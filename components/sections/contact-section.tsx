@@ -31,21 +31,21 @@ export function ContactSection({ config = siteContent.contact }: { config?: Cont
   }
 
   return (
-    <section id="contact" className="section-anchor section-grid gap-y-8 py-2 sm:py-4">
+    <section id="contact" className="section-anchor section-grid gap-y-6 py-2 sm:gap-y-8 sm:py-4">
       <SectionHeading
         eyebrow="Contact"
         title={config.heading}
         description={config.blurb}
       />
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
-        <div className="surface-card rounded-[1.9rem] p-5 sm:p-6 lg:p-7">
-          <div className="flex flex-col gap-6">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(300px,0.9fr)] lg:items-start">
+        <div className="surface-card rounded-[1.7rem] p-4 sm:p-6 lg:p-7">
+          <div className="flex flex-col gap-5 sm:gap-6">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.28em] text-muted">
                 Preferred lane
               </p>
-              <h3 className="text-3xl font-semibold tracking-[-0.04em] text-text sm:text-4xl">
+              <h3 className="text-balance text-2xl font-semibold leading-[1.02] tracking-[-0.04em] text-text sm:text-4xl">
                 Email first, with copy as the primary action.
               </h3>
               <p className="max-w-2xl text-sm leading-7 text-muted">
@@ -55,9 +55,9 @@ export function ContactSection({ config = siteContent.contact }: { config?: Cont
               </p>
             </div>
 
-            <div className="rounded-[1.5rem] border border-border/70 bg-surface-2/70 p-4 sm:p-5">
-              <div className="flex items-center gap-3">
-                <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl border border-border/70 bg-background/80 p-2">
+            <div className="rounded-[1.45rem] border border-border/70 bg-surface-2/70 p-4 sm:p-5">
+              <div className="flex items-start gap-3">
+                <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-[1rem] border border-border/70 bg-background/80 p-2 sm:h-12 sm:w-12">
                   <Image
                     src={config.icons.email.src}
                     alt={config.icons.email.alt}
@@ -66,22 +66,22 @@ export function ContactSection({ config = siteContent.contact }: { config?: Cont
                     className="object-contain p-2"
                   />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-xs uppercase tracking-[0.22em] text-muted">
                     Email
                   </p>
-                  <p className="mt-1 text-base font-medium text-text">
+                  <p className="mt-1 break-words text-[0.95rem] font-medium leading-6 text-text sm:text-base">
                     {email || "Hidden until NEXT_PUBLIC_CONTACT_EMAIL is set."}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-5 flex flex-wrap gap-3">
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <button
                   type="button"
                   onClick={() => handleCopy("email", email)}
                   disabled={!email}
-                  className="inline-flex h-12 items-center gap-2 rounded-full bg-text px-5 text-sm font-medium text-background transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-text px-5 text-sm font-medium text-background transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                 >
                   <Copy className="h-4 w-4" />
                   {copiedField === "email"
@@ -95,7 +95,7 @@ export function ContactSection({ config = siteContent.contact }: { config?: Cont
                       trackOutboundLink("contact_email", `mailto:${email}`);
                     }
                   }}
-                  className={`inline-flex h-12 items-center gap-2 rounded-full px-5 text-sm font-medium ${
+                  className={`inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-5 text-sm font-medium sm:w-auto ${
                     email
                       ? "surface-pill text-text transition-colors hover:text-accent"
                       : "pointer-events-none rounded-full border border-border bg-surface text-muted"
@@ -108,9 +108,9 @@ export function ContactSection({ config = siteContent.contact }: { config?: Cont
             </div>
 
             {showPhone ? (
-              <div className="rounded-[1.5rem] border border-border/70 bg-surface-2/70 p-4 sm:p-5">
-                <div className="flex items-center gap-3">
-                  <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl border border-border/70 bg-background/80 p-2">
+              <div className="rounded-[1.45rem] border border-border/70 bg-surface-2/70 p-4 sm:p-5">
+                <div className="flex items-start gap-3">
+                  <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-[1rem] border border-border/70 bg-background/80 p-2 sm:h-12 sm:w-12">
                     <Image
                       src={config.icons.phone.src}
                       alt={config.icons.phone.alt}
@@ -119,18 +119,20 @@ export function ContactSection({ config = siteContent.contact }: { config?: Cont
                       className="object-contain p-2"
                     />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-xs uppercase tracking-[0.22em] text-muted">
                       Phone
                     </p>
-                    <p className="mt-1 text-base font-medium text-text">{phone}</p>
+                    <p className="mt-1 break-words text-[0.95rem] font-medium leading-6 text-text sm:text-base">
+                      {phone}
+                    </p>
                   </div>
                 </div>
-                <div className="mt-5 flex flex-wrap gap-3">
+                <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                   <button
                     type="button"
                     onClick={() => handleCopy("phone", phone)}
-                    className="surface-pill inline-flex h-12 items-center gap-2 rounded-full px-5 text-sm font-medium text-text transition-colors hover:text-accent"
+                    className="surface-pill inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-5 text-sm font-medium text-text transition-colors hover:text-accent sm:w-auto"
                   >
                     <Copy className="h-4 w-4" />
                     {copiedField === "phone" ? "Phone copied" : "Copy phone"}
@@ -138,7 +140,7 @@ export function ContactSection({ config = siteContent.contact }: { config?: Cont
                   <a
                     href={`tel:${phone}`}
                     onClick={() => trackOutboundLink("contact_phone", `tel:${phone}`)}
-                    className="surface-pill inline-flex h-12 items-center gap-2 rounded-full px-5 text-sm font-medium text-text transition-colors hover:text-accent"
+                    className="surface-pill inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-5 text-sm font-medium text-text transition-colors hover:text-accent sm:w-auto"
                   >
                     <Phone className="h-4 w-4" />
                     Call
@@ -149,22 +151,31 @@ export function ContactSection({ config = siteContent.contact }: { config?: Cont
           </div>
         </div>
 
-        <aside className="surface-card rounded-[1.9rem] p-5 sm:p-6 lg:p-7">
-          <div className="space-y-5">
-            <div>
-              <p className="text-xs uppercase tracking-[0.28em] text-muted">
-                Availability
-              </p>
-              <p className="mt-3 text-lg leading-8 text-text">{config.availability}</p>
+        <aside className="surface-card rounded-[1.7rem] p-4 sm:p-6 lg:p-7">
+          <div className="space-y-4 sm:space-y-5">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+              <div className="rounded-[1.35rem] border border-border/70 bg-surface-2/70 p-4">
+                <p className="text-xs uppercase tracking-[0.28em] text-muted">
+                  Availability
+                </p>
+                <p className="mt-3 text-base leading-7 text-text sm:text-lg sm:leading-8">
+                  {config.availability}
+                </p>
+              </div>
+              <div className="rounded-[1.35rem] border border-border/70 bg-surface-2/70 p-4">
+                <p className="text-xs uppercase tracking-[0.28em] text-muted">
+                  Location
+                </p>
+                <p className="mt-3 text-base leading-7 text-text">
+                  {config.location}
+                </p>
+              </div>
             </div>
-            <div>
+            <div className="rounded-[1.35rem] border border-border/70 bg-surface-2/70 p-4">
               <p className="text-xs uppercase tracking-[0.28em] text-muted">
-                Location
+                Privacy
               </p>
-              <p className="mt-3 text-base leading-7 text-text">{config.location}</p>
-            </div>
-            <div className="rounded-[1.4rem] border border-border/70 bg-surface-2/70 p-4">
-              <p className="text-sm leading-7 text-muted">
+              <p className="mt-3 text-sm leading-7 text-muted">
                 Contact details stay environment-driven so private info never needs to be committed to the repository.
               </p>
             </div>

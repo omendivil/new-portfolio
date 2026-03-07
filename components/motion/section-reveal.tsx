@@ -1,28 +1,43 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 
-import { fadeInUp, motionEase } from "@/lib/motion";
+import { createRevealVariants, useMotionPreference } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 interface SectionRevealProps {
   children: ReactNode;
   className?: string;
   delay?: number;
+  amount?: number;
+  distance?: number;
 }
 
-export function SectionReveal({ children, className, delay = 0 }: SectionRevealProps) {
-  const shouldReduceMotion = useReducedMotion();
+export function SectionReveal({
+  children,
+  className,
+  delay = 0,
+  amount = 0.12,
+  distance = 26,
+}: SectionRevealProps) {
+  const { reduceMotion, viewport } = useMotionPreference({
+    amount,
+    margin: "0px 0px -10% 0px",
+  });
 
   return (
     <motion.div
       className={cn(className)}
-      initial={shouldReduceMotion ? false : "hidden"}
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.25 }}
-      variants={shouldReduceMotion ? undefined : fadeInUp}
-      transition={shouldReduceMotion ? undefined : { duration: 0.48, ease: motionEase, delay }}
+      initial={reduceMotion ? false : "hidden"}
+      whileInView={reduceMotion ? undefined : "visible"}
+      viewport={viewport}
+      variants={createRevealVariants(reduceMotion, {
+        delay,
+        distance,
+        duration: 0.54,
+        scale: 0.985,
+      })}
     >
       {children}
     </motion.div>

@@ -30,6 +30,7 @@ export function ProjectsSection() {
     () => filterProjects(siteContent.projects, query, selectedCategory),
     [query, selectedCategory],
   );
+  const projectCount = siteContent.projects.length;
   const selectedProject = useMemo(
     () => siteContent.projects.find((project) => project.id === selectedProjectId) ?? null,
     [selectedProjectId],
@@ -92,19 +93,51 @@ export function ProjectsSection() {
       />
 
       <div className="space-y-5">
-        <div className="flex flex-col gap-4 rounded-[1.5rem] border border-border/70 bg-surface-2/70 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
-          <p className="max-w-2xl text-sm leading-7 text-muted">
-            Start with the featured poster deck, then open the browse drawer for the full list. Videos stay out of the deck and list until a project is explicitly opened.
-          </p>
-          <button
-            ref={drawerTriggerRef}
-            type="button"
-            onClick={openDrawer}
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-text px-5 text-sm font-medium text-background transition-transform hover:-translate-y-0.5"
-          >
-            <PanelsTopLeft className="h-4 w-4" />
-            View all projects
-          </button>
+        <div className="surface-card overflow-hidden rounded-[1.9rem] p-5 sm:p-6">
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.92fr)] xl:items-start">
+            <div className="space-y-4">
+              <span className="inline-flex rounded-full border border-border/70 bg-background/70 px-3 py-1 text-[0.68rem] uppercase tracking-[0.24em] text-muted">
+                Curated showcase
+              </span>
+              <p className="max-w-3xl text-sm leading-7 text-muted sm:text-[0.96rem]">
+                Featured work is presented like a product shelf: deliberate posters up front,
+                structured browsing behind a drawer, and demo video only after a project is opened.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="rounded-full border border-border/70 bg-surface-2/70 px-3 py-1 text-xs text-muted">
+                  {featuredProjects.length} featured projects
+                </span>
+                <span className="rounded-full border border-border/70 bg-surface-2/70 px-3 py-1 text-xs text-muted">
+                  {categories.length - 1} categories
+                </span>
+                <span className="rounded-full border border-border/70 bg-surface-2/70 px-3 py-1 text-xs text-muted">
+                  Video stays inside the peek panel
+                </span>
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
+              <div className="rounded-[1.35rem] border border-border/70 bg-surface-2/55 p-4">
+                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-muted">Default view</p>
+                <p className="mt-2 text-sm leading-6 text-text">Poster-first and intentionally curated.</p>
+              </div>
+              <div className="rounded-[1.35rem] border border-border/70 bg-surface-2/55 p-4">
+                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-muted">Browse mode</p>
+                <p className="mt-2 text-sm leading-6 text-text">
+                  Lightweight rows with search and category filtering.
+                </p>
+              </div>
+              <button
+                ref={drawerTriggerRef}
+                type="button"
+                onClick={openDrawer}
+                className="inline-flex min-h-[5.5rem] items-center justify-center gap-2 rounded-[1.35rem] bg-text px-5 text-sm font-medium text-background transition-transform hover:-translate-y-0.5"
+              >
+                <PanelsTopLeft className="h-4 w-4" />
+                Browse all {projectCount} projects
+              </button>
+            </div>
+          </div>
         </div>
 
         <FeaturedProjects onOpenProject={handleOpenProject} projects={featuredProjects} />

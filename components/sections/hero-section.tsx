@@ -20,47 +20,47 @@ export function HeroSection() {
 
   return (
     <SectionShell id="hero" className="overflow-hidden">
-      <div className="grid gap-8 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
-        <FadeIn className="space-y-8">
-          <div className="space-y-5">
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted">
+      <div className="grid gap-8 md:gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)] lg:items-end">
+        <FadeIn className="space-y-7 sm:space-y-8">
+          <div className="space-y-4 sm:space-y-5">
+            <p className="font-mono text-[0.68rem] uppercase tracking-[0.28em] text-muted sm:text-xs">
               {hero.eyebrow}
             </p>
-            <h1 className="max-w-4xl text-4xl font-semibold tracking-[-0.05em] text-text sm:text-5xl lg:text-6xl">
+            <h1 className="max-w-4xl text-balance text-[clamp(2.75rem,11vw,4.8rem)] font-semibold leading-[0.94] tracking-[-0.055em] text-text">
               {hero.title}
             </h1>
-            <div className="max-w-3xl space-y-4 text-base leading-7 text-muted sm:text-lg">
+            <div className="max-w-3xl space-y-3 text-[0.98rem] leading-7 text-muted sm:space-y-4 sm:text-lg sm:leading-8">
               <p>{hero.intro}</p>
               <p>{hero.description}</p>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <a
               href="#projects"
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-text px-5 py-3 text-sm font-medium text-background transition-transform hover:-translate-y-0.5"
+              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-border bg-text px-5 py-3 text-sm font-medium text-background transition-transform hover:-translate-y-0.5 sm:w-auto"
             >
               {hero.primaryCtaLabel}
               <ArrowDownRight className="h-4 w-4" aria-hidden="true" />
             </a>
             <a
               href="#contact"
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-2 px-5 py-3 text-sm font-medium text-text transition-colors hover:bg-surface"
+              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-border bg-surface-2 px-5 py-3 text-sm font-medium text-text transition-colors hover:bg-surface sm:w-auto"
             >
               {hero.secondaryCtaLabel}
             </a>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr))]">
             {stats.map((stat) => (
               <div
                 key={stat.label}
-                className="rounded-[1.4rem] border border-border bg-background/70 px-4 py-4"
+                className="min-w-0 rounded-[1.35rem] border border-border bg-background/70 px-4 py-4 sm:rounded-[1.4rem]"
               >
-                <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted">
+                <p className="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-muted sm:text-xs">
                   {stat.label}
                 </p>
-                <p className="mt-3 text-lg font-semibold tracking-[-0.03em] text-text">
+                <p className="mt-3 text-xl font-semibold tracking-[-0.03em] text-text">
                   {stat.value}
                 </p>
               </div>
@@ -68,10 +68,10 @@ export function HeroSection() {
           </div>
         </FadeIn>
 
-        <FadeIn className="mx-auto w-full max-w-sm lg:max-w-none">
-          <div className="relative overflow-hidden rounded-[2rem] border border-border bg-surface-2 p-3">
-            <div className="absolute inset-x-6 top-6 h-24 rounded-full bg-accent-soft/70 blur-3xl" />
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[1.6rem] border border-border bg-surface">
+        <FadeIn className="mx-auto w-full max-w-[21rem] lg:max-w-none">
+          <div className="relative overflow-hidden rounded-[1.75rem] border border-border bg-surface-2/90 p-2.5 sm:rounded-[2rem] sm:p-3">
+            <div className="absolute inset-x-5 top-5 h-20 rounded-full bg-accent-soft/70 blur-3xl sm:inset-x-6 sm:top-6 sm:h-24" />
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[1.45rem] border border-border bg-surface sm:rounded-[1.6rem]">
               <Image
                 src={hero.portrait.src}
                 alt={hero.portrait.alt}
