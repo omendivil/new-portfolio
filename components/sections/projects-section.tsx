@@ -88,8 +88,8 @@ export function ProjectsSection() {
     <section id="projects" className="section-anchor section-grid gap-y-8 py-2 sm:py-4">
       <SectionHeading
         eyebrow="Projects"
-        title="Featured work up front, deeper browsing on demand"
-        description="The home view stays curated. A bottom drawer handles search and category filtering, while the right-side peek panel carries the deeper context and lazy video media."
+        title="An active project stage up front, deeper inspection on demand"
+        description="The featured layer now behaves more like a live showcase. Select a project, let the preview start immediately, then open the right-side panel for the full story and guided walkthrough."
       />
 
       <div className="space-y-5">
@@ -100,8 +100,7 @@ export function ProjectsSection() {
                 Curated showcase
               </span>
               <p className="max-w-3xl text-sm leading-7 text-muted sm:text-[0.96rem]">
-                Featured work is presented like a product shelf: deliberate posters up front,
-                structured browsing behind a drawer, and demo video only after a project is opened.
+                The first layer is now about motion and presence. If a featured project has a demo, it starts playing in the stage as soon as the preview is on screen. Projects without video fall back to a designed still.
               </p>
               <div className="flex flex-wrap gap-2">
                 <span className="rounded-full border border-border/70 bg-surface-2/70 px-3 py-1 text-xs text-muted">
@@ -118,13 +117,13 @@ export function ProjectsSection() {
 
             <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
               <div className="rounded-[1.35rem] border border-border/70 bg-surface-2/55 p-4">
-                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-muted">Default view</p>
-                <p className="mt-2 text-sm leading-6 text-text">Poster-first and intentionally curated.</p>
+                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-muted">Stage behavior</p>
+                <p className="mt-2 text-sm leading-6 text-text">Select a project to swap the live stage and immediately change the preview.</p>
               </div>
               <div className="rounded-[1.35rem] border border-border/70 bg-surface-2/55 p-4">
-                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-muted">Browse mode</p>
+                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-muted">Panel behavior</p>
                 <p className="mt-2 text-sm leading-6 text-text">
-                  Lightweight rows with search and category filtering.
+                  Open the panel for the full case-study breakdown, chapters, and deeper technical framing.
                 </p>
               </div>
               <button

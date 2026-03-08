@@ -53,9 +53,25 @@ export type ProjectChapter = {
   videoId: string;
 };
 
+export type ProjectPresentation = "canvas" | "device";
+
+export type ProjectStoryBeat = {
+  description: string;
+  eyebrow: string;
+  id: string;
+  title: string;
+};
+
+export type ProjectDemoGuide = {
+  eyebrow: string;
+  summary: string;
+  title: string;
+};
+
 export type Project = {
   category: ProjectCategory;
   chapters: ProjectChapter[];
+  demo: ProjectDemoGuide;
   featured: boolean;
   gallery: MediaAsset[];
   highlights: string[];
@@ -64,11 +80,14 @@ export type Project = {
   media: ProjectVideo[];
   oneLiner: string;
   poster: MediaAsset;
+  presentation: ProjectPresentation;
   role: string;
   slug: string;
+  story: ProjectStoryBeat[];
   status: string;
   summary: string;
   tags: string[];
+  technicalThemes: string[];
   title: string;
   videos: ProjectVideo[];
   year: string;

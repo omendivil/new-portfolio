@@ -27,8 +27,8 @@ export function ProjectChapters({
 
   return (
     <div className="space-y-3">
-      <p className="text-xs uppercase tracking-[0.28em] text-muted">Chapters</p>
-      <div className="grid gap-2">
+      <p className="text-xs uppercase tracking-[0.28em] text-muted">Guided scenes</p>
+      <div className="grid gap-3">
         {chapters.map((chapter, index) => {
           const isActive = chapter.id === activeChapterId;
 
@@ -37,17 +37,18 @@ export function ProjectChapters({
               key={chapter.id}
               type="button"
               onClick={() => onSelect(chapter)}
+              aria-pressed={isActive}
               className={cn(
-                "rounded-[1.1rem] border px-4 py-3 text-left transition-colors",
+                "rounded-[1.25rem] border px-4 py-4 text-left transition-colors",
                 isActive
-                  ? "border-accent/35 bg-accent-soft"
-                  : "border-border/70 bg-surface-2/80 hover:border-accent/20 hover:bg-accent-soft/60",
+                  ? "border-accent/35 bg-accent-soft/78"
+                  : "border-border/70 bg-surface/74 hover:border-accent/20 hover:bg-accent-soft/44",
               )}
             >
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-3.5">
                 <span
                   className={cn(
-                    "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-[0.68rem] font-medium uppercase tracking-[0.18em]",
+                    "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-[0.68rem] font-medium uppercase tracking-[0.18em]",
                     isActive
                       ? "border-accent/35 bg-background/72 text-text"
                       : "border-border/70 bg-background/70 text-muted",
@@ -58,7 +59,12 @@ export function ProjectChapters({
 
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-sm font-medium text-text">{chapter.label}</p>
+                    <div>
+                      <p className="text-[0.68rem] uppercase tracking-[0.24em] text-muted">
+                        Scene {String(index + 1).padStart(2, "0")}
+                      </p>
+                      <p className="mt-1 text-sm font-medium text-text">{chapter.label}</p>
+                    </div>
                     <span className="font-mono text-[0.64rem] uppercase tracking-[0.2em] text-muted">
                       {formatTimestamp(chapter.atSeconds)}
                     </span>

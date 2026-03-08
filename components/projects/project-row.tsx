@@ -44,6 +44,7 @@ export function ProjectRow({
               </span>
             </div>
             <p className="max-w-3xl text-sm leading-7 text-muted">{project.oneLiner}</p>
+            <p className="max-w-3xl text-sm leading-6 text-text/85">{project.demo.title}</p>
           </div>
 
           <div className="flex flex-wrap gap-2">

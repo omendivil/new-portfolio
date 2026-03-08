@@ -1,13 +1,15 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CircleDot } from "lucide-react";
+import { useMemo, useState } from "react";
 
 import type { Project } from "@/data/types";
-import { useMotionPreference } from "@/lib/motion";
+import { createHoverMotion, pillTransition, useMotionPreference } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
-import { getProjectPresentation, ProjectPoster } from "./project-poster";
+import { ProjectLivePreview } from "./project-live-preview";
 
 export function FeaturedProjects({
   onOpenProject,
@@ -17,176 +19,146 @@ export function FeaturedProjects({
   projects: Project[];
 }) {
   const { reduceMotion } = useMotionPreference();
-  const [leadProject, ...supportingProjects] = projects;
+  const [activeProjectId, setActiveProjectId] = useState<string | null>(projects[0]?.id ?? null);
+  const hoverMotion = createHoverMotion(reduceMotion, {
+    hoverScale: 1.008,
+    hoverY: -2,
+    tapScale: 0.992,
+  });
 
-  if (!leadProject) {
+  const activeProject = useMemo(() => {
+    if (!projects.length) {
+      return null;
+    }
+
+    return projects.find((project) => project.id === activeProjectId) ?? projects[0];
+  }, [activeProjectId, projects]);
+
+  if (!activeProject) {
     return null;
   }
 
-  const leadPresentation = getProjectPresentation(leadProject);
-
   return (
-    <div className="grid gap-4 xl:grid-cols-[minmax(0,1.08fr)_minmax(320px,0.92fr)]">
-      <motion.button
-        type="button"
-        onClick={(event) => onOpenProject(leadProject.id, event.currentTarget)}
-        whileHover={reduceMotion ? undefined : { y: -5, scale: 1.005 }}
-        className="group relative overflow-hidden rounded-[2rem] border border-border/70 bg-surface/78 p-4 text-left shadow-[0_24px_80px_-52px_rgba(17,16,13,0.34)] transition duration-300 hover:-translate-y-0.5 hover:border-accent/30 sm:p-5"
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(45,111,102,0.08),transparent_42%)] dark:bg-[radial-gradient(circle_at_top_right,rgba(138,201,189,0.12),transparent_42%)]" />
-        <div className="relative grid gap-5 lg:grid-cols-[minmax(0,1.02fr)_minmax(280px,0.98fr)] lg:items-stretch">
-          <div className="order-2 flex h-full flex-col gap-4 lg:order-1">
+    <div className="space-y-4">
+      <div className="grid gap-4 xl:grid-cols-[minmax(320px,0.46fr)_minmax(0,0.54fr)] xl:items-stretch">
+        <div className="surface-card rounded-[1.9rem] p-5 sm:p-6">
+          <div className="flex h-full flex-col gap-5">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full border border-border/70 bg-background/80 px-3 py-1 text-[0.68rem] uppercase tracking-[0.24em] text-muted">
-                Featured selection
+              <span className="rounded-full border border-border/70 bg-background/72 px-3 py-1 text-[0.68rem] uppercase tracking-[0.24em] text-muted">
+                Active showcase
               </span>
-              <span className="rounded-full border border-border/70 bg-background/70 px-3 py-1 text-[0.68rem] uppercase tracking-[0.24em] text-muted">
-                {leadProject.category}
+              <span className="rounded-full border border-border/70 bg-background/72 px-3 py-1 font-mono text-[0.64rem] uppercase tracking-[0.2em] text-muted">
+                {activeProject.year}
               </span>
             </div>
 
             <div className="space-y-3">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <h3 className="text-2xl font-semibold tracking-[-0.04em] text-text sm:text-3xl">
-                  {leadProject.title}
-                </h3>
-                <span className="font-mono text-xs uppercase tracking-[0.22em] text-muted">
-                  {leadProject.year}
-                </span>
-              </div>
-              <p className="max-w-2xl text-sm leading-7 text-muted sm:text-[0.96rem]">
-                {leadProject.summary}
+              <p className="text-[0.68rem] uppercase tracking-[0.24em] text-muted">
+                {activeProject.demo.eyebrow}
+              </p>
+              <h3 className="text-balance text-2xl font-semibold tracking-[-0.04em] text-text sm:text-3xl">
+                {activeProject.title}
+              </h3>
+              <p className="text-sm leading-7 text-muted sm:text-[0.96rem]">
+                {activeProject.demo.summary}
               </p>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-3">
-              <div className="rounded-[1.2rem] border border-border/70 bg-background/72 px-4 py-3">
-                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-muted">Role</p>
-                <p className="mt-2 text-sm leading-6 text-text">{leadProject.role}</p>
-              </div>
-              <div className="rounded-[1.2rem] border border-border/70 bg-background/72 px-4 py-3">
-                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-muted">Status</p>
-                <p className="mt-2 text-sm leading-6 text-text">{leadProject.status}</p>
-              </div>
-              <div className="rounded-[1.2rem] border border-border/70 bg-background/72 px-4 py-3">
-                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-muted">Media</p>
-                <p className="mt-2 text-sm leading-6 text-text">Poster here, demo in the peek panel.</p>
-              </div>
+            <div className="rounded-[1.35rem] border border-border/70 bg-surface-2/56 p-4">
+              <p className="text-[0.68rem] uppercase tracking-[0.24em] text-muted">
+                Why this preview matters
+              </p>
+              <p className="mt-2 text-sm leading-6 text-text">{activeProject.story[0].description}</p>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              {leadProject.highlights.slice(0, 2).map((highlight) => (
-                <div
-                  key={highlight}
-                  className="rounded-[1.2rem] border border-border/70 bg-surface-2/55 px-4 py-3 text-sm leading-6 text-muted"
+            <div className="flex flex-wrap gap-2">
+              {activeProject.technicalThemes.slice(0, 3).map((theme) => (
+                <span
+                  key={theme}
+                  className="rounded-full border border-border/70 bg-background/72 px-3 py-1 text-xs text-muted"
                 >
-                  {highlight}
-                </div>
+                  {theme}
+                </span>
               ))}
             </div>
 
-            <div className="mt-auto flex flex-wrap items-center gap-3">
-              <div className="flex flex-wrap gap-2">
-                {leadProject.tags.slice(0, 3).map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full border border-border/70 bg-background/70 px-3 py-1 text-xs text-muted"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <span className="inline-flex items-center gap-2 text-sm font-medium text-text">
-                Open project
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-              </span>
+            <div className="mt-auto">
+              <button
+                type="button"
+                onClick={(event) => onOpenProject(activeProject.id, event.currentTarget)}
+                className="inline-flex min-h-12 items-center gap-2 rounded-full bg-text px-5 text-sm font-medium text-background transition-transform hover:-translate-y-0.5"
+              >
+                Open project details
+                <ArrowRight className="h-4 w-4" />
+              </button>
             </div>
           </div>
-
-          <ProjectPoster
-            className={cn(
-              "order-1 h-full lg:order-2",
-              leadPresentation === "device" && "justify-self-center lg:w-full lg:max-w-[20rem]",
-            )}
-            label="Curated preview"
-            mediaClassName={leadPresentation === "canvas" ? "min-h-[18rem] lg:h-full lg:aspect-auto" : undefined}
-            presentation={leadPresentation}
-            priority
-            project={leadProject}
-            sizes="(min-width: 1280px) 34vw, (min-width: 1024px) 42vw, 100vw"
-          />
         </div>
-      </motion.button>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
-        {supportingProjects.map((project, index) => (
-          <motion.button
-            key={project.id}
-            type="button"
-            onClick={(event) => onOpenProject(project.id, event.currentTarget)}
-            whileHover={reduceMotion ? undefined : { y: -4, scale: 1.005 }}
-            className={cn(
-              "group relative overflow-hidden rounded-[1.7rem] border border-border/70 bg-surface/72 p-4 text-left transition duration-300 hover:-translate-y-0.5 hover:border-accent/28",
-              index === supportingProjects.length - 1 ? "xl:min-h-[18.75rem]" : undefined,
-            )}
-          >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(45,111,102,0.06),transparent_40%)] dark:bg-[radial-gradient(circle_at_top_right,rgba(138,201,189,0.1),transparent_40%)]" />
-            <div className="relative grid gap-4 sm:grid-cols-[minmax(150px,0.85fr)_minmax(0,1fr)] xl:grid-cols-1">
-              <ProjectPoster
+        <ProjectLivePreview project={activeProject} />
+      </div>
+
+      <div className="-mx-1 overflow-x-auto pb-1">
+        <div className="flex min-w-max gap-3 px-1 xl:min-w-0 xl:flex-wrap">
+          {projects.map((project) => {
+            const isActive = project.id === activeProject.id;
+            const hasVideo = project.videos.length > 0;
+
+            return (
+              <motion.button
+                key={project.id}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => setActiveProjectId(project.id)}
+                transition={hoverMotion.transition}
+                whileHover={hoverMotion.whileHover}
+                whileTap={hoverMotion.whileTap}
                 className={cn(
-                  "border-0 bg-transparent p-0 shadow-none",
-                  getProjectPresentation(project) === "device" && "sm:max-w-[11rem] xl:max-w-[13rem]",
+                  "relative min-w-[17rem] overflow-hidden rounded-[1.4rem] border border-border/70 bg-surface/78 p-3.5 text-left xl:min-w-[15rem] xl:flex-1",
+                  isActive && "bg-accent-soft/58",
                 )}
-                label="Poster"
-                mediaClassName={
-                  getProjectPresentation(project) === "canvas"
-                    ? "aspect-[4/3] sm:aspect-[1.08] xl:aspect-[4/3]"
-                    : undefined
-                }
-                presentation={getProjectPresentation(project)}
-                project={project}
-                sizes="(min-width: 1280px) 24vw, (min-width: 640px) 30vw, 100vw"
-              />
+              >
+                {isActive ? (
+                  <motion.span
+                    layoutId="featured-project-active-card"
+                    transition={pillTransition}
+                    className="absolute inset-0 rounded-[1.4rem] border border-accent/18 bg-accent-soft/66"
+                  />
+                ) : null}
 
-              <div className="flex h-full flex-col gap-3">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-[0.68rem] uppercase tracking-[0.24em] text-muted">
-                    {project.category}
-                  </p>
-                  <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted">
-                    {project.year}
-                  </p>
-                </div>
+                <div className="relative z-10 flex items-center gap-3">
+                  <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-[0.95rem] border border-border/70 bg-surface">
+                    <Image
+                      src={project.poster.url}
+                      alt={project.poster.alt}
+                      fill
+                      sizes="56px"
+                      className="object-cover"
+                    />
+                  </div>
 
-                <div className="space-y-2">
-                  <h3 className="text-xl font-semibold tracking-[-0.03em] text-text">
-                    {project.title}
-                  </h3>
-                  <p className="text-sm leading-6 text-muted">{project.oneLiner}</p>
-                </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="truncate text-base font-semibold tracking-[-0.03em] text-text">
+                        {project.title}
+                      </p>
+                      <span className="rounded-full border border-border/70 bg-background/70 px-2.5 py-1 text-[0.62rem] uppercase tracking-[0.2em] text-muted">
+                        {project.category}
+                      </span>
+                    </div>
 
-                <div className="rounded-[1.1rem] border border-border/70 bg-background/68 px-4 py-3 text-sm leading-6 text-muted">
-                  {project.highlights[0]}
-                </div>
+                    <p className="mt-1.5 truncate text-sm leading-6 text-muted">{project.demo.title}</p>
 
-                <div className="mt-auto flex flex-wrap items-center gap-2">
-                  {project.tags.slice(0, 2).map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-border/70 bg-background/70 px-3 py-1 text-xs text-muted"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                  <span className="ml-auto inline-flex items-center gap-2 text-sm font-medium text-text">
-                    Open
-                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-                  </span>
+                    <div className="mt-2.5 flex items-center gap-2 text-[0.68rem] uppercase tracking-[0.22em] text-muted">
+                      {hasVideo ? <CircleDot className="h-3.5 w-3.5" /> : null}
+                      <span>{hasVideo ? "Autoplay preview" : "Poster fallback"}</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </motion.button>
-        ))}
+              </motion.button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

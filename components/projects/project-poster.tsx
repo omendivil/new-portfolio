@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import type { Project } from "@/data/types";
+import type { Project, ProjectPresentation } from "@/data/types";
 
 import {
   ProjectShowcaseFrame,
@@ -11,18 +11,16 @@ type ProjectPosterProps = {
   className?: string;
   label?: string;
   mediaClassName?: string;
-  presentation?: ProjectShowcaseVariant;
+  presentation?: ProjectPresentation;
   priority?: boolean;
   project: Project;
   sizes?: string;
 };
 
-export function getProjectPresentation(project: Pick<Project, "category" | "title">): ProjectShowcaseVariant {
-  if (project.category === "iOS" || project.category === "AI Product" || project.title.includes("App")) {
-    return "device";
-  }
-
-  return "canvas";
+export function getProjectPresentation(
+  project: Pick<Project, "presentation">,
+): ProjectShowcaseVariant {
+  return project.presentation;
 }
 
 export function ProjectPoster({

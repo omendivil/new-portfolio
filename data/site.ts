@@ -7,9 +7,11 @@ import {
   type Project,
   type ProjectCategory,
   type ProjectChapter,
+  type ProjectDemoGuide,
   type ProjectFilterOptions,
   type ProjectGroup,
   type ProjectLink,
+  type ProjectStoryBeat,
   type ProjectVideo,
   type SiteContent,
   type SiteMediaCatalog,
@@ -67,6 +69,32 @@ function createChapter(
     timestampSeconds: atSeconds,
     title: label,
     videoId,
+  };
+}
+
+function createDemoGuide(
+  eyebrow: string,
+  title: string,
+  summary: string,
+): ProjectDemoGuide {
+  return {
+    eyebrow,
+    summary,
+    title,
+  };
+}
+
+function createStoryBeat(
+  id: string,
+  eyebrow: string,
+  title: string,
+  description: string,
+): ProjectStoryBeat {
+  return {
+    description,
+    eyebrow,
+    id,
+    title,
   };
 }
 
@@ -213,32 +241,37 @@ export const projects: Project[] = [
     chapters: [
       createChapter(
         "frameworks-browse",
-        "Browse view",
-        "Open on the lightweight framework index and scan the main categories.",
+        "Catalog browse",
+        "Start on the framework index and scan grouped cards that keep a dense catalog readable.",
         videoFrameworksPrimary.id,
         0,
       ),
       createChapter(
         "frameworks-detail",
-        "Detail transition",
-        "Shift into a focused framework detail view without losing context.",
+        "Detail handoff",
+        "Move into a focused detail view that keeps orientation instead of feeling like a context switch.",
         videoFrameworksPrimary.id,
         12,
       ),
       createChapter(
-        "frameworks-scrub",
-        "Scroll scrub",
-        "Review the scroll-scrubbing style interaction called out in the media brief.",
+        "frameworks-motion",
+        "Motion cue",
+        "Review the scroll-scrubbed transition language used to make the learning flow feel guided.",
         videoFrameworksPrimary.id,
         19,
       ),
     ],
+    demo: createDemoGuide(
+      "Guided walkthrough",
+      "Browse to detail without losing context",
+      "This preview follows the product's core promise: scan quickly, commit to one framework, and land in detail with motion that keeps the user oriented.",
+    ),
     featured: true,
     gallery: [],
     highlights: [
-      "Browse-heavy information architecture tuned for quick scanning.",
-      "Detail flow designed around motion rather than page churn.",
-      "Scroll-scrubbing style demo captured as the product narrative.",
+      "Turns a dense Apple-framework catalog into a calm browse-first learning surface.",
+      "Uses motion cues to explain structure instead of leaning on extra chrome.",
+      "Packages technical reference content in a way that still feels approachable and polished.",
     ],
     id: "frameworks-app",
     links: [
@@ -247,14 +280,36 @@ export const projects: Project[] = [
     ],
     media: [videoFrameworksPrimary],
     oneLiner:
-      "A SwiftUI reference browser for learning Apple frameworks through motion and scroll-scrubbed storytelling.",
+      "A SwiftUI reference browser that makes Apple's framework catalog feel approachable, guided, and easy to learn from.",
     poster: posterFrameworks,
+    presentation: "device",
     role: "Product design and SwiftUI development",
     slug: "frameworks-app",
+    story: [
+      createStoryBeat(
+        "frameworks-what",
+        "What it is",
+        "An educational browser, not just a list of logos.",
+        "Frameworks App turns Apple technologies into a clean learning surface with enough hierarchy to browse fast and enough polish to feel intentionally productized.",
+      ),
+      createStoryBeat(
+        "frameworks-tech",
+        "Technical lens",
+        "The challenge is navigation clarity under density.",
+        "The project focuses on reusable SwiftUI composition, layered browse states, and transitions that keep users oriented as they move from catalog scan to detail.",
+      ),
+      createStoryBeat(
+        "frameworks-why",
+        "Why it matters",
+        "It shows product thinking on top of implementation detail.",
+        "This is strong portfolio work because the win is restraint: making technical information feel obvious, native, and calm rather than visually overloaded.",
+      ),
+    ],
     status: "Prototype",
     summary:
-      "Frameworks App turns a dense list of Apple technologies into a calm browse-first experience with strong hierarchy, smooth transitions, and detail views that feel native.",
+      "Frameworks App explores how a technical catalog can still feel light. The product uses clean grouping, clear navigation, and measured motion so detail views feel like a continuation of browsing rather than a hard mode switch.",
     tags: ["SwiftUI", "iOS", "Motion Systems"],
+    technicalThemes: ["SwiftUI navigation", "information architecture", "motion-led transitions"],
     title: "Frameworks App",
     videos: [videoFrameworksPrimary],
     year: "2024",
@@ -263,26 +318,31 @@ export const projects: Project[] = [
     category: "AI Product",
     chapters: [
       createChapter(
-        "anime-ai-chat",
-        "Conversation start",
-        "Move from prompt entry into tailored suggestions.",
+        "anime-ai-discovery",
+        "Prompt to discovery",
+        "Start with a conversational request and move into a product view that turns free-form intent into structured anime recommendations.",
         videoAnimeAiPrimary.id,
         0,
       ),
       createChapter(
-        "anime-ai-results",
-        "Recommendation layout",
-        "See how AI output becomes structured content cards instead of raw text.",
+        "anime-ai-structure",
+        "Structured response",
+        "Watch the UI turn summaries, comparisons, and recommendations into browseable cards instead of chat-only output.",
         videoAnimeAiPrimary.id,
         9,
       ),
     ],
+    demo: createDemoGuide(
+      "AI product preview",
+      "Translate prompts into product-like results",
+      "The demo focuses on the moment where natural-language requests become structured UI: recommendations, summaries, and comparisons that feel like product features rather than generated text.",
+    ),
     featured: true,
     gallery: [extraAnimeAiOne, extraAnimeAiTwo],
     highlights: [
-      "Blends chat-style discovery with clear recommendation surfaces.",
-      "Balances personality and utility without losing browse speed.",
-      "Designed for progressive disclosure from overview to detail.",
+      "Combines anime discovery with AI features without collapsing into a plain chatbot UI.",
+      "Turns natural-language prompts into structured recommendation and comparison flows.",
+      "Balances playful exploration with clear browsing surfaces and readable detail states.",
     ],
     id: "anime-ai-app",
     links: [
@@ -291,14 +351,36 @@ export const projects: Project[] = [
     ],
     media: [videoAnimeAiPrimary],
     oneLiner:
-      "An anime discovery experience with AI-assisted recommendations and conversational exploration.",
+      "A SwiftUI anime app that blends discovery, conversation, and AI-assisted recommendations into one guided product flow.",
     poster: posterAnimeAi,
-    role: "Product direction and frontend implementation",
+    presentation: "device",
+    role: "Product direction, SwiftUI, and AI interaction design",
     slug: "anime-ai-app",
+    story: [
+      createStoryBeat(
+        "anime-ai-what",
+        "What it is",
+        "An anime discovery app with AI woven into the product flow.",
+        "The goal was to combine search, detail views, and natural-language assistance without making the experience feel like a bolted-on assistant.",
+      ),
+      createStoryBeat(
+        "anime-ai-tech",
+        "Technical lens",
+        "The interesting work is prompt interpretation plus API-driven UI.",
+        "The app uses anime metadata from Jikan, then layers in OpenAI-powered features for summaries, comparisons, and recommendations that resolve into structured interface states.",
+      ),
+      createStoryBeat(
+        "anime-ai-why",
+        "Why it matters",
+        "It demonstrates AI as interface behavior, not decoration.",
+        "This project is useful in interviews because it shows how to translate open-ended prompts into reliable UI responses while still preserving browse speed and product clarity.",
+      ),
+    ],
     status: "Prototype",
     summary:
-      "Anime AI App combines assistant-style prompting with structured media browsing so the interface can move between playful exploration and direct recommendations.",
+      "Anime AI App explores how conversational input can power a real product surface. Instead of stopping at chat output, it converts prompts into recommendation cards, summaries, and comparisons that still behave like a browseable interface.",
     tags: ["AI", "Product Design", "Frontend"],
+    technicalThemes: ["prompt classification", "Jikan API integration", "SwiftUI state handling"],
     title: "Anime AI App",
     videos: [videoAnimeAiPrimary],
     year: "2025",
@@ -308,25 +390,30 @@ export const projects: Project[] = [
     chapters: [
       createChapter(
         "appetizer-menu",
-        "Menu system",
-        "Use the browse clip to inspect category navigation and item hierarchy.",
+        "Menu browse",
+        "Start on the API-driven menu and review the category hierarchy, image loading, and add-to-order flow.",
         videoAppetizerBrowse.id,
         0,
       ),
       createChapter(
         "appetizer-checkout",
-        "Checkout",
-        "Jump to the checkout clip and review the shortened completion path.",
+        "Checkout path",
+        "Jump to the second clip to see validation, confirmation, and how the flow stays calm through the final step.",
         videoAppetizerCheckout.id,
         0,
       ),
     ],
+    demo: createDemoGuide(
+      "Commerce flow",
+      "Browse first, then tighten the path to checkout",
+      "The demo is split into guided scenes so menu browsing, adding items, and checkout validation each get room to explain the product instead of being buried in one overloaded clip.",
+    ),
     featured: true,
     gallery: [],
     highlights: [
-      "Menu browsing built around legibility first.",
-      "Shorter path from item discovery to action.",
-      "Multiple demo clips split by flow instead of one overloaded video.",
+      "Uses API-backed menu data and image caching to keep browsing responsive.",
+      "Splits the demo into scenes so browsing and checkout can each be explained clearly.",
+      "Focuses on validation, order state, and a clean mobile commerce path.",
     ],
     id: "appetizer-app",
     links: [
@@ -336,14 +423,36 @@ export const projects: Project[] = [
     ],
     media: [videoAppetizerBrowse, videoAppetizerCheckout],
     oneLiner:
-      "A mobile ordering concept focused on faster selection, readable menus, and a calm checkout path.",
+      "A SwiftUI ordering app focused on readable menus, responsive image loading, and a checkout flow that stays clear under validation.",
     poster: posterAppetizer,
-    role: "Mobile product design and SwiftUI implementation",
+    presentation: "device",
+    role: "SwiftUI mobile product implementation",
     slug: "appetizer-app",
+    story: [
+      createStoryBeat(
+        "appetizer-what",
+        "What it is",
+        "A mobile ordering flow shaped around clarity over excess.",
+        "The app practices familiar product moments: fetch remote items, maintain order state, and guide the user from menu browsing into checkout without visual noise.",
+      ),
+      createStoryBeat(
+        "appetizer-tech",
+        "Technical lens",
+        "The interesting parts are state, validation, and performance polish.",
+        "The build leans on remote data fetching, image caching, local order updates, and form validation so the experience feels responsive even as the user moves through multiple steps.",
+      ),
+      createStoryBeat(
+        "appetizer-why",
+        "Why it matters",
+        "It shows product execution in a common but demanding pattern.",
+        "Commerce-style flows expose weak hierarchy quickly. This project is useful because it demonstrates the small interaction decisions that make a basic ordering flow feel trustworthy.",
+      ),
+    ],
     status: "Prototype",
     summary:
-      "Appetizer App studies the small decisions that make ordering feel effortless: clear hierarchy, predictable actions, and enough motion to guide without distracting.",
+      "Appetizer App studies the small choices that make ordering feel easy: fast image loading, predictable cart updates, and checkout validation that supports the user instead of interrupting them.",
     tags: ["SwiftUI", "Commerce", "Mobile UX"],
+    technicalThemes: ["API-driven UI", "image caching", "form validation"],
     title: "Appetizer App",
     videos: [videoAppetizerBrowse, videoAppetizerCheckout],
     year: "2024",
@@ -353,25 +462,30 @@ export const projects: Project[] = [
     chapters: [
       createChapter(
         "2048-opening",
-        "Board setup",
-        "See the initial board, score framing, and first interaction cues.",
+        "Board opening",
+        "Open on the first board state to inspect layout, score framing, and the visual cues that guide the initial move.",
         video2048Gameplay.id,
         0,
       ),
       createChapter(
         "2048-flow",
-        "Momentum",
-        "Jump into the middle of a scoring sequence to see feedback speed.",
+        "Score rhythm",
+        "Jump into a later sequence to review merge feedback, score pacing, and how the UI keeps momentum readable.",
         video2048Gameplay.id,
         8,
       ),
     ],
+    demo: createDemoGuide(
+      "Interaction preview",
+      "Show game feel through pacing and feedback",
+      "The walkthrough focuses on how board motion, merge feedback, and score rhythm combine to make a familiar mechanic feel crisp instead of generic.",
+    ),
     featured: true,
     gallery: [],
     highlights: [
-      "Responsive board layout with fast visual feedback.",
-      "Single-screen product framing with minimal friction.",
-      "A compact surface used to push interaction polish.",
+      "Recreates a familiar game with a stronger emphasis on responsive visual rhythm.",
+      "Separates game logic from presentation so the interaction remains easier to validate.",
+      "Uses a compact surface to focus on feedback timing and state clarity.",
     ],
     id: "2048-game",
     links: [
@@ -380,14 +494,36 @@ export const projects: Project[] = [
     ],
     media: [video2048Gameplay],
     oneLiner:
-      "A polished browser version of 2048 with tactile feedback, score flow, and crisp visual rhythm.",
+      "A 2048 implementation built to practice game-state logic and sharpen the feel of a fast, single-purpose interface.",
     poster: poster2048,
+    presentation: "canvas",
     role: "Frontend design and implementation",
     slug: "2048-game",
+    story: [
+      createStoryBeat(
+        "2048-what",
+        "What it is",
+        "A focused recreation of a familiar puzzle loop.",
+        "The project rebuilds 2048 as a compact browser experience where the interesting work lives in game feel, merge timing, and the clarity of each board state.",
+      ),
+      createStoryBeat(
+        "2048-tech",
+        "Technical lens",
+        "The code is organized around state handling, not visual tricks.",
+        "The implementation separates board logic, tile behavior, and presentation so the gameplay rules stay testable while the interface stays responsive.",
+      ),
+      createStoryBeat(
+        "2048-why",
+        "Why it matters",
+        "It shows discipline on a small surface.",
+        "Small games reveal whether someone can make a familiar interaction feel intentional. This piece highlights object-oriented thinking and attention to feedback detail.",
+      ),
+    ],
     status: "Shipped demo",
     summary:
-      "2048 Game focuses on game feel more than complexity, turning a familiar mechanic into a responsive single-purpose interface with clear states and pacing.",
+      "2048 Game is less about novelty and more about execution. The project uses a familiar mechanic to focus on state management, crisp feedback, and the pacing decisions that make a simple interaction feel satisfying.",
     tags: ["TypeScript", "Game UI", "Frontend"],
+    technicalThemes: ["object-oriented design", "game state management", "Java Swing UI"],
     title: "2048 Game",
     videos: [video2048Gameplay],
     year: "2025",
@@ -395,25 +531,52 @@ export const projects: Project[] = [
   {
     category: "Frontend",
     chapters: [],
+    demo: createDemoGuide(
+      "Browse system",
+      "A search-first catalog focused on async UI polish",
+      "Anime Browser has no embedded demo yet, but the project is still presented as a browse system study: fast scanning, infinite scrolling, and predictable async feedback.",
+    ),
     featured: false,
     gallery: [],
     highlights: [
-      "List density calibrated for large catalogs.",
-      "Search-first interaction without losing visual hierarchy.",
-      "A useful contrast to the more guided AI experience.",
+      "Uses infinite scrolling and loading guards to keep pagination predictable.",
+      "Keeps async states readable with skeletons, throttling, and responsive cards.",
+      "Treats the browse layer itself as the product experience.",
     ],
     id: "anime-browser",
     links: [createProjectLink("Poster asset", posterAnimeBrowser.url, "poster")],
     media: [],
     oneLiner:
-      "A searchable anime library with list density tuned for discovery instead of clutter.",
+      "A lightweight anime browser built to practice infinite scroll, async loading states, and clean responsive discovery UI.",
     poster: posterAnimeBrowser,
+    presentation: "canvas",
     role: "Product design and frontend systems",
     slug: "anime-browser",
+    story: [
+      createStoryBeat(
+        "anime-browser-what",
+        "What it is",
+        "A browse-first anime library built around real frontend fundamentals.",
+        "The app focuses on the quality of searching, scrolling, and loading rather than on decorative complexity, which makes it a good study in practical interface behavior.",
+      ),
+      createStoryBeat(
+        "anime-browser-tech",
+        "Technical lens",
+        "Async state handling drives the experience.",
+        "It uses Jikan API data, IntersectionObserver-based pagination, and loading guards so requests stay predictable even when users scroll quickly or repeatedly.",
+      ),
+      createStoryBeat(
+        "anime-browser-why",
+        "Why it matters",
+        "It demonstrates discipline in common web product patterns.",
+        "A lot of real product work lives in list density, empty states, and async polish. This project is useful because it makes those details explicit instead of treating them as table stakes.",
+      ),
+    ],
     status: "Concept",
     summary:
-      "Anime Browser treats the browse layer as the product itself, focusing on fast scanning, category cues, and a layout that feels organized at a glance.",
+      "Anime Browser treats the browse layer as the product itself. The work centers on async loading, infinite-scroll control, and responsive layout choices that keep a large catalog readable.",
     tags: ["Search", "Catalog UX", "Frontend"],
+    technicalThemes: ["async UI handling", "infinite scroll behavior", "responsive components"],
     title: "Anime Browser",
     videos: [],
     year: "2025",
@@ -664,6 +827,11 @@ export function filterProjects(
       project.oneLiner,
       project.summary,
       project.category,
+      project.role,
+      project.demo.title,
+      project.demo.summary,
+      ...project.technicalThemes,
+      ...project.story.map((storyBeat) => `${storyBeat.title} ${storyBeat.description}`),
       ...project.tags,
     ]
       .join(" ")

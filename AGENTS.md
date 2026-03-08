@@ -4,6 +4,22 @@
 
 Build a brand new production grade portfolio for Omar Mendivil using a Notion style layout and a Notion style motion vibe.
 
+## Current working phase
+
+The portfolio is no longer in first-build mode.
+The overall structure is considered stable enough to refine rather than replace.
+
+From this point forward, the primary mode is style refinement and interaction polish.
+Agents should also follow `REVIEW_PROCESS.md` for major-change workflow and review expectations.
+
+What this means for agents
+
+1. Prefer improving the current implementation over re-architecting it.
+2. Styling, spacing, motion, hierarchy, storytelling, and project presentation may evolve more freely than in earlier passes.
+3. Do not assume that a visual or interaction change should force a structural rewrite.
+4. Keep the core guardrails intact unless the user explicitly approves a change to them.
+5. If a requested design change conflicts with an older rule, surface the conflict and get approval before breaking the rule.
+
 ## Stack
 
 1. Next.js App Router
@@ -78,6 +94,65 @@ Project detail routes are optional, but home is the main experience.
 5. Mark only necessary components as client
 6. Use strict TypeScript
 7. Keep naming consistent and predictable
+
+## Change workflow
+
+Agents are expected to work issue by issue, not by broad uncontrolled rewrites.
+
+1. Before a major change, restate the issue being solved.
+2. Get approval before implementing that major change.
+3. Make one major change at a time whenever possible.
+4. Minor supporting fixes may be bundled into the same approved pass.
+5. After each major change, run a read-only review pass before starting the next issue.
+
+Examples of a major change
+
+1. Redesigning the featured projects stage
+2. Reworking project detail behavior
+3. Changing the contact section structure
+4. Reworking motion patterns across a section
+
+## Mandatory review pass
+
+Every major change must be followed by a read-only guardrail review.
+
+The guardrail review must check:
+
+1. architecture drift
+2. dead code left behind by abandoned ideas
+3. duplicated logic or duplicated data fields
+4. performance regressions
+5. accessibility regressions
+6. security basics
+7. typed data layer compliance
+8. responsiveness
+9. whether the change solved only the approved issue or spilled into unrelated rewrites
+
+If a dedicated reviewer agent is available, use it.
+If not, the lead agent must still perform the same review checklist before moving on.
+
+## Security review basics
+
+Even though this is a portfolio site, agents must still review for basic security and safety issues during major passes.
+
+Check for:
+
+1. hardcoded secrets, phone numbers, or email addresses in tracked files
+2. unsafe external link behavior
+3. unnecessary client-side exposure of environment values
+4. untrusted HTML injection or risky rendering patterns
+5. accidental broadening of third-party script usage
+6. avoidable media or asset loading behavior that exposes unnecessary risk or cost
+
+## Agent coordination
+
+When multiple agents are used:
+
+1. Assign disjoint file ownership whenever possible.
+2. Do not overwrite another agent's in-progress area.
+3. Reviewer agents must stay read-only unless explicitly told to perform a minimal cleanup pass.
+4. If an agent is interrupted, errors, or collides with another agent's work, that incident must be reported in the next review output.
+5. Exploration and cleanup are both valid outcomes. If an idea is abandoned, reviewers must check whether code or data should be removed.
 
 ## Deliverable format for agents
 
