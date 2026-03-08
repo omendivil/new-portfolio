@@ -39,8 +39,10 @@ Do not introduce additional UI libraries unless explicitly requested.
 4. Content is data driven from a single typed source
 5. Projects browsing must be scalable and Notion like.
    Show a curated featured view by default and provide a structured browse view via drawer or panel with search and filters.
-   Default featured view must use posters only.
-   Video must load only inside the peek panel after a project is opened.
+   The featured area may use one active live showcase at a time when that is the approved direction.
+   Only the active featured project may load preview media on the home stage.
+   Non-active featured projects should stay lightweight and poster-first.
+   The drawer must remain lightweight and should not load demo video.
 6. Browse view should be lightweight rows plus search and category filters.
 7. Clicking a project opens a right side peek panel with details and demo media
 8. Animations are subtle, consistent, and Notion like
@@ -53,6 +55,17 @@ Do not introduce additional UI libraries unless explicitly requested.
     lazy load video
     do not preload all media
     avoid heavy client bundles
+
+## Current projects direction
+
+The currently approved projects direction is:
+
+1. one active featured project at a time
+2. small project selectors for switching the active stage
+3. live preview behavior is allowed in the active stage when approved
+4. poster fallback is required for projects without video
+5. the drawer stays lightweight
+6. the peek panel remains the deeper case-study surface
 
 ## Contact info and repo safety
 

@@ -15,7 +15,11 @@ export function FeaturedProjects({
   onOpenProject,
   projects,
 }: {
-  onOpenProject: (projectId: string, trigger: HTMLElement | null) => void;
+  onOpenProject: (
+    projectId: string,
+    trigger: HTMLElement | null,
+    source?: "drawer" | "featured",
+  ) => void;
   projects: Project[];
 }) {
   const { reduceMotion } = useMotionPreference();
@@ -85,7 +89,7 @@ export function FeaturedProjects({
             <div className="mt-auto">
               <button
                 type="button"
-                onClick={(event) => onOpenProject(activeProject.id, event.currentTarget)}
+                onClick={(event) => onOpenProject(activeProject.id, event.currentTarget, "featured")}
                 className="inline-flex min-h-12 items-center gap-2 rounded-full bg-text px-5 text-sm font-medium text-background transition-transform hover:-translate-y-0.5"
               >
                 Open project details

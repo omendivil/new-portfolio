@@ -132,3 +132,9 @@ When relevant to the change, run:
 2. `npm run build`
 
 If a build requires external font fetching or another approved escalation, note that clearly in the review.
+
+Current repo-specific note:
+
+1. This project currently uses `next/font/google` in `app/layout.tsx`.
+2. Because of that, `npm run build` may require approved network access only for Google font fetching during build verification.
+3. That approval does not broaden into general network access for unrelated tasks.

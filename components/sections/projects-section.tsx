@@ -56,11 +56,25 @@ export function ProjectsSection() {
     trackBrowseDrawer(true);
   }, []);
 
-  const handleOpenProject = useCallback((projectId: string, trigger: HTMLElement | null) => {
-    panelReturnFocusRef.current = trigger;
-    setSelectedProjectId(projectId);
-    trackProjectOpen(projectId);
-  }, []);
+  const handleOpenProject = useCallback(
+    (
+      projectId: string,
+      trigger: HTMLElement | null,
+      source: "drawer" | "featured" = "featured",
+    ) => {
+      if (source === "drawer") {
+        panelReturnFocusRef.current = drawerTriggerRef.current;
+        setIsDrawerOpen(false);
+        trackBrowseDrawer(false);
+      } else {
+        panelReturnFocusRef.current = trigger;
+      }
+
+      setSelectedProjectId(projectId);
+      trackProjectOpen(projectId, { source });
+    },
+    [],
+  );
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {

@@ -32,7 +32,7 @@ The home page should stay focused and not become a giant wall of projects.
 
 8. A right side peek panel for viewing project details and demo media
 
-9. Video must load only after a project is opened
+9. Demo media should stay constrained and intentional
 
 10. No hardcoded contact info in tracked files
 
@@ -118,13 +118,15 @@ Agents may read `MEDIA.md` to find URLs, but must not hardcode URLs directly ins
 
 1. Show 3 to 5 featured projects only
 
-2. Use poster images only
+2. The home stage may use one active live preview at a time when that direction is approved
 
-3. No video loading in the featured area
+3. Non-active featured projects should stay lightweight and poster-first
 
 4. Horizontal interaction should feel smooth and premium
 
 5. Must work well on mobile and desktop
+
+6. Projects without video should fall back to a poster or designed still
 
 ### Browse drawer
 
@@ -138,7 +140,7 @@ Agents may read `MEDIA.md` to find URLs, but must not hardcode URLs directly ins
 
 5. Supports category filters
 
-6. Does not render videos
+6. Does not render videos and should stay lightweight
 
 7. Clicking a row opens the peek panel
 
@@ -148,7 +150,7 @@ Agents may read `MEDIA.md` to find URLs, but must not hardcode URLs directly ins
 
 2. Shows title, one liner, highlights, tags, links, and poster
 
-3. Loads video only after panel opens
+3. Loads deeper demo media and case-study detail on demand
 
 4. If chapters exist, show a chapter list and allow jumping
 
@@ -158,11 +160,11 @@ Agents may read `MEDIA.md` to find URLs, but must not hardcode URLs directly ins
 
 1. Do not preload all videos
 
-2. Do not load videos in the featured deck
+2. If the featured stage uses live media, only the active project may load preview media
 
 3. Do not load videos in the browse drawer
 
-4. Use posters everywhere until a project is opened
+4. Keep non-active project states poster-first and lightweight
 
 5. Keep client components limited to places that actually need interactivity
 

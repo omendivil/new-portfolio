@@ -68,6 +68,8 @@ Direction
 3. The layout should feel alive, similar to polished design showcase sites
 4. The project presentation should support scroll based or section based transitions if appropriate
 5. If the current drawer or peek panel architecture still works, improve it rather than replacing it unnecessarily
+6. A single active showcase may autoplay when in view if that remains the approved direction
+7. Non-active projects should remain lightweight and not behave like parallel live previews
 
 ## Performance requirements
 
@@ -75,6 +77,7 @@ Direction
 2. Load videos only when needed
 3. Keep poster based previews where possible
 4. Preserve good performance on mobile
+5. If a live featured stage exists, only the active project should request preview media
 
 ## Code standards
 

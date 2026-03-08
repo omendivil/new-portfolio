@@ -12,6 +12,7 @@ import { ProjectVideoPlayer } from "@/components/projects/project-video-player";
 import type { Project, ProjectChapter } from "@/data/types";
 import { trackChapterClick } from "@/lib/analytics";
 import { motionEase, overlayMotion, panelMotion, useMotionPreference } from "@/lib/motion";
+import { useModalBehavior } from "@/lib/use-modal-behavior";
 import { cn } from "@/lib/utils";
 
 function findFirstChapter(project: Project | null, videoId?: string | null) {
@@ -40,6 +41,7 @@ export function ProjectPeekPanel({
   project: Project | null;
 }) {
   const { reduceMotion } = useMotionPreference();
+  const panelRef = useRef<HTMLElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const initialVideo = project?.videos[0] ?? null;
   const initialChapter = findFirstChapter(project, initialVideo?.id);
@@ -54,6 +56,11 @@ export function ProjectPeekPanel({
       closeButtonRef.current?.focus();
     }
   }, [isOpen]);
+
+  useModalBehavior({
+    containerRef: panelRef,
+    isOpen,
+  });
 
   const activeVideo = useMemo(() => {
     if (!project?.videos.length) {
@@ -111,9 +118,7 @@ export function ProjectPeekPanel({
     <AnimatePresence>
       {isOpen && project ? (
         <>
-          <motion.button
-            type="button"
-            aria-label="Close project panel"
+          <motion.div
             onClick={onClose}
             className="fixed inset-0 z-40 bg-background/65 backdrop-blur-[6px]"
             initial="hidden"
@@ -123,6 +128,7 @@ export function ProjectPeekPanel({
           />
 
           <motion.aside
+            ref={panelRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby={`${project.id}-title`}
@@ -130,6 +136,7 @@ export function ProjectPeekPanel({
             animate="visible"
             exit="exit"
             variants={panelMotion(reduceMotion)}
+            tabIndex={-1}
             className="fixed inset-0 z-50 flex justify-end p-2 sm:p-4"
           >
             <div className="pointer-events-auto ml-auto flex h-full w-full max-w-[46rem] flex-col">
@@ -303,6 +310,34 @@ export function ProjectPeekPanel({
                     </div>
 
                     <div className="space-y-5">
+                      <div className="rounded-[1.45rem] border border-border/70 bg-surface-2/75 p-4">
+                        <p className="text-xs uppercase tracking-[0.28em] text-muted">Highlights</p>
+                        <ul className="mt-4 space-y-3 text-sm leading-7 text-text">
+                          {project.highlights.map((highlight) => (
+                            <li
+                              key={highlight}
+                              className="rounded-[1rem] border border-border/70 bg-background/70 px-4 py-3"
+                            >
+                              {highlight}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="rounded-[1.45rem] border border-border/70 bg-surface-2/75 p-4">
+                        <p className="text-xs uppercase tracking-[0.28em] text-muted">Tags</p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {project.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="rounded-full border border-border/70 bg-background/70 px-3 py-1 text-xs text-muted"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
                       <div className="rounded-[1.45rem] border border-border/70 bg-surface-2/75 p-4">
                         <p className="text-xs uppercase tracking-[0.28em] text-muted">Guided walkthrough</p>
                         <p className="mt-3 text-sm leading-7 text-muted">

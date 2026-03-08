@@ -9,6 +9,7 @@ import { ProjectRow } from "@/components/projects/project-row";
 import { groupProjectsByCategory } from "@/data/site";
 import type { Project } from "@/data/types";
 import { drawerMotion, useMotionPreference } from "@/lib/motion";
+import { useModalBehavior } from "@/lib/use-modal-behavior";
 
 export function ProjectsBrowseDrawer({
   categories,
@@ -25,16 +26,26 @@ export function ProjectsBrowseDrawer({
   isOpen: boolean;
   onCategoryChange: (category: string) => void;
   onClose: () => void;
-  onOpenProject: (projectId: string, trigger: HTMLElement | null) => void;
+  onOpenProject: (
+    projectId: string,
+    trigger: HTMLElement | null,
+    source?: "drawer" | "featured",
+  ) => void;
   onQueryChange: (query: string) => void;
   projects: Project[];
   query: string;
   selectedCategory: string;
 }) {
+  const drawerRef = useRef<HTMLElement | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const { reduceMotion } = useMotionPreference();
   const groupedProjects = groupProjectsByCategory(projects);
   const resultsLabel = `${projects.length} ${projects.length === 1 ? "result" : "results"}`;
+
+  useModalBehavior({
+    containerRef: drawerRef,
+    isOpen,
+  });
 
   useEffect(() => {
     if (isOpen) {
@@ -46,9 +57,7 @@ export function ProjectsBrowseDrawer({
     <AnimatePresence>
       {isOpen ? (
         <>
-          <motion.button
-            type="button"
-            aria-label="Close project browser"
+          <motion.div
             onClick={onClose}
             className="fixed inset-0 z-30 bg-background/50 backdrop-blur-[2px]"
             initial={{ opacity: 0 }}
@@ -58,6 +67,7 @@ export function ProjectsBrowseDrawer({
           />
 
           <motion.section
+            ref={drawerRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="projects-browse-title"
@@ -65,6 +75,7 @@ export function ProjectsBrowseDrawer({
             animate="visible"
             exit="exit"
             variants={drawerMotion(reduceMotion)}
+            tabIndex={-1}
             className="fixed inset-x-0 bottom-0 z-40 px-3 pb-3 sm:px-5 sm:pb-5"
           >
             <div className="surface-card mx-auto flex max-h-[78vh] w-full max-w-6xl flex-col overflow-hidden rounded-[2rem]">
