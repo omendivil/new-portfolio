@@ -9,6 +9,8 @@ The workflow is now iterative and issue-by-issue.
 
 The goal is to allow freer styling changes without letting complexity, regressions, or abandoned code accumulate.
 
+Agents should also review `AGENT_ISSUES.md` before major work so recurring conflicts and prior resolutions do not have to be rediscovered.
+
 ## Default workflow
 
 For each major change:
@@ -47,6 +49,24 @@ The reviewer checks whether the completed pass stayed clean, coherent, and safe.
 
 If a separate reviewer agent is available, use it.
 If not, the lead agent must still run the same checklist before continuing.
+
+## Reviewer timeout mitigation
+
+Reviewer-agent timeouts should be treated as a process problem first, not as a reason to keep retrying the same prompt blindly.
+
+For narrow cleanup or single-file passes:
+
+1. run the local guardrail review first
+2. avoid forking the full conversation context into the reviewer
+3. give the reviewer only the current issue, changed files, and the specific review question
+4. prefer one longer wait over repeated short polling
+5. if the reviewer still stalls, close it, report the incident, and continue with the local review result
+
+For broader architectural reviews:
+
+1. a reviewer agent is still preferred
+2. keep the scope explicit
+3. close completed agents promptly so thread limits do not cause avoidable failures
 
 ## Required review checklist
 

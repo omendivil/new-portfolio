@@ -1,4 +1,4 @@
-import { SectionReveal } from "@/components/motion/section-reveal";
+import { FadeIn } from "@/components/motion/fade-in";
 import { StaggerGroup } from "@/components/motion/stagger-group";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { SectionShell } from "@/components/sections/section-shell";
@@ -8,13 +8,13 @@ export function ExperienceSection() {
   return (
     <SectionShell id="experience">
       <div className="space-y-8">
-        <SectionReveal>
+        <FadeIn amount={0.12} distance={26} duration={0.54} margin="0px 0px -10% 0px" scale={0.985}>
           <SectionHeading
             eyebrow="Experience"
             title="Recent work has centered on product concepts that earn their detail."
             description="The emphasis is less about volume and more about turning rough ideas into interfaces that communicate immediately."
           />
-        </SectionReveal>
+        </FadeIn>
 
         <StaggerGroup className="space-y-4" itemDistance={20}>
           {siteContent.experience.map((entry) => (

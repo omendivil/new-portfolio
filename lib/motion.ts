@@ -9,7 +9,7 @@ import {
 } from "framer-motion";
 
 export const motionEase: NonNullable<Transition["ease"]> = [0.16, 1, 0.3, 1];
-export const gentleMotionEase: NonNullable<Transition["ease"]> = [0.22, 1, 0.36, 1];
+const gentleMotionEase: NonNullable<Transition["ease"]> = [0.22, 1, 0.36, 1];
 
 type MotionPreferenceOptions = {
   amount?: number;
@@ -39,12 +39,6 @@ type HoverMotionOptions = {
   hoverY?: number;
   tapScale?: number;
 };
-
-type VariantFactory = ((reduceMotion?: boolean) => Variants) & Variants;
-
-function withDefaultVariants(factory: (reduceMotion?: boolean) => Variants): VariantFactory {
-  return Object.assign(factory, factory(false));
-}
 
 export function createRevealVariants(
   reduceMotion = false,
@@ -123,34 +117,6 @@ export function useMotionPreference(
     viewport: reduceMotion ? { once, margin } : { once, amount, margin },
   };
 }
-
-export const fadeInUp = withDefaultVariants((reduceMotion = false) =>
-  createRevealVariants(reduceMotion, {
-    distance: 22,
-    duration: 0.48,
-    scale: 0.982,
-  }),
-);
-
-export const sectionMotion = withDefaultVariants((reduceMotion = false) =>
-  createRevealVariants(reduceMotion, {
-    distance: 26,
-    duration: 0.54,
-    scale: 0.985,
-  }),
-);
-
-export const staggerChildren = withDefaultVariants((reduceMotion = false) =>
-  createStaggerVariants(reduceMotion),
-);
-
-export const staggerItem = withDefaultVariants((reduceMotion = false) =>
-  createRevealVariants(reduceMotion, {
-    distance: 16,
-    duration: 0.4,
-    scale: 0.99,
-  }),
-);
 
 export function drawerMotion(reduceMotion = false): Variants {
   if (reduceMotion) {
@@ -283,17 +249,6 @@ export function createHoverMotion(
       scale: tapScale,
     },
   };
-}
-
-export function subtleHover(
-  reduceMotion = false,
-  y = -2,
-  scale = 1.02,
-): TargetAndTransition | undefined {
-  return createHoverMotion(reduceMotion, {
-    hoverScale: scale,
-    hoverY: y,
-  }).whileHover;
 }
 
 export const iconTransition: Transition = {

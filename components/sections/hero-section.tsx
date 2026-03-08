@@ -3,19 +3,18 @@ import { ArrowDownRight } from "lucide-react";
 
 import { FadeIn } from "@/components/motion/fade-in";
 import { SectionShell } from "@/components/sections/section-shell";
-import { getFeaturedProjects, siteContent } from "@/data/site";
+import { getFeaturedProjects } from "@/data/project-utils";
+import { navSections, projects, siteContent } from "@/data/site";
 
 export function HeroSection() {
   const { hero } = siteContent;
   const stats = [
     {
       label: "Featured projects",
-      value: getFeaturedProjects(siteContent.projects).length
-        .toString()
-        .padStart(2, "0"),
+      value: getFeaturedProjects(projects).length.toString().padStart(2, "0"),
     },
     { label: "Skills in rotation", value: siteContent.skills.length.toString() },
-    { label: "Sections on page", value: siteContent.navSections.length.toString() },
+    { label: "Sections on page", value: navSections.length.toString() },
   ];
 
   return (

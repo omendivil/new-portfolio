@@ -1,37 +1,20 @@
-"use client";
-
 import Image from "next/image";
-import { Copy, Mail, Phone } from "lucide-react";
-import { useState } from "react";
 
+import { ContactActionButtons } from "@/components/contact/contact-action-buttons";
 import { SectionHeading } from "@/components/sections/section-heading";
-import { siteContent } from "@/data/site";
+import { contact } from "@/data/site";
 import type { ContactConfig } from "@/data/types";
-import { trackContactCopy, trackOutboundLink } from "@/lib/analytics";
 
-export function ContactSection({ config = siteContent.contact }: { config?: ContactConfig }) {
-  const [copiedField, setCopiedField] = useState<"email" | "phone" | null>(null);
+export function ContactSection({ config = contact }: { config?: ContactConfig }) {
   const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() ?? "";
   const phone = process.env.NEXT_PUBLIC_CONTACT_PHONE?.trim() ?? "";
   const showPhone = config.showPhone && phone.length > 0;
 
-  async function handleCopy(field: "email" | "phone", value: string) {
-    if (!value) {
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopiedField(field);
-      trackContactCopy(field);
-      window.setTimeout(() => setCopiedField(null), 1800);
-    } catch {
-      setCopiedField(null);
-    }
-  }
-
   return (
-    <section id="contact" className="section-anchor section-grid gap-y-6 py-2 sm:gap-y-8 sm:py-4">
+    <section
+      id="contact"
+      className="section-anchor section-surface section-grid gap-y-6 px-4 py-4 sm:gap-y-8 sm:px-6 sm:py-6 lg:px-8 lg:py-8"
+    >
       <SectionHeading
         eyebrow="Contact"
         title={config.heading}
@@ -76,35 +59,15 @@ export function ContactSection({ config = siteContent.contact }: { config?: Cont
                 </div>
               </div>
 
-              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <button
-                  type="button"
-                  onClick={() => handleCopy("email", email)}
-                  disabled={!email}
-                  className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-text px-5 text-sm font-medium text-background transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-                >
-                  <Copy className="h-4 w-4" />
-                  {copiedField === "email"
-                    ? "Email copied"
-                    : config.primaryActionLabel}
-                </button>
-                <a
-                  href={email ? `mailto:${email}` : undefined}
-                  onClick={() => {
-                    if (email) {
-                      trackOutboundLink("contact_email", `mailto:${email}`);
-                    }
-                  }}
-                  className={`inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-5 text-sm font-medium sm:w-auto ${
-                    email
-                      ? "surface-pill text-text transition-colors hover:text-accent"
-                      : "pointer-events-none rounded-full border border-border bg-surface text-muted"
-                  }`}
-                >
-                  <Mail className="h-4 w-4" />
-                  {config.secondaryActionLabel}
-                </a>
-              </div>
+              <ContactActionButtons
+                channel="email"
+                copiedLabel="Email copied"
+                copyLabel={config.primaryActionLabel}
+                href={email ? `mailto:${email}` : undefined}
+                hrefLabel={config.secondaryActionLabel}
+                primaryVariant="solid"
+                value={email}
+              />
             </div>
 
             {showPhone ? (
@@ -128,24 +91,14 @@ export function ContactSection({ config = siteContent.contact }: { config?: Cont
                     </p>
                   </div>
                 </div>
-                <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                  <button
-                    type="button"
-                    onClick={() => handleCopy("phone", phone)}
-                    className="surface-pill inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-5 text-sm font-medium text-text transition-colors hover:text-accent sm:w-auto"
-                  >
-                    <Copy className="h-4 w-4" />
-                    {copiedField === "phone" ? "Phone copied" : "Copy phone"}
-                  </button>
-                  <a
-                    href={`tel:${phone}`}
-                    onClick={() => trackOutboundLink("contact_phone", `tel:${phone}`)}
-                    className="surface-pill inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-5 text-sm font-medium text-text transition-colors hover:text-accent sm:w-auto"
-                  >
-                    <Phone className="h-4 w-4" />
-                    Call
-                  </a>
-                </div>
+                <ContactActionButtons
+                  channel="phone"
+                  copiedLabel="Phone copied"
+                  copyLabel="Copy phone"
+                  href={`tel:${phone}`}
+                  hrefLabel="Call"
+                  value={phone}
+                />
               </div>
             ) : null}
           </div>
@@ -179,13 +132,6 @@ export function ContactSection({ config = siteContent.contact }: { config?: Cont
                 Contact details stay environment-driven so private info never needs to be committed to the repository.
               </p>
             </div>
-            <p className="sr-only" aria-live="polite">
-              {copiedField === "email"
-                ? "Email copied to clipboard"
-                : copiedField === "phone"
-                  ? "Phone number copied to clipboard"
-                  : ""}
-            </p>
           </div>
         </aside>
       </div>

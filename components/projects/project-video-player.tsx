@@ -161,14 +161,14 @@ export const ProjectVideoPlayer = forwardRef<HTMLVideoElement, ProjectVideoPlaye
             >
               <video
                 ref={setRefs}
-                aria-label={`${video.title} project preview`}
+                aria-label={`${video.label} project preview`}
                 autoPlay={!reduceMotion}
                 disablePictureInPicture
                 disableRemotePlayback
                 loop={!reduceMotion}
                 muted
                 playsInline
-                poster={video.posterUrl}
+                poster={video.poster}
                 preload="metadata"
                 className="h-full w-full bg-black object-cover"
                 onPlay={() => {

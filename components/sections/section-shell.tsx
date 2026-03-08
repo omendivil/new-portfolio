@@ -13,7 +13,7 @@ export function SectionShell({ id, className, children }: SectionShellProps) {
     <section
       id={id}
       className={cn(
-        "scroll-mt-24 rounded-[1.7rem] border border-border/80 bg-surface/92 px-4 py-8 shadow-[0_18px_80px_rgba(17,16,13,0.06)] backdrop-blur sm:scroll-mt-28 sm:rounded-[2rem] sm:px-6 sm:py-10 md:px-8 md:py-12 lg:px-10 lg:py-14",
+        "section-anchor section-surface px-4 py-8 sm:px-6 sm:py-10 md:px-8 md:py-12 lg:px-10 lg:py-14",
         className,
       )}
     >

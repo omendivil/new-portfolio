@@ -1,6 +1,6 @@
+import { FadeIn } from "@/components/motion/fade-in";
 import Image from "next/image";
 
-import { SectionReveal } from "@/components/motion/section-reveal";
 import { StaggerGroup } from "@/components/motion/stagger-group";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { SectionShell } from "@/components/sections/section-shell";
@@ -10,13 +10,13 @@ export function SkillsSection() {
   return (
     <SectionShell id="skills">
       <div className="space-y-8">
-        <SectionReveal>
+        <FadeIn amount={0.12} distance={26} duration={0.54} margin="0px 0px -10% 0px" scale={0.985}>
           <SectionHeading
             eyebrow="Skills"
             title="Tools that support product clarity across mobile and web."
             description="The focus stays on a small set of technologies that help move from concept to polished demo without dragging in unnecessary weight."
           />
-        </SectionReveal>
+        </FadeIn>
 
         <StaggerGroup
           className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"

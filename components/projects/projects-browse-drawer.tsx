@@ -6,8 +6,8 @@ import { useEffect, useRef } from "react";
 
 import { ProjectFilterPills } from "@/components/projects/project-filter-pills";
 import { ProjectRow } from "@/components/projects/project-row";
-import { groupProjectsByCategory } from "@/data/site";
-import type { Project } from "@/data/types";
+import { groupProjectsByCategory } from "@/data/project-utils";
+import type { Project, ProjectCategory } from "@/data/types";
 import { drawerMotion, useMotionPreference } from "@/lib/motion";
 import { useModalBehavior } from "@/lib/use-modal-behavior";
 
@@ -22,9 +22,9 @@ export function ProjectsBrowseDrawer({
   query,
   selectedCategory,
 }: {
-  categories: string[];
+  categories: Array<ProjectCategory | "All">;
   isOpen: boolean;
-  onCategoryChange: (category: string) => void;
+  onCategoryChange: (category: ProjectCategory | "All") => void;
   onClose: () => void;
   onOpenProject: (
     projectId: string,
@@ -34,7 +34,7 @@ export function ProjectsBrowseDrawer({
   onQueryChange: (query: string) => void;
   projects: Project[];
   query: string;
-  selectedCategory: string;
+  selectedCategory: ProjectCategory | "All";
 }) {
   const drawerRef = useRef<HTMLElement | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);

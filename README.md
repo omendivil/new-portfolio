@@ -1,40 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Omar Mendivil Portfolio
 
-## Getting Started
+Production-focused portfolio built with Next.js App Router, TypeScript, Tailwind CSS, Framer Motion, and `next-themes`.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 App Router
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- Framer Motion
+- `next-themes`
+- `lucide-react`
+
+## Local Development
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+## Scripts
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run lint
+npm run build
+npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+UI contact values stay env-driven.
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Recommended variables:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+```bash
+NEXT_PUBLIC_CONTACT_EMAIL=you@example.com
+NEXT_PUBLIC_CONTACT_PHONE=555-555-5555
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`NEXT_PUBLIC_CONTACT_EMAIL` enables the primary contact lane.
+`NEXT_PUBLIC_CONTACT_PHONE` is optional and is only shown when the content config allows it.
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+- `app/`: App Router entrypoints and layout
+- `components/`: UI sections, motion primitives, project surfaces, and small client islands
+- `data/`: typed content source and project helpers
+- `styles/`: global theme tokens and shared utilities
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+## Workflow Docs
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `AGENTS.md`: repo guardrails and current phase instructions
+- `REVIEW_PROCESS.md`: issue-by-issue workflow and review checklist
+- `AGENT_ISSUES.md`: recurring agent conflicts and prior resolutions
+- `WORK.md`: primary implementation direction
+- `WORK_PASS_TWO.md`: pass-two refinement direction
 
-## Deploy on Vercel
+## Build Note
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+Fonts are currently loaded with `next/font/google` in `app/layout.tsx`.
+In restricted environments, `npm run build` may need network access to fetch those Google fonts.

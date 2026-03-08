@@ -1,6 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 
-import { SectionReveal } from "@/components/motion/section-reveal";
+import { FadeIn } from "@/components/motion/fade-in";
 import { StaggerGroup } from "@/components/motion/stagger-group";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { SectionShell } from "@/components/sections/section-shell";
@@ -10,13 +10,13 @@ export function WritingSection() {
   return (
     <SectionShell id="writing">
       <div className="space-y-8">
-        <SectionReveal>
+        <FadeIn amount={0.12} distance={26} duration={0.54} margin="0px 0px -10% 0px" scale={0.985}>
           <SectionHeading
             eyebrow="Writing & Videos"
             title="Short-form notes and walkthroughs around interaction structure."
             description="This section stays intentionally compact. It points to the themes that show up repeatedly in the product work above."
           />
-        </SectionReveal>
+        </FadeIn>
 
         <StaggerGroup
           className="grid gap-4 lg:grid-cols-3"

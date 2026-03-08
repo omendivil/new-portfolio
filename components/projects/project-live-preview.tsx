@@ -118,7 +118,7 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
                 loop
                 muted
                 playsInline
-                poster={previewVideo.posterUrl}
+                poster={previewVideo.poster}
                 preload="metadata"
                 className="h-full w-full bg-black object-cover"
                 onPlay={() => {

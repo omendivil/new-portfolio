@@ -108,17 +108,16 @@
     scroll-margin-top: 6.25rem;
   }
 
-  .section-grid {
-    display: grid;
-  }
-
-  section.section-grid {
+  .section-surface {
     border: 1px solid color-mix(in oklab, var(--border) 82%, transparent);
     background: color-mix(in oklab, var(--surface) 90%, transparent);
     border-radius: 1.7rem;
-    padding: 1rem;
     box-shadow: 0 22px 72px -44px rgba(17, 16, 13, 0.22);
     backdrop-filter: blur(18px);
+  }
+
+  .section-grid {
+    display: grid;
   }
 
   .section-grid > * {
@@ -148,15 +147,8 @@
     scroll-margin-top: 7rem;
   }
 
-  section.section-grid {
+  .section-surface {
     border-radius: 2rem;
-    padding: 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  section.section-grid {
-    padding: 2rem;
   }
 }
 

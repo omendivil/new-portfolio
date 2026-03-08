@@ -11,6 +11,7 @@ The overall structure is considered stable enough to refine rather than replace.
 
 From this point forward, the primary mode is style refinement and interaction polish.
 Agents should also follow `REVIEW_PROCESS.md` for major-change workflow and review expectations.
+Agents should review `AGENT_ISSUES.md` for prior conflicts, clarifications, and recurring process resolutions.
 
 What this means for agents
 

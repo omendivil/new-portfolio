@@ -13,6 +13,9 @@ type FadeInProps = {
   delay?: number;
   distance?: number;
   amount?: number;
+  duration?: number;
+  margin?: string;
+  scale?: number;
 };
 
 const components = {
@@ -28,8 +31,11 @@ export function FadeIn({
   delay = 0,
   distance = 22,
   amount = 0.18,
+  duration = 0.48,
+  margin,
+  scale = 0.982,
 }: FadeInProps) {
-  const { reduceMotion, viewport } = useMotionPreference({ amount });
+  const { reduceMotion, viewport } = useMotionPreference({ amount, margin });
   const Component = components[as];
 
   return (
@@ -40,8 +46,8 @@ export function FadeIn({
       variants={createRevealVariants(reduceMotion, {
         delay,
         distance,
-        duration: 0.48,
-        scale: 0.982,
+        duration,
+        scale,
       })}
       className={cn(className)}
     >

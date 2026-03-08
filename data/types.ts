@@ -32,24 +32,15 @@ export type ProjectVideo = {
   description: string;
   id: string;
   label: string;
-  mimeType: "video/mp4";
   poster: string;
-  posterUrl: string;
-  src: string;
-  title: string;
   url: string;
 };
-
-export type ProjectMedia = ProjectVideo;
 
 export type ProjectChapter = {
   atSeconds: number;
   description: string;
   id: string;
   label: string;
-  mediaId: string;
-  timestampSeconds: number;
-  title: string;
   videoId: string;
 };
 
@@ -77,12 +68,10 @@ export type Project = {
   highlights: string[];
   id: string;
   links: ProjectLink[];
-  media: ProjectVideo[];
   oneLiner: string;
   poster: MediaAsset;
   presentation: ProjectPresentation;
   role: string;
-  slug: string;
   story: ProjectStoryBeat[];
   status: string;
   summary: string;
@@ -106,7 +95,6 @@ export type Skill = {
 
 export type Experience = {
   bullets: string[];
-  highlights: string[];
   id: string;
   location: string;
   organization: string;
@@ -130,24 +118,15 @@ export type WritingEntry = {
 export type ContactConfig = {
   availability: string;
   blurb: string;
-  copyLabel: string;
-  description: string;
-  emailEnvVar: "NEXT_PUBLIC_CONTACT_EMAIL";
-  emailIconUrl: string;
   heading: string;
   icons: {
     email: MediaAsset;
-    linkedIn: MediaAsset;
     phone: MediaAsset;
   };
-  linkedInIconUrl: string;
   location: string;
-  phoneEnvVar: "NEXT_PUBLIC_CONTACT_PHONE";
-  phoneIconUrl: string;
   primaryActionLabel: string;
   secondaryActionLabel: string;
   showPhone: boolean;
-  title: string;
 };
 
 export type HeroContent = {
@@ -218,8 +197,6 @@ export type SiteContent = {
   experience: Experience[];
   hero: HeroContent;
   media: SiteMediaCatalog;
-  nav: NavSection[];
-  navSections: NavSection[];
   projects: Project[];
   skills: Skill[];
   writing: WritingEntry[];

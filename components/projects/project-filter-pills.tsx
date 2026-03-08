@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 
+import type { ProjectCategory } from "@/data/types";
 import { pillTransition } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
@@ -10,9 +11,9 @@ export function ProjectFilterPills({
   onChange,
   selectedCategory,
 }: {
-  categories: string[];
-  onChange: (category: string) => void;
-  selectedCategory: string;
+  categories: Array<ProjectCategory | "All">;
+  onChange: (category: ProjectCategory | "All") => void;
+  selectedCategory: ProjectCategory | "All";
 }) {
   return (
     <div

@@ -5,11 +5,8 @@ import {
   type MediaAsset,
   type NavSection,
   type Project,
-  type ProjectCategory,
   type ProjectChapter,
   type ProjectDemoGuide,
-  type ProjectFilterOptions,
-  type ProjectGroup,
   type ProjectLink,
   type ProjectStoryBeat,
   type ProjectVideo,
@@ -44,11 +41,7 @@ function createVideo(
     description,
     id,
     label,
-    mimeType: "video/mp4",
     poster: poster.url,
-    posterUrl: poster.url,
-    src: url,
-    title: label,
     url,
   };
 }
@@ -65,9 +58,6 @@ function createChapter(
     description,
     id,
     label,
-    mediaId: videoId,
-    timestampSeconds: atSeconds,
-    title: label,
     videoId,
   };
 }
@@ -278,13 +268,11 @@ export const projects: Project[] = [
       createProjectLink("Poster asset", posterFrameworks.url, "poster"),
       createProjectLink("Demo asset", videoFrameworksPrimary.url, "video"),
     ],
-    media: [videoFrameworksPrimary],
     oneLiner:
       "A SwiftUI reference browser that makes Apple's framework catalog feel approachable, guided, and easy to learn from.",
     poster: posterFrameworks,
     presentation: "device",
     role: "Product design and SwiftUI development",
-    slug: "frameworks-app",
     story: [
       createStoryBeat(
         "frameworks-what",
@@ -349,13 +337,11 @@ export const projects: Project[] = [
       createProjectLink("Poster asset", posterAnimeAi.url, "poster"),
       createProjectLink("Demo asset", videoAnimeAiPrimary.url, "video"),
     ],
-    media: [videoAnimeAiPrimary],
     oneLiner:
       "A SwiftUI anime app that blends discovery, conversation, and AI-assisted recommendations into one guided product flow.",
     poster: posterAnimeAi,
     presentation: "device",
     role: "Product direction, SwiftUI, and AI interaction design",
-    slug: "anime-ai-app",
     story: [
       createStoryBeat(
         "anime-ai-what",
@@ -421,13 +407,11 @@ export const projects: Project[] = [
       createProjectLink("Browse demo", videoAppetizerBrowse.url, "video"),
       createProjectLink("Checkout demo", videoAppetizerCheckout.url, "video"),
     ],
-    media: [videoAppetizerBrowse, videoAppetizerCheckout],
     oneLiner:
       "A SwiftUI ordering app focused on readable menus, responsive image loading, and a checkout flow that stays clear under validation.",
     poster: posterAppetizer,
     presentation: "device",
     role: "SwiftUI mobile product implementation",
-    slug: "appetizer-app",
     story: [
       createStoryBeat(
         "appetizer-what",
@@ -492,13 +476,11 @@ export const projects: Project[] = [
       createProjectLink("Poster asset", poster2048.url, "poster"),
       createProjectLink("Demo asset", video2048Gameplay.url, "video"),
     ],
-    media: [video2048Gameplay],
     oneLiner:
       "A 2048 implementation built to practice game-state logic and sharpen the feel of a fast, single-purpose interface.",
     poster: poster2048,
     presentation: "canvas",
     role: "Frontend design and implementation",
-    slug: "2048-game",
     story: [
       createStoryBeat(
         "2048-what",
@@ -545,13 +527,11 @@ export const projects: Project[] = [
     ],
     id: "anime-browser",
     links: [createProjectLink("Poster asset", posterAnimeBrowser.url, "poster")],
-    media: [],
     oneLiner:
       "A lightweight anime browser built to practice infinite scroll, async loading states, and clean responsive discovery UI.",
     poster: posterAnimeBrowser,
     presentation: "canvas",
     role: "Product design and frontend systems",
-    slug: "anime-browser",
     story: [
       createStoryBeat(
         "anime-browser-what",
@@ -663,11 +643,6 @@ export const experience: Experience[] = [
       "Translate rough concepts into demo-ready interfaces that communicate intent quickly.",
       "Use motion sparingly to improve orientation instead of decoration.",
     ],
-    highlights: [
-      "Design and implement single-purpose product experiences with tight feedback loops.",
-      "Translate rough concepts into demo-ready interfaces that communicate intent quickly.",
-      "Use motion sparingly to improve orientation instead of decoration.",
-    ],
     id: "independent-product",
     location: "Arizona",
     organization: "Self-directed work",
@@ -682,11 +657,6 @@ export const experience: Experience[] = [
       "Prototype detail flows, browse states, and lightweight information systems.",
       "Use captured demos to refine pacing and handoff between screens.",
     ],
-    highlights: [
-      "Ship SwiftUI prototypes that feel close to finished products.",
-      "Prototype detail flows, browse states, and lightweight information systems.",
-      "Use captured demos to refine pacing and handoff between screens.",
-    ],
     id: "ios-builds",
     location: "Remote",
     organization: "Selected app experiments",
@@ -697,11 +667,6 @@ export const experience: Experience[] = [
   },
   {
     bullets: [
-      "Build interfaces where list browsing and detail inspection stay fast on any screen size.",
-      "Prioritize keyboard support and performance constraints from the start.",
-      "Keep client bundles small by isolating interactivity to the surfaces that need it.",
-    ],
-    highlights: [
       "Build interfaces where list browsing and detail inspection stay fast on any screen size.",
       "Prioritize keyboard support and performance constraints from the start.",
       "Keep client bundles small by isolating interactivity to the surfaces that need it.",
@@ -755,25 +720,15 @@ export const contact: ContactConfig = {
   availability: "Open to product-focused frontend and iOS opportunities.",
   blurb:
     "Best-fit work usually begins with a product question, a rough flow, or an interaction that needs to feel obvious.",
-  copyLabel: "Copy email",
-  description:
-    "Email stays env-driven so private contact details never need to live in tracked files. Phone remains optional and off by default.",
-  emailEnvVar: "NEXT_PUBLIC_CONTACT_EMAIL",
-  emailIconUrl: siteMedia.contactIcons.email.url,
   heading: "Start with a concrete problem.",
   icons: {
     email: siteMedia.contactIcons.email,
-    linkedIn: siteMedia.contactIcons.linkedIn,
     phone: siteMedia.contactIcons.phone,
   },
-  linkedInIconUrl: siteMedia.contactIcons.linkedIn.url,
   location: "Based in Arizona",
-  phoneEnvVar: "NEXT_PUBLIC_CONTACT_PHONE",
-  phoneIconUrl: siteMedia.contactIcons.phone.url,
   primaryActionLabel: "Copy email",
   secondaryActionLabel: "Open mail app",
   showPhone: false,
-  title: "Reach out through the env-driven contact lane",
 };
 
 export const siteContent: SiteContent = {
@@ -781,84 +736,7 @@ export const siteContent: SiteContent = {
   experience,
   hero,
   media: siteMedia,
-  nav: navSections,
-  navSections,
   projects,
   skills,
   writing,
 };
-
-export function getFeaturedProjects(projectList: Project[] = siteContent.projects): Project[] {
-  return projectList.filter((project) => project.featured);
-}
-
-export function getProjectCategories(
-  projectList: Project[] = siteContent.projects,
-): ProjectCategory[] {
-  return Array.from(new Set(projectList.map((project) => project.category)));
-}
-
-export function filterProjects(
-  projectList: Project[] = siteContent.projects,
-  searchOrOptions: string | ProjectFilterOptions = "",
-  categoryArg: ProjectCategory | "All" = "All",
-): Project[] {
-  const options: ProjectFilterOptions =
-    typeof searchOrOptions === "string"
-      ? { category: categoryArg, query: searchOrOptions }
-      : searchOrOptions;
-
-  const query = options.query?.trim().toLowerCase() ?? "";
-  const category = options.category ?? "All";
-
-  return projectList.filter((project) => {
-    const matchesCategory = category === "All" || project.category === category;
-
-    if (!matchesCategory) {
-      return false;
-    }
-
-    if (!query) {
-      return true;
-    }
-
-    const haystack = [
-      project.title,
-      project.oneLiner,
-      project.summary,
-      project.category,
-      project.role,
-      project.demo.title,
-      project.demo.summary,
-      ...project.technicalThemes,
-      ...project.story.map((storyBeat) => `${storyBeat.title} ${storyBeat.description}`),
-      ...project.tags,
-    ]
-      .join(" ")
-      .toLowerCase();
-
-    return haystack.includes(query);
-  });
-}
-
-export function groupProjectsByCategory(
-  projectList: Project[] = siteContent.projects,
-): ProjectGroup[] {
-  const groups = new Map<ProjectCategory, Project[]>();
-
-  for (const project of projectList) {
-    const existing = groups.get(project.category);
-
-    if (existing) {
-      existing.push(project);
-      continue;
-    }
-
-    groups.set(project.category, [project]);
-  }
-
-  return Array.from(groups.entries()).map(([category, groupedProjects]) => ({
-    category,
-    projects: groupedProjects,
-  }));
-}
