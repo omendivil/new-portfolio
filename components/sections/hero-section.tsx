@@ -72,7 +72,7 @@ export function HeroSection() {
             <div className="absolute inset-x-5 top-5 h-20 rounded-full bg-accent-soft/70 blur-3xl sm:inset-x-6 sm:top-6 sm:h-24" />
             <div className="relative aspect-[4/5] overflow-hidden rounded-[1.45rem] border border-border bg-surface sm:rounded-[1.6rem]">
               <Image
-                src={hero.portrait.src}
+                src={hero.portrait.url}
                 alt={hero.portrait.alt}
                 fill
                 sizes="(max-width: 1024px) 90vw, 32vw"

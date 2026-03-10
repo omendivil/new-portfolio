@@ -10,7 +10,6 @@ import { trackVideoPlay } from "@/lib/analytics";
 import { motionEase, useMotionPreference } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
-import { getProjectPresentation } from "./project-poster";
 import { ProjectShowcaseFrame } from "./project-showcase-frame";
 
 type ProjectLivePreviewProps = {
@@ -25,7 +24,7 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
   const trackedPlaybackRef = useRef(false);
   const hasVideo = project.videos.length > 0;
   const previewVideo = hasVideo ? project.videos[0] : null;
-  const presentation = getProjectPresentation(project);
+  const presentation = project.presentation;
   const isInView = useInView(previewRef, {
     amount: 0.45,
     once: false,

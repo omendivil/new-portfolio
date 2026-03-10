@@ -43,7 +43,7 @@ export function SkillsSection() {
                 {skill.icon ? (
                   <div className="relative h-11 w-11 overflow-hidden rounded-2xl border border-border bg-surface p-2 transition-[transform,border-color,background-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:border-accent/25 group-hover:bg-accent-soft/55 motion-reduce:transition-none motion-safe:group-hover:-translate-y-0.5">
                     <Image
-                      src={skill.icon.src}
+                      src={skill.icon.url}
                       alt={skill.icon.alt}
                       fill
                       sizes="44px"

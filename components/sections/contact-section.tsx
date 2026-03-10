@@ -42,7 +42,7 @@ export function ContactSection({ config = contact }: { config?: ContactConfig })
               <div className="flex items-start gap-3">
                 <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-[1rem] border border-border/70 bg-background/80 p-2 sm:h-12 sm:w-12">
                   <Image
-                    src={config.icons.email.src}
+                    src={config.icons.email.url}
                     alt={config.icons.email.alt}
                     fill
                     sizes="48px"
@@ -75,7 +75,7 @@ export function ContactSection({ config = contact }: { config?: ContactConfig })
                 <div className="flex items-start gap-3">
                   <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-[1rem] border border-border/70 bg-background/80 p-2 sm:h-12 sm:w-12">
                     <Image
-                      src={config.icons.phone.src}
+                      src={config.icons.phone.url}
                       alt={config.icons.phone.alt}
                       fill
                       sizes="48px"

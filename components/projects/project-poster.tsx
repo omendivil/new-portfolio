@@ -2,10 +2,7 @@ import Image from "next/image";
 
 import type { Project, ProjectPresentation } from "@/data/types";
 
-import {
-  ProjectShowcaseFrame,
-  type ProjectShowcaseVariant,
-} from "./project-showcase-frame";
+import { ProjectShowcaseFrame } from "./project-showcase-frame";
 
 type ProjectPosterProps = {
   className?: string;
@@ -17,12 +14,6 @@ type ProjectPosterProps = {
   sizes?: string;
 };
 
-export function getProjectPresentation(
-  project: Pick<Project, "presentation">,
-): ProjectShowcaseVariant {
-  return project.presentation;
-}
-
 export function ProjectPoster({
   className,
   label,
@@ -32,7 +23,7 @@ export function ProjectPoster({
   project,
   sizes = "(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw",
 }: ProjectPosterProps) {
-  const showcaseVariant = presentation ?? getProjectPresentation(project);
+  const showcaseVariant = presentation ?? project.presentation;
 
   return (
     <ProjectShowcaseFrame

@@ -1,55 +1,38 @@
 "use client";
 
-import { forwardRef, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { CircleDot } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
 
-import type { ProjectVideo } from "@/data/types";
+import type { ProjectPresentation, ProjectVideo } from "@/data/types";
 import { trackVideoPlay } from "@/lib/analytics";
 
-import { ProjectShowcaseFrame, type ProjectShowcaseVariant } from "./project-showcase-frame";
+import { ProjectShowcaseFrame } from "./project-showcase-frame";
 
 type ProjectVideoPlayerProps = {
   chapterCount?: number;
   chapterLabel?: string;
   chapterNumber?: number;
   contextLabel?: string;
-  presentation?: ProjectShowcaseVariant;
+  presentation?: ProjectPresentation;
   projectId: string;
   startAtSeconds?: number;
   video: ProjectVideo;
 };
 
-export const ProjectVideoPlayer = forwardRef<HTMLVideoElement, ProjectVideoPlayerProps>(
-  function ProjectVideoPlayer(
-    {
-      chapterCount,
-      chapterLabel,
-      chapterNumber,
-      contextLabel,
-      presentation = "device",
-      projectId,
-      startAtSeconds = 0,
-      video,
-    },
-    ref,
-  ) {
+export function ProjectVideoPlayer({
+  chapterCount,
+  chapterLabel,
+  chapterNumber,
+  contextLabel,
+  presentation = "device",
+  projectId,
+  startAtSeconds = 0,
+  video,
+}: ProjectVideoPlayerProps) {
     const reduceMotion = Boolean(useReducedMotion());
     const localVideoRef = useRef<HTMLVideoElement | null>(null);
     const trackedPlaybackRef = useRef(false);
-
-    function setRefs(node: HTMLVideoElement | null) {
-      localVideoRef.current = node;
-
-      if (typeof ref === "function") {
-        ref(node);
-        return;
-      }
-
-      if (ref) {
-        ref.current = node;
-      }
-    }
 
     useEffect(() => {
       trackedPlaybackRef.current = false;
@@ -160,7 +143,7 @@ export const ProjectVideoPlayer = forwardRef<HTMLVideoElement, ProjectVideoPlaye
               variant={presentation}
             >
               <video
-                ref={setRefs}
+                ref={localVideoRef}
                 aria-label={`${video.label} project preview`}
                 autoPlay={!reduceMotion}
                 disablePictureInPicture
@@ -205,7 +188,4 @@ export const ProjectVideoPlayer = forwardRef<HTMLVideoElement, ProjectVideoPlaye
         </div>
       </div>
     );
-  },
-);
-
-ProjectVideoPlayer.displayName = "ProjectVideoPlayer";
+}

@@ -13,7 +13,6 @@ export function useActiveSection(sectionIds: NavSectionId[]) {
     const hash = window.location.hash.slice(1) as NavSectionId;
     return hash && sectionIds.includes(hash) ? hash : sectionIds[0];
   });
-  const sectionIdsKey = sectionIds.join(",");
 
   useEffect(() => {
     const sections = sectionIds
@@ -46,7 +45,7 @@ export function useActiveSection(sectionIds: NavSectionId[]) {
     sections.forEach((section) => observer.observe(section));
 
     return () => observer.disconnect();
-  }, [sectionIds, sectionIdsKey]);
+  }, [sectionIds]);
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -59,7 +58,7 @@ export function useActiveSection(sectionIds: NavSectionId[]) {
 
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
-  }, [sectionIds, sectionIdsKey]);
+  }, [sectionIds]);
 
   return { activeSection, setActiveSection };
 }

@@ -18,7 +18,6 @@ export type SkillCategory =
 
 export type MediaAsset = {
   alt: string;
-  src: string;
   url: string;
 };
 
@@ -86,10 +85,8 @@ export type Skill = {
   category: SkillCategory;
   icon?: MediaAsset;
   id: string;
-  label: string;
   level: string;
   name: string;
-  note: string;
   summary: string;
 };
 
@@ -151,7 +148,6 @@ export type SiteMediaCatalog = {
   baseHost: string;
   contactIcons: {
     email: MediaAsset;
-    linkedIn: MediaAsset;
     phone: MediaAsset;
   };
   logos: {
@@ -164,8 +160,6 @@ export type SiteMediaCatalog = {
     xcode: MediaAsset;
   };
   people: {
-    alternateHeadshot: MediaAsset;
-    optionalPersonalImage: MediaAsset;
     primaryHeadshot: MediaAsset;
   };
   projectAssets: {

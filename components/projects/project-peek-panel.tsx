@@ -7,7 +7,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ProjectChapters } from "@/components/projects/project-chapters";
 import { ProjectLinkList } from "@/components/projects/project-link-list";
-import { getProjectPresentation, ProjectPoster } from "@/components/projects/project-poster";
+import { ProjectPoster } from "@/components/projects/project-poster";
 import { ProjectVideoPlayer } from "@/components/projects/project-video-player";
 import type { Project, ProjectChapter } from "@/data/types";
 import { trackChapterClick } from "@/lib/analytics";
@@ -89,7 +89,7 @@ export function ProjectPeekPanel({
     return project.chapters.findIndex((chapter) => chapter.id === activeChapter.id);
   }, [activeChapter, project]);
 
-  const presentation = project ? getProjectPresentation(project) : "canvas";
+  const presentation = project ? project.presentation : "canvas";
 
   function handleSelectVideo(videoId: string) {
     if (!project) {

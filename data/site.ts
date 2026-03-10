@@ -21,11 +21,7 @@ const baseHost = "https://pub-8845c4797eee47adbbeb7077d3509851.r2.dev";
 function createMediaAsset(path: string, alt: string): MediaAsset {
   const url = `${baseHost}/${path}`;
 
-  return {
-    alt,
-    src: url,
-    url,
-  };
+  return { alt, url };
 }
 
 function createVideo(
@@ -97,8 +93,6 @@ function createProjectLink(label: string, href: string, kind: ProjectLink["kind"
 }
 
 const primaryHeadshot = createMediaAsset("omar.jpg", "Portrait of Omar Mendivil");
-const alternateHeadshot = createMediaAsset("omar2.jpeg", "Alternate portrait of Omar Mendivil");
-const optionalPersonalImage = createMediaAsset("puppy.jpg", "Optional personal image");
 
 const logoC = createMediaAsset("c.svg", "C logo");
 const logoPython = createMediaAsset("python.png", "Python logo");
@@ -109,7 +103,6 @@ const logoFigma = createMediaAsset("figma.png", "Figma logo");
 const logoGithub = createMediaAsset("github.png", "GitHub logo");
 
 const iconEmail = createMediaAsset("email.png", "Email icon");
-const iconLinkedIn = createMediaAsset("linked.png", "LinkedIn icon");
 const iconPhone = createMediaAsset("phone.png", "Phone icon");
 
 const poster2048 = createMediaAsset("2048-homepage.png", "2048 Game poster preview");
@@ -169,7 +162,6 @@ export const siteMedia: SiteMediaCatalog = {
   baseHost,
   contactIcons: {
     email: iconEmail,
-    linkedIn: iconLinkedIn,
     phone: iconPhone,
   },
   logos: {
@@ -182,8 +174,6 @@ export const siteMedia: SiteMediaCatalog = {
     xcode: logoXcode,
   },
   people: {
-    alternateHeadshot,
-    optionalPersonalImage,
     primaryHeadshot,
   },
   projectAssets: {
@@ -505,7 +495,7 @@ export const projects: Project[] = [
     summary:
       "2048 Game is less about novelty and more about execution. The project uses a familiar mechanic to focus on state management, crisp feedback, and the pacing decisions that make a simple interaction feel satisfying.",
     tags: ["TypeScript", "Game UI", "Frontend"],
-    technicalThemes: ["object-oriented design", "game state management", "Java Swing UI"],
+    technicalThemes: ["object-oriented design", "game state management", "DOM-driven rendering"],
     title: "2048 Game",
     videos: [video2048Gameplay],
     year: "2025",
@@ -568,70 +558,56 @@ export const skills: Skill[] = [
     category: "Languages",
     icon: siteMedia.logos.swift,
     id: "swift",
-    label: "Swift",
     level: "Core",
     name: "Swift",
-    note: "Native application development with an emphasis on product feel and UI detail.",
     summary: "Native application development with an emphasis on product feel and UI detail.",
   },
   {
     category: "Mobile",
     icon: siteMedia.logos.swiftUi,
     id: "swiftui",
-    label: "SwiftUI",
     level: "Core",
     name: "SwiftUI",
-    note: "Declarative layout systems, motion, and reusable composition for iOS work.",
     summary: "Declarative layout systems, motion, and reusable composition for iOS work.",
   },
   {
     category: "Tooling",
     icon: siteMedia.logos.xcode,
     id: "xcode",
-    label: "Xcode",
     level: "Daily",
     name: "Xcode",
-    note: "Build, debug, and ship workflows centered around native product iteration.",
     summary: "Build, debug, and ship workflows centered around native product iteration.",
   },
   {
     category: "Languages",
     icon: siteMedia.logos.python,
     id: "python",
-    label: "Python",
     level: "Supporting",
     name: "Python",
-    note: "Automation, scripting, and quick experiments for product and data workflows.",
     summary: "Automation, scripting, and quick experiments for product and data workflows.",
   },
   {
     category: "Foundations",
     icon: siteMedia.logos.c,
     id: "c",
-    label: "C",
     level: "Foundational",
     name: "C",
-    note: "Lower-level thinking that sharpens performance and systems reasoning.",
     summary: "Lower-level thinking that sharpens performance and systems reasoning.",
   },
   {
     category: "Design",
     icon: siteMedia.logos.figma,
     id: "figma",
-    label: "Figma",
     level: "Core",
     name: "Figma",
-    note: "Interface studies, layout iteration, and motion planning before implementation.",
     summary: "Interface studies, layout iteration, and motion planning before implementation.",
   },
   {
     category: "Workflow",
     icon: siteMedia.logos.github,
     id: "github",
-    label: "GitHub",
     level: "Daily",
     name: "GitHub",
-    note: "Versioned collaboration, review flow, and project hygiene across product work.",
     summary: "Versioned collaboration, review flow, and project hygiene across product work.",
   },
 ];

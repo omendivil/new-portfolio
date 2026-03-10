@@ -3,14 +3,12 @@ import type { ReactNode } from "react";
 import type { ProjectPresentation } from "@/data/types";
 import { cn } from "@/lib/utils";
 
-export type ProjectShowcaseVariant = ProjectPresentation;
-
 type ProjectShowcaseFrameProps = {
   children: ReactNode;
   className?: string;
   label?: string;
   screenClassName?: string;
-  variant?: ProjectShowcaseVariant;
+  variant?: ProjectPresentation;
 };
 
 export function ProjectShowcaseFrame({
