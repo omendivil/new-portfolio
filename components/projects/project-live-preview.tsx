@@ -165,17 +165,18 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
           </div>
         </AnimatePresence>
 
-        {/* Phone */}
-        <div className="relative z-10 flex min-h-[22rem] items-center justify-center sm:min-h-[30rem]">
-          <div
-            className={cn(
-              "w-full",
-              presentation === "device" ? "max-w-[22rem]" : "max-w-[42rem]",
-            )}
-          >
-            <ProjectShowcaseFrame
-              className={cn("mx-auto", presentation === "canvas" && "w-full")}
-              variant={presentation}
+        {/* Stable-height stage — content sizes itself, container stays fixed */}
+        <div className="relative z-10 h-[26rem] sm:h-[34rem]">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div
+              className={cn(
+                "w-full",
+                presentation === "device" ? "max-w-[11rem] sm:max-w-[16rem]" : "max-w-[30rem] sm:max-w-[52rem]",
+              )}
+            >
+              <ProjectShowcaseFrame
+                className="mx-auto"
+                variant={presentation}
             >
               {previewVideo && !reduceMotion ? (
                 <video
@@ -214,6 +215,7 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
               <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/28 via-transparent to-transparent" />
               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/46 via-black/10 to-transparent" />
             </ProjectShowcaseFrame>
+          </div>
           </div>
         </div>
       </div>

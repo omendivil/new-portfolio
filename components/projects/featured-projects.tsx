@@ -49,7 +49,7 @@ export function FeaturedProjects({
 
   return (
     <div className="space-y-6">
-      <div className="min-h-[7.5rem] sm:min-h-[6.5rem]">
+      <div className="h-[11.5rem] overflow-hidden sm:h-[9.5rem]">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeProject.id}
@@ -88,7 +88,7 @@ export function FeaturedProjects({
           Projects
         </p>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="-mx-4 flex items-center gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:overflow-x-visible sm:px-0">
           {projects.map((project) => {
             const isActive = project.id === activeProject.id;
 
@@ -99,7 +99,7 @@ export function FeaturedProjects({
                 aria-pressed={isActive}
                 onClick={() => setActiveProjectId(project.id)}
                 className={cn(
-                  "relative rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                  "relative shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors",
                   isActive
                     ? "text-text"
                     : "text-muted hover:text-text",
@@ -119,13 +119,13 @@ export function FeaturedProjects({
             );
           })}
 
-          <span className="mx-1 h-4 w-px bg-border/70" />
+          <span className="mx-1 h-4 w-px shrink-0 bg-border/70" />
 
           <button
             ref={drawerTriggerRef}
             type="button"
             onClick={onOpenDrawer}
-            className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm text-muted transition-colors hover:text-text"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm text-muted transition-colors hover:text-text"
           >
             <PanelsTopLeft className="h-3.5 w-3.5" />
             All {projectCount}

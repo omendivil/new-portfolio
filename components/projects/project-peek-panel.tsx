@@ -260,7 +260,7 @@ export function ProjectPeekPanel({
                         />
                       ) : (
                         <ProjectPoster
-                          className={cn(presentation === "device" && "mx-auto w-full max-w-[21rem]")}
+                          className={cn(presentation === "device" && "mx-auto w-full max-w-[22rem]")}
                           label={project.demo.eyebrow}
                           presentation={presentation}
                           project={project}

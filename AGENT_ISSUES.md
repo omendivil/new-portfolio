@@ -130,6 +130,51 @@ Reference:
 [components/motion/section-reveal.tsx](/Users/omendivil/Dev/new-portfolio/components/motion/section-reveal.tsx)
 [lib/motion.ts](/Users/omendivil/Dev/new-portfolio/lib/motion.ts)
 
+### 2026-03-09: Fixed-height stage prevents page shift between project presentations
+
+Issue:
+Switching between a phone-frame project (tall) and a canvas-frame project (shorter) caused the page to shift vertically because the outer container used `min-h` and grew to fit content.
+
+Resolution:
+
+1. The preview stage uses a fixed height (`h-[26rem] sm:h-[34rem]`), not min-height.
+2. Inner content is absolutely positioned (`absolute inset-0 flex items-center justify-center`).
+3. The frame sizes itself via its own `max-w` and `aspect-ratio`, independent of the container.
+4. This pattern must be preserved when modifying the preview stage.
+
+Reference:
+[project-live-preview.tsx](/Users/omendivil/Dev/new-portfolio/components/projects/project-live-preview.tsx)
+
+### 2026-03-09: Video element must use key prop to force reload on source change
+
+Issue:
+Switching projects changed the `<source src>` attribute but the browser did not reload the video because the same `<video>` DOM element was reused.
+
+Resolution:
+
+1. The `<video>` element must use `key={previewVideo.id}` to force React to remount it.
+2. This applies anywhere a video source changes dynamically (live preview, peek panel player).
+
+Reference:
+[project-live-preview.tsx](/Users/omendivil/Dev/new-portfolio/components/projects/project-live-preview.tsx)
+
+### 2026-03-09: Showcase frame sizing must stay consistent across components
+
+Issue:
+The device frame `max-w` was `20rem` in the showcase frame, `22rem` in the live preview wrapper, and `21rem` in the peek panel, causing inconsistent sizing.
+
+Resolution:
+
+1. Device frame max-width: `max-w-[20rem]` in `ProjectShowcaseFrame`.
+2. Wrapper max-width in live preview: `max-w-[22rem]` (allows space around the frame).
+3. Peek panel device max-width: `max-w-[22rem]` (matches live preview wrapper).
+4. When adjusting any of these, check all three locations.
+
+Reference:
+[project-showcase-frame.tsx](/Users/omendivil/Dev/new-portfolio/components/projects/project-showcase-frame.tsx)
+[project-live-preview.tsx](/Users/omendivil/Dev/new-portfolio/components/projects/project-live-preview.tsx)
+[project-peek-panel.tsx](/Users/omendivil/Dev/new-portfolio/components/projects/project-peek-panel.tsx)
+
 ### 2026-03-08: Contact section should stay mostly server-rendered
 
 Issue:

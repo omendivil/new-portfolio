@@ -126,6 +126,21 @@ Examples of a major change
 3. Changing the contact section structure
 4. Reworking motion patterns across a section
 
+## Context hygiene
+
+Long sessions burn through the context window fast, especially with heavy file reads and multi-file edits. To prevent losing decisions and progress when context compresses, agents must proactively sync state.
+
+Every 15 messages (or after completing a major change, whichever comes first):
+
+1. Update `MEMORY.md` with any new decisions, patterns, or removals.
+2. Update the relevant `WORK` doc if scope or state changed.
+3. Log new resolutions to `AGENT_ISSUES.md` if any came up.
+4. Mention the sync briefly so the user knows it happened.
+
+Do not ask permission for this — just do it as part of the workflow.
+
+If a context compression has already occurred (indicated by a conversation summary at the top of the session), re-read `MEMORY.md`, the active `WORK` doc, and `AGENT_ISSUES.md` before resuming work to restore lost nuance.
+
 ## Mandatory review pass
 
 Every major change must be followed by a read-only guardrail review.
