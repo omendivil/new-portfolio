@@ -250,7 +250,7 @@ export const projects: Project[] = [
     gallery: [],
     highlights: [
       "Turns a dense Apple-framework catalog into a calm browse-first learning surface.",
-      "Uses motion cues to explain structure instead of leaning on extra chrome.",
+      "Built with reusable SwiftUI composition and layered browse states for fast scanning.",
       "Packages technical reference content in a way that still feels approachable and polished.",
     ],
     id: "frameworks-app",
