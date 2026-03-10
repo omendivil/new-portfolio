@@ -167,6 +167,36 @@
   }
 }
 
+/* --- Animated border gradient for project preview --- */
+/* A conic gradient rotates behind the inner content.
+   The outer card clips it with overflow-hidden, and the
+   inner content covers the center — so the gradient only
+   shows through the padding gap, creating a glowing
+   animated border. Uses transform: rotate for GPU compositing. */
+
+@keyframes border-rotate {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.preview-border-glow {
+  width: 150%;
+  height: 150%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(143, 179, 171, 0.8),
+    transparent 20%,
+    rgba(255, 129, 41, 0.7),
+    transparent 45%,
+    rgba(143, 179, 171, 0.8),
+    transparent 70%,
+    rgba(255, 129, 41, 0.7),
+    transparent 95%
+  );
+  animation: border-rotate 8s linear infinite;
+  will-change: transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

@@ -49,7 +49,7 @@ export function FeaturedProjects({
 
   return (
     <div className="space-y-6">
-      <div className="h-[11.5rem] overflow-hidden sm:h-[9.5rem]">
+      <div className="h-[11rem] overflow-hidden sm:h-[9.5rem]">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeProject.id}
