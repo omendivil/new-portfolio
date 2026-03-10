@@ -91,12 +91,12 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
       animate={reduceMotion ? undefined : { opacity: 1, y: 0, filter: "brightness(1)" }}
       transition={{ duration: 0.42, ease: motionEase }}
       className={cn(
-        "relative overflow-hidden rounded-[2rem] border border-border/70 bg-[#141210] p-3 shadow-[0_32px_120px_-54px_rgba(17,16,13,0.54)] sm:p-4",
+        "preview-outer-shell relative overflow-hidden rounded-[2rem] p-3 sm:p-4",
         className,
       )}
     >
       {/* Static radial gradients on the Outer Shell */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.06),transparent_24%),radial-gradient(circle_at_top_right,rgba(143,179,171,0.14),transparent_34%),radial-gradient(circle_at_bottom_center,rgba(255,129,41,0.16),transparent_28%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.06),transparent_24%),radial-gradient(circle_at_top_right,rgba(143,179,171,0.14),transparent_34%)]" />
 
       {/* Spinning gradient on the Outer Shell — Inner Stage covers the center */}
       <div className="preview-border-glow pointer-events-none absolute left-1/2 top-1/2" />
@@ -115,7 +115,7 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
               transition={reduceMotion ? { duration: 0 } : hudTransition(0.3)}
               className="absolute left-4 top-4 z-20 sm:left-5 sm:top-5"
             >
-              <p className="font-mono text-[0.58rem] uppercase tracking-[0.22em] text-white/50 sm:text-[0.62rem]">
+              <p className="font-mono text-[0.58rem] font-semibold uppercase tracking-[0.22em] text-white/70 sm:text-[0.68rem]">
                 {project.status} · {project.year} · {project.category}
               </p>
             </motion.div>
@@ -129,7 +129,7 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
                   animate={hudAnimate}
                   exit={reduceMotion ? undefined : hudExit}
                   transition={reduceMotion ? { duration: 0 } : hudTransition(0.6 + i * 0.3)}
-                  className="mt-1.5 text-right font-mono text-[0.58rem] uppercase tracking-[0.18em] text-white/40 first:mt-0 sm:text-[0.62rem]"
+                  className="mt-1.5 text-right font-mono text-[0.58rem] font-semibold uppercase tracking-[0.18em] text-white/60 first:mt-0 sm:text-[0.68rem]"
                 >
                   {theme}
                 </motion.p>
@@ -137,7 +137,7 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
             </div>
 
             {/* Left side — two highlights, centered to phone (desktop only) */}
-            <div className="absolute bottom-0 left-5 top-0 z-20 hidden w-[13rem] items-center xl:flex">
+            <div className="absolute bottom-0 left-5 top-0 z-20 hidden w-[14.5rem] items-center lg:flex">
               <div className="space-y-4">
                 {highlights.map((hl, i) => (
                   <motion.p
@@ -146,7 +146,7 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
                     animate={hudSlideAnimate}
                     exit={reduceMotion ? undefined : hudExit}
                     transition={reduceMotion ? { duration: 0 } : hudTransition(1.2 + i * 1.0)}
-                    className="text-[0.82rem] leading-[1.6] text-white/44"
+                    className="text-[0.88rem] font-semibold leading-[1.6] text-white/80 sm:text-[0.95rem]"
                   >
                     {hl}
                   </motion.p>
@@ -160,9 +160,9 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
               animate={hudSlideAnimate}
               exit={reduceMotion ? undefined : hudExit}
               transition={reduceMotion ? { duration: 0 } : hudTransition(1.0)}
-              className="absolute bottom-4 left-4 right-4 z-20 sm:bottom-5 sm:left-5 sm:right-5 xl:hidden"
+              className="absolute bottom-4 left-4 right-4 z-20 sm:bottom-5 sm:left-5 sm:right-5 lg:hidden"
             >
-              <p className="text-[0.74rem] leading-[1.5] text-white/44 sm:text-[0.82rem]">
+              <p className="text-[0.82rem] font-semibold leading-[1.5] text-white/80 sm:text-[0.95rem]">
                 {highlights[0]}
               </p>
             </motion.div>

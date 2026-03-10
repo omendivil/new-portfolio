@@ -91,6 +91,50 @@
 }
 
 @layer components {
+  /* Outer Shell — light: frosted glass / dark: original solid */
+  .preview-outer-shell {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(30, 30, 28, 0.65);
+    box-shadow: 0 32px 120px -54px rgba(17, 16, 13, 0.3);
+    -webkit-backdrop-filter: blur(28px) saturate(1.4);
+    backdrop-filter: blur(28px) saturate(1.4);
+  }
+
+  /* Inner Stage — light: warm grey / dark: sleek black */
+  .preview-inner-stage {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, #a0a8a4, #948874);
+  }
+
+  .dark .preview-inner-stage {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: linear-gradient(135deg, #1a1a1a, #0d0d0d 40%, #141414 70%, #0a0a0a);
+  }
+
+  .preview-inner-stage-glow {
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1), transparent 38%);
+  }
+
+  .dark .preview-inner-stage-glow {
+    background: radial-gradient(circle at 40% 30%, rgba(255, 255, 255, 0.04), transparent 40%);
+  }
+
+  .preview-inner-stage-strip {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .dark .preview-inner-stage-strip {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .dark .preview-outer-shell {
+    border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+    background: #141210;
+    box-shadow: 0 32px 120px -54px rgba(17, 16, 13, 0.54);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
   .surface-card {
     border: 1px solid color-mix(in oklab, var(--border) 82%, transparent);
     background: color-mix(in oklab, var(--surface) 90%, transparent);
@@ -168,33 +212,40 @@
 }
 
 /* --- Animated border gradient for project preview --- */
-/* A conic gradient rotates behind the inner content.
-   The outer card clips it with overflow-hidden, and the
-   inner content covers the center — so the gradient only
-   shows through the padding gap, creating a glowing
-   animated border. Uses transform: rotate for GPU compositing. */
+/* Conic gradient orbits behind the Inner Stage. The Outer Shell
+   clips with overflow-hidden and the opaque Inner Stage covers
+   the center — gradient only visible in the Outer Shell padding. */
 
-@keyframes border-rotate {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
+@keyframes border-orbit {
+  0%   { transform: translate(-50%, -50%) rotate(0deg); }
   100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 .preview-border-glow {
-  width: 150%;
-  height: 150%;
+  width: 160%;
+  height: 160%;
   background: conic-gradient(
     from 0deg,
-    rgba(143, 179, 171, 0.8),
-    transparent 20%,
-    rgba(255, 129, 41, 0.7),
-    transparent 45%,
-    rgba(143, 179, 171, 0.8),
-    transparent 70%,
-    rgba(255, 129, 41, 0.7),
-    transparent 95%
+    rgba(255, 140, 200, 0.5) 0%,
+    rgba(140, 200, 255, 0.4) 10%,
+    rgba(200, 170, 255, 0.2) 20%,
+    transparent 35%,
+    transparent 100%
   );
-  animation: border-rotate 8s linear infinite;
+  filter: blur(8px);
+  animation: border-orbit 24s linear infinite;
   will-change: transform;
+}
+
+.dark .preview-border-glow {
+  background: conic-gradient(
+    from 0deg,
+    rgba(120, 60, 200, 0.5) 0%,
+    rgba(80, 40, 180, 0.35) 10%,
+    rgba(100, 50, 190, 0.15) 20%,
+    transparent 35%,
+    transparent 100%
+  );
 }
 
 @media (prefers-reduced-motion: reduce) {
