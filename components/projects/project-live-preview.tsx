@@ -110,6 +110,7 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
           >
             {previewVideo && !reduceMotion ? (
               <video
+                key={previewVideo.id}
                 ref={videoRef}
                 autoPlay
                 disablePictureInPicture
