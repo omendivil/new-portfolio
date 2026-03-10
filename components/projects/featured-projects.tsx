@@ -1,14 +1,25 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { PanelsTopLeft } from "lucide-react";
 import { type RefObject, useMemo, useState } from "react";
 
 import type { Project } from "@/data/types";
-import { pillTransition, useMotionPreference } from "@/lib/motion";
+import { motionEase, pillTransition, useMotionPreference } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 import { ProjectLivePreview } from "./project-live-preview";
+
+const headingVariants = {
+  enter: { opacity: 0, y: 8 },
+  center: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -6 },
+};
+
+const headingTransition = {
+  duration: 0.3,
+  ease: motionEase,
+};
 
 export function FeaturedProjects({
   drawerTriggerRef,
@@ -38,6 +49,38 @@ export function FeaturedProjects({
 
   return (
     <div className="space-y-6">
+      <div className="min-h-[7.5rem] sm:min-h-[6.5rem]">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeProject.id}
+            variants={reduceMotion ? undefined : headingVariants}
+            initial={reduceMotion ? false : "enter"}
+            animate="center"
+            exit={reduceMotion ? undefined : "exit"}
+            transition={reduceMotion ? { duration: 0 } : headingTransition}
+            className="space-y-2.5 sm:space-y-3"
+          >
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+              <p className="font-mono text-[0.68rem] uppercase tracking-[0.24em] text-muted sm:text-xs">
+                Projects
+              </p>
+              <span className="text-[0.62rem] text-muted/50">·</span>
+              <p className="text-[0.68rem] uppercase tracking-[0.2em] text-muted sm:text-xs">
+                {activeProject.role}
+              </p>
+            </div>
+
+            <h2 className="max-w-3xl text-balance text-[clamp(1.9rem,7vw,3rem)] font-semibold leading-[0.96] tracking-[-0.045em] text-text sm:text-4xl">
+              {activeProject.title}
+            </h2>
+
+            <p className="max-w-2xl text-pretty text-[0.98rem] leading-7 text-muted sm:text-lg sm:leading-8">
+              {activeProject.oneLiner}
+            </p>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
       <ProjectLivePreview project={activeProject} />
 
       <div className="space-y-3">

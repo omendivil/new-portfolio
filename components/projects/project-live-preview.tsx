@@ -1,8 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useInView } from "framer-motion";
-import { CircleDot, Play } from "lucide-react";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useEffect, useRef } from "react";
 
 import type { Project } from "@/data/types";
@@ -16,6 +15,16 @@ type ProjectLivePreviewProps = {
   className?: string;
   project: Project;
 };
+
+function hudTransition(delay: number) {
+  return { delay, duration: 0.5, ease: motionEase };
+}
+
+const hudSlideIn = { opacity: 0, x: -10 };
+const hudSlideAnimate = { opacity: 1, x: 0 };
+const hudInitial = { opacity: 0, y: 6 };
+const hudAnimate = { opacity: 1, y: 0 };
+const hudExit = { opacity: 0, transition: { duration: 0.12, ease: motionEase } };
 
 export function ProjectLivePreview({ className, project }: ProjectLivePreviewProps) {
   const { reduceMotion } = useMotionPreference();
@@ -71,6 +80,9 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
     };
   }, [isInView, previewVideo, reduceMotion]);
 
+  const highlights = project.highlights.slice(0, 2);
+  const themes = project.technicalThemes.slice(0, 3);
+
   return (
     <motion.div
       ref={previewRef}
@@ -78,96 +90,130 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
       animate={reduceMotion ? undefined : { opacity: 1, y: 0, filter: "brightness(1)" }}
       transition={{ duration: 0.42, ease: motionEase }}
       className={cn(
-        "relative overflow-hidden rounded-[2rem] border border-border/70 bg-[#181512] p-3 shadow-[0_32px_120px_-54px_rgba(17,16,13,0.54)] sm:p-4",
+        "relative overflow-hidden rounded-[2rem] border border-border/70 bg-[#141210] p-3 shadow-[0_32px_120px_-54px_rgba(17,16,13,0.54)] sm:p-4",
         className,
       )}
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.1),transparent_24%),radial-gradient(circle_at_top_right,rgba(143,179,171,0.2),transparent_34%),radial-gradient(circle_at_bottom_center,rgba(255,129,41,0.24),transparent_28%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.06),transparent_24%),radial-gradient(circle_at_top_right,rgba(143,179,171,0.14),transparent_34%),radial-gradient(circle_at_bottom_center,rgba(255,129,41,0.16),transparent_28%)]" />
 
-      <div className="relative flex min-h-[22rem] items-center justify-center overflow-hidden rounded-[1.7rem] border border-white/8 bg-[linear-gradient(135deg,rgba(210,217,214,0.9),rgba(203,188,163,0.82))] px-4 py-5 sm:min-h-[30rem] sm:px-6 sm:py-7">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.18),transparent_38%)]" />
-        <div className="pointer-events-none absolute inset-y-0 left-[20%] w-[28%] bg-white/14 blur-3xl" />
+      <div className="relative overflow-hidden rounded-[1.7rem] border border-white/8 bg-[linear-gradient(135deg,rgba(160,168,164,0.82),rgba(148,136,116,0.72))] px-4 py-5 sm:px-6 sm:py-7">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1),transparent_38%)]" />
+        <div className="pointer-events-none absolute inset-y-0 left-[20%] w-[28%] bg-white/8 blur-3xl" />
 
-        <div className="pointer-events-none absolute left-4 top-4 z-20 flex flex-wrap items-center gap-2 sm:left-5 sm:top-5">
-          <span className="rounded-full border border-white/12 bg-black/32 px-3 py-1 text-[0.62rem] uppercase tracking-[0.22em] text-white/74 backdrop-blur">
-            {project.demo.eyebrow}
-          </span>
-          <span className="rounded-full border border-white/12 bg-black/32 px-3 py-1 text-[0.62rem] uppercase tracking-[0.22em] text-white/74 backdrop-blur">
-            {hasVideo && !reduceMotion ? "Motion on view" : "Still fallback"}
-          </span>
-        </div>
-
-        <div
-          className={cn(
-            "relative z-10 w-full",
-            presentation === "device" ? "max-w-[22rem]" : "max-w-[42rem]",
-          )}
-        >
-          <ProjectShowcaseFrame
-            className={cn("mx-auto", presentation === "canvas" && "w-full")}
-            label={hasVideo && !reduceMotion ? "Live preview" : "Poster preview"}
-            variant={presentation}
-          >
-            {previewVideo && !reduceMotion ? (
-              <video
-                key={previewVideo.id}
-                ref={videoRef}
-                autoPlay
-                disablePictureInPicture
-                disableRemotePlayback
-                loop
-                muted
-                playsInline
-                poster={previewVideo.poster}
-                preload="metadata"
-                className="h-full w-full bg-black object-cover"
-                onPlay={() => {
-                  if (trackedPlaybackRef.current) {
-                    return;
-                  }
-
-                  trackedPlaybackRef.current = true;
-                  trackVideoPlay(project.id, previewVideo.id, { surface: "featured_stage" });
-                }}
-              >
-                <source src={previewVideo.url} type="video/mp4" />
-              </video>
-            ) : (
-              <Image
-                src={project.poster.url}
-                alt={project.poster.alt}
-                fill
-                sizes="(min-width: 1280px) 44vw, (min-width: 768px) 56vw, 100vw"
-                className="object-cover"
-              />
-            )}
-
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/28 via-transparent to-transparent" />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/46 via-black/10 to-transparent" />
-          </ProjectShowcaseFrame>
-        </div>
-
-        <div className="pointer-events-none absolute bottom-4 left-4 right-4 z-20 rounded-[1.15rem] border border-white/10 bg-black/34 px-4 py-3 text-white/82 backdrop-blur sm:bottom-5 sm:left-5 sm:right-5">
-          <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium">{project.title}</p>
-              <p className="mt-1 truncate text-xs uppercase tracking-[0.2em] text-white/58">
-                {project.demo.title}
+        {/* HUD overlays */}
+        <AnimatePresence mode="wait">
+          <div key={project.id} className="contents">
+            {/* Top left — status line */}
+            <motion.div
+              initial={reduceMotion ? false : hudInitial}
+              animate={hudAnimate}
+              exit={reduceMotion ? undefined : hudExit}
+              transition={reduceMotion ? { duration: 0 } : hudTransition(0.3)}
+              className="absolute left-4 top-4 z-20 sm:left-5 sm:top-5"
+            >
+              <p className="font-mono text-[0.58rem] uppercase tracking-[0.22em] text-white/50 sm:text-[0.62rem]">
+                {project.status} · {project.year} · {project.category}
               </p>
+            </motion.div>
+
+            {/* Top right — tech themes stacked vertically */}
+            <div className="absolute right-4 top-4 z-20 hidden sm:right-5 sm:top-5 sm:block">
+              {themes.map((theme, i) => (
+                <motion.p
+                  key={theme}
+                  initial={reduceMotion ? false : hudInitial}
+                  animate={hudAnimate}
+                  exit={reduceMotion ? undefined : hudExit}
+                  transition={reduceMotion ? { duration: 0 } : hudTransition(0.6 + i * 0.3)}
+                  className="mt-1.5 text-right font-mono text-[0.58rem] uppercase tracking-[0.18em] text-white/40 first:mt-0 sm:text-[0.62rem]"
+                >
+                  {theme}
+                </motion.p>
+              ))}
             </div>
-            <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-white/10 bg-white/6 px-3 py-1 text-[0.62rem] uppercase tracking-[0.22em] text-white/72">
-              {hasVideo && !reduceMotion ? (
-                <>
-                  <CircleDot className="h-3.5 w-3.5" />
-                  Live
-                </>
+
+            {/* Left side — two highlights, centered to phone (desktop only) */}
+            <div className="absolute bottom-0 left-5 top-0 z-20 hidden w-[13rem] items-center xl:flex">
+              <div className="space-y-4">
+                {highlights.map((hl, i) => (
+                  <motion.p
+                    key={hl}
+                    initial={reduceMotion ? false : hudSlideIn}
+                    animate={hudSlideAnimate}
+                    exit={reduceMotion ? undefined : hudExit}
+                    transition={reduceMotion ? { duration: 0 } : hudTransition(1.2 + i * 1.0)}
+                    className="text-[0.82rem] leading-[1.6] text-white/44"
+                  >
+                    {hl}
+                  </motion.p>
+                ))}
+              </div>
+            </div>
+
+            {/* Mobile — single highlight */}
+            <motion.div
+              initial={reduceMotion ? false : hudSlideIn}
+              animate={hudSlideAnimate}
+              exit={reduceMotion ? undefined : hudExit}
+              transition={reduceMotion ? { duration: 0 } : hudTransition(1.0)}
+              className="absolute bottom-4 left-4 right-4 z-20 sm:bottom-5 sm:left-5 sm:right-5 xl:hidden"
+            >
+              <p className="text-[0.74rem] leading-[1.5] text-white/44 sm:text-[0.82rem]">
+                {highlights[0]}
+              </p>
+            </motion.div>
+          </div>
+        </AnimatePresence>
+
+        {/* Phone */}
+        <div className="relative z-10 flex min-h-[22rem] items-center justify-center sm:min-h-[30rem]">
+          <div
+            className={cn(
+              "w-full",
+              presentation === "device" ? "max-w-[22rem]" : "max-w-[42rem]",
+            )}
+          >
+            <ProjectShowcaseFrame
+              className={cn("mx-auto", presentation === "canvas" && "w-full")}
+              variant={presentation}
+            >
+              {previewVideo && !reduceMotion ? (
+                <video
+                  key={previewVideo.id}
+                  ref={videoRef}
+                  autoPlay
+                  disablePictureInPicture
+                  disableRemotePlayback
+                  loop
+                  muted
+                  playsInline
+                  poster={previewVideo.poster}
+                  preload="metadata"
+                  className="h-full w-full bg-black object-cover"
+                  onPlay={() => {
+                    if (trackedPlaybackRef.current) {
+                      return;
+                    }
+
+                    trackedPlaybackRef.current = true;
+                    trackVideoPlay(project.id, previewVideo.id, { surface: "featured_stage" });
+                  }}
+                >
+                  <source src={previewVideo.url} type="video/mp4" />
+                </video>
               ) : (
-                <>
-                  <Play className="h-3.5 w-3.5" />
-                  Poster
-                </>
+                <Image
+                  src={project.poster.url}
+                  alt={project.poster.alt}
+                  fill
+                  sizes="(min-width: 1280px) 30vw, (min-width: 768px) 56vw, 100vw"
+                  className="object-cover"
+                />
               )}
-            </span>
+
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/28 via-transparent to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/46 via-black/10 to-transparent" />
+            </ProjectShowcaseFrame>
           </div>
         </div>
       </div>
