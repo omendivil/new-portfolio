@@ -9,6 +9,7 @@ import { trackVideoPlay } from "@/lib/analytics";
 import { motionEase, useMotionPreference } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
+import { ProjectPreviewStage } from "./project-preview-stage";
 import { ProjectShowcaseFrame } from "./project-showcase-frame";
 
 type ProjectLivePreviewProps = {
@@ -94,11 +95,14 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
         className,
       )}
     >
+      {/* Static radial gradients on the Outer Shell */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.06),transparent_24%),radial-gradient(circle_at_top_right,rgba(143,179,171,0.14),transparent_34%),radial-gradient(circle_at_bottom_center,rgba(255,129,41,0.16),transparent_28%)]" />
 
-      <div className="relative overflow-hidden rounded-[1.7rem] border border-white/8 bg-[linear-gradient(135deg,rgba(160,168,164,0.82),rgba(148,136,116,0.72))] px-4 py-5 sm:px-6 sm:py-7">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1),transparent_38%)]" />
-        <div className="pointer-events-none absolute inset-y-0 left-[20%] w-[28%] bg-white/8 blur-3xl" />
+      {/* Spinning gradient on the Outer Shell — Inner Stage covers the center */}
+      <div className="preview-border-glow pointer-events-none absolute left-1/2 top-1/2" />
+
+      {/* Inner Stage */}
+      <ProjectPreviewStage className="relative">
 
         {/* HUD overlays */}
         <AnimatePresence mode="wait">
@@ -218,7 +222,7 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
           </div>
           </div>
         </div>
-      </div>
+        </ProjectPreviewStage>
     </motion.div>
   );
 }
