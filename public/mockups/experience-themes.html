@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Experience Section — 4 Theme Skins</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Patrick+Hand&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=UnifrakturCook:wght@700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #11100d; color: #f3f0e9; font-family: -apple-system, sans-serif; }
+
+  .page-header { padding: 40px; text-align: center; }
+  .page-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+  .page-header p { font-size: 13px; color: #888; }
+
+  .theme-section { padding: 20px 20px 60px; max-width: 800px; margin: 0 auto; }
+  .theme-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: #8ac9bd; margin-bottom: 8px; font-weight: 600; }
+  .theme-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; color: #f3f0e9; }
+  .theme-desc { font-size: 13px; color: #888; margin-bottom: 20px; line-height: 1.6; }
+
+  .divider { border-top: 1px solid rgba(255,255,255,0.04); margin: 0 20px; }
+
+  /* ============================================
+     THEME 1: WINDOWS 95 (reference only — already built)
+     ============================================ */
+  .win95-preview {
+    background: #c0c0c0;
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+    padding: 3px;
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 11px;
+    max-height: 220px;
+    overflow: hidden;
+  }
+  .win95-preview .tb { background: linear-gradient(to right, #000080, #1084d0); color: #fff; font-weight: bold; padding: 2px 4px; height: 18px; display: flex; align-items: center; justify-content: space-between; font-size: 11px; }
+  .win95-preview .content { background: #fff; margin: 3px; padding: 8px; font-family: "Times New Roman", serif; font-size: 13px; color: #000; box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080; }
+  .win95-preview .content h2 { font-family: Arial; font-size: 14px; font-weight: bold; border-bottom: 2px solid #000; padding-bottom: 2px; margin-bottom: 6px; }
+  .win95-preview .content h3 { font-family: Arial; font-size: 12px; font-weight: bold; margin-top: 8px; }
+  .win95-preview .content .badge { background: #000080; color: #fff; font-size: 9px; font-weight: bold; padding: 1px 6px; font-family: Arial; display: inline-block; margin: 2px 0; }
+
+  /* ============================================
+     THEME 2: HAND-DRAWN / NOTEBOOK
+     ============================================ */
+  .notebook-preview {
+    background-color: #fdf6e3;
+    background-image:
+      linear-gradient(90deg, transparent 77px, #e74c4c 77px, #e74c4c 79px, transparent 79px),
+      repeating-linear-gradient(transparent, transparent 31px, #c8d8e4 31px, #c8d8e4 32px);
+    background-position: 0 32px;
+    padding: 40px 24px 24px 96px;
+    line-height: 32px;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 16px;
+    color: #2c2c2c;
+    border-radius: 4px;
+    box-shadow: 2px 3px 12px rgba(0,0,0,0.15);
+    position: relative;
+    min-height: 260px;
+  }
+  .notebook-preview h2 {
+    font-family: 'Caveat', cursive;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 64px;
+    transform: rotate(-0.5deg);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='8' viewBox='0 0 200 8'%3E%3Cpath d='M0,4 Q10,1 20,4 T40,4 T60,4 T80,4 T100,4 T120,4 T140,4 T160,4 T180,4 T200,4' fill='none' stroke='%232c2c2c' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-position: bottom left;
+    background-repeat: repeat-x;
+    background-size: 200px 8px;
+    padding-bottom: 6px;
+  }
+  .notebook-preview h3 {
+    font-family: 'Caveat', cursive;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    transform: rotate(0.3deg);
+    margin-top: 8px;
+  }
+  .notebook-preview .sub {
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+  }
+  .notebook-preview .highlight {
+    background: linear-gradient(104deg, rgba(255,220,100,0) 0.9%, rgba(255,220,100,0.5) 2.4%, rgba(255,220,100,0.35) 5.8%, rgba(255,220,100,0.3) 93%, rgba(255,220,100,0.5) 96%, rgba(255,220,100,0) 98%);
+    padding: 0.1em 0.3em;
+    border-radius: 7.5px;
+  }
+  .notebook-preview ul { list-style: none; padding: 0; }
+  .notebook-preview ul li { padding-left: 1.2em; position: relative; }
+  .notebook-preview ul li::before { content: '~'; position: absolute; left: 0; font-family: 'Caveat'; font-size: 1.3em; }
+  .notebook-preview ul li:nth-child(2)::before { content: '*'; }
+  .notebook-preview ul li:nth-child(3)::before { content: '-'; }
+  /* Spiral holes */
+  .notebook-preview .holes {
+    position: absolute;
+    left: 16px;
+    top: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+  }
+  .notebook-preview .holes span {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid #bbb;
+    background: #11100d;
+  }
+  .notebook-preview .nav-sketch {
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Caveat', cursive;
+    font-size: 18px;
+  }
+  .notebook-preview .nav-sketch button {
+    background: none;
+    border: 2px solid #2c2c2c;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    padding: 4px 16px;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    color: #2c2c2c;
+  }
+
+  /* ============================================
+     THEME 3: BLUEPRINT
+     ============================================ */
+  .blueprint-preview {
+    background: #0a1628;
+    background-image:
+      linear-gradient(rgba(90,163,217,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(90,163,217,0.08) 1px, transparent 1px);
+    background-size: 20px 20px;
+    padding: 24px;
+    font-family: 'Fira Code', monospace;
+    color: #e8f0ff;
+    border: 1px dashed rgba(90,163,217,0.3);
+    position: relative;
+    min-height: 260px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  /* Corner registration marks */
+  .blueprint-preview::before, .blueprint-preview::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-color: rgba(90,163,217,0.4);
+    border-style: solid;
+  }
+  .blueprint-preview::before { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
+  .blueprint-preview::after { top: 6px; right: 6px; border-width: 1px 1px 0 0; }
+
+  .blueprint-preview .corner-bl, .blueprint-preview .corner-br {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-color: rgba(90,163,217,0.4);
+    border-style: solid;
+  }
+  .blueprint-preview .corner-bl { bottom: 6px; left: 6px; border-width: 0 0 1px 1px; }
+  .blueprint-preview .corner-br { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
+
+  .blueprint-preview .bp-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #5ba3d9;
+    margin-bottom: 2px;
+  }
+  .blueprint-preview .bp-value {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  .blueprint-preview .bp-title {
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .blueprint-preview .bp-divider {
+    border-top: 1px dashed rgba(90,163,217,0.25);
+    margin: 10px 0;
+  }
+  .blueprint-preview .bp-req {
+    font-size: 11px;
+    margin-bottom: 3px;
+    padding-left: 1em;
+  }
+  .blueprint-preview .bp-req-num {
+    color: #5ba3d9;
+    font-size: 10px;
+  }
+  .blueprint-preview .title-block {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    border: 1px solid rgba(90,163,217,0.25);
+    padding: 4px 10px;
+    font-size: 9px;
+    color: #5ba3d9;
+    text-align: right;
+    line-height: 1.5;
+  }
+  .blueprint-preview .bp-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+  .blueprint-preview .bp-nav button {
+    background: none;
+    border: 1px solid rgba(90,163,217,0.3);
+    color: #5ba3d9;
+    padding: 3px 12px;
+    font-family: inherit;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+  }
+
+  /* ============================================
+     THEME 4: NEWSPAPER
+     ============================================ */
+  .newspaper-preview {
+    background: #f5f0e8;
+    padding: 24px;
+    font-family: 'Playfair Display', Georgia, serif;
+    color: #1a1a1a;
+    min-height: 280px;
+    box-shadow: 2px 3px 12px rgba(0,0,0,0.12);
+    position: relative;
+  }
+  /* Paper fiber texture */
+  .newspaper-preview::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    pointer-events: none;
+  }
+  .newspaper-preview > * { position: relative; }
+
+  .newspaper-preview .masthead {
+    text-align: center;
+    border-bottom: 3px double #1a1a1a;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+  .newspaper-preview .masthead h2 {
+    font-family: 'UnifrakturCook', serif;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 2px;
+  }
+  .newspaper-preview .masthead .tagline {
+    font-style: italic;
+    font-size: 11px;
+    color: #555;
+    margin-top: 2px;
+  }
+  .newspaper-preview .masthead .edition {
+    font-family: Georgia, serif;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #888;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+  }
+
+  .newspaper-preview .dateline {
+    font-family: Georgia, serif;
+    font-size: 10px;
+    font-variant: small-caps;
+    letter-spacing: 0.05em;
+    color: #666;
+    margin-bottom: 4px;
+  }
+  .newspaper-preview .headline {
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+  .newspaper-preview .subhead {
+    font-size: 14px;
+    font-style: italic;
+    color: #444;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #ccc;
+  }
+  .newspaper-preview .article-body {
+    font-size: 13px;
+    line-height: 1.6;
+    column-count: 2;
+    column-gap: 20px;
+    column-rule: 1px solid #ddd;
+  }
+  .newspaper-preview .article-body .badge-news {
+    display: inline-block;
+    background: #cc0000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 9px;
+    font-weight: bold;
+    padding: 1px 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .newspaper-preview .np-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    font-family: Georgia, serif;
+    font-size: 11px;
+    font-style: italic;
+    border-top: 1px solid #ccc;
+    padding-top: 6px;
+  }
+  .newspaper-preview .np-nav a {
+    color: #444;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .newspaper-preview .np-nav a:hover { text-decoration: underline; }
+
+  /* ===== THEME SELECTOR PREVIEW ===== */
+  .selector-bar {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .selector-bar button {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-family: -apple-system, sans-serif;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
+    color: #888;
+    transition: all 0.2s;
+  }
+  .selector-bar button.active {
+    background: rgba(138,201,189,0.12);
+    border-color: rgba(138,201,189,0.3);
+    color: #8ac9bd;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Experience Section — 4 Theme Skins</h1>
+  <p>Same data, completely different visual worlds. Theme selector buttons would appear near the section.</p>
+</div>
+
+<!-- THEME SELECTOR MOCKUP -->
+<div class="theme-section">
+  <div class="selector-bar">
+    <button class="active">💻 Retro</button>
+    <button>✏️ Sketch</button>
+    <button>📐 Blueprint</button>
+    <button>📰 Newspaper</button>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- THEME 1: WINDOWS 95 -->
+<div class="theme-section">
+  <div class="theme-label">Theme 1 — Windows 95 (current)</div>
+  <div class="theme-title">Retro Computer</div>
+  <div class="theme-desc">Already built and live. Beige/dark monitor frame, WordPad document, draggable window, CRT boot animation.</div>
+
+  <div class="win95-preview">
+    <div class="tb">
+      <span>📝 resume.doc — WordPad</span>
+      <span>_ □ ×</span>
+    </div>
+    <div class="content">
+      <h2>Omar Mendivil — Experience</h2>
+      <h3>Perception Triage Engineer</h3>
+      <div style="font-size:10px;font-style:italic;color:#555;">Apple · Cupertino, CA · Jun 2025 – Nov 2025</div>
+      <div class="badge">TOP 10% — Career Experience Program</div>
+      <div style="font-size:12px;margin-top:4px;">Selected into a program only the top 10% of the company is accepted into...</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- THEME 2: HAND-DRAWN -->
+<div class="theme-section">
+  <div class="theme-label">Theme 2 — Hand-drawn / Sketch</div>
+  <div class="theme-title">Notebook Page</div>
+  <div class="theme-desc">Ruled notebook paper with spiral holes, handwriting fonts (Caveat + Patrick Hand), wobbly borders, highlighter marks, doodle bullets.</div>
+
+  <div class="notebook-preview">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+
+    <h2>Experience</h2>
+
+    <h3>Perception Triage Engineer</h3>
+    <div class="sub">Apple · Cupertino, CA · Jun 2025 – Nov 2025</div>
+    <div><span class="highlight">Top 10%</span> — Career Experience Program</div>
+    <div style="margin-top:4px;">Selected into a program only the top 10% of the company is accepted into. Triaged perception system issues.</div>
+    <ul>
+      <li>Led weekly triage meetings with Product Integrity</li>
+      <li>Helped QE team understand system behavior</li>
+      <li>Identified recurring issue pattern across radars</li>
+    </ul>
+
+    <div class="nav-sketch">
+      <button>← prev</button>
+      <span style="font-size:14px;color:#888;">page 1 of 3</span>
+      <button>next →</button>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- THEME 3: BLUEPRINT -->
+<div class="theme-section">
+  <div class="theme-label">Theme 3 — Blueprint</div>
+  <div class="theme-title">Engineering Schematic</div>
+  <div class="theme-desc">Deep blue background with cyan grid, monospace ALL-CAPS typography, annotation callouts, dimension lines, corner registration marks. "SPEC:", "CLIENT:", "REQ-01:" field labels.</div>
+
+  <div class="blueprint-preview">
+    <div class="corner-bl"></div>
+    <div class="corner-br"></div>
+
+    <div class="bp-label">SPECIFICATION SHEET — REV 01</div>
+    <div class="bp-divider"></div>
+
+    <div class="bp-title">PERCEPTION TRIAGE ENGINEER</div>
+    <div style="display:flex;gap:24px;margin-bottom:6px;">
+      <div>
+        <div class="bp-label">CLIENT</div>
+        <div class="bp-value">APPLE</div>
+      </div>
+      <div>
+        <div class="bp-label">LOCATION</div>
+        <div class="bp-value">CUPERTINO, CA</div>
+      </div>
+      <div>
+        <div class="bp-label">PERIOD</div>
+        <div class="bp-value">JUN 2025 — NOV 2025</div>
+      </div>
+    </div>
+
+    <div class="bp-divider"></div>
+    <div class="bp-label">SCOPE</div>
+    <div style="font-size:11px;margin-bottom:8px;line-height:1.5;">Selected into a program only the top 10% of the company is accepted into. Triaged perception system issues across the product integrity pipeline.</div>
+
+    <div class="bp-label">REQUIREMENTS</div>
+    <div class="bp-req"><span class="bp-req-num">REQ-01</span> Led weekly triage meetings with Product Integrity team</div>
+    <div class="bp-req"><span class="bp-req-num">REQ-02</span> Helped QE team understand system behavior</div>
+    <div class="bp-req"><span class="bp-req-num">REQ-03</span> Identified recurring issue pattern across radars</div>
+
+    <div class="bp-nav">
+      <button>◄ PREV SHEET</button>
+      <span style="font-size:10px;color:#5ba3d9;">SHEET 1 OF 3</span>
+      <button>NEXT SHEET ►</button>
+    </div>
+
+    <div class="title-block">
+      DRAWN BY: O. MENDIVIL<br>
+      DATE: 2025<br>
+      REV: 01
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- THEME 4: NEWSPAPER -->
+<div class="theme-section">
+  <div class="theme-label">Theme 4 — Newspaper</div>
+  <div class="theme-title">Broadsheet Front Page</div>
+  <div class="theme-desc">Cream newsprint with blackletter masthead, serif column typography, dateline, headline, "EXTRA!" badge. The newspaper "unfolds" on scroll reveal.</div>
+
+  <div class="newspaper-preview">
+    <div class="masthead">
+      <h2>The Mendivil Times</h2>
+      <div class="tagline">"All the experience that's fit to ship"</div>
+      <div class="edition">
+        <span>Vol. I, No. 1</span>
+        <span>Cupertino, California</span>
+        <span>June 2025</span>
+      </div>
+    </div>
+
+    <div class="dateline">CUPERTINO, CA — Jun. 2025</div>
+    <div class="headline">Triage Engineer Selected for Top 10% Career Program at Apple</div>
+    <div class="subhead">Perception system issues triaged across product integrity pipeline</div>
+
+    <div class="article-body">
+      <div class="badge-news">EXTRA</div>
+      <p>In a program that accepts only the top 10% of Apple's workforce, Omar Mendivil served as a Perception Triage Engineer, leading weekly triage meetings with the Product Integrity team.</p>
+      <p style="margin-top:8px;">He analyzed radar data, communicated issues to engineers, and helped the QE team better understand system behavior — reducing unnecessary radars and making testing more targeted.</p>
+      <p style="margin-top:8px;">Most notably, he identified a recurring issue pattern across multiple radars that helped engineers isolate and fix a critical perception bug.</p>
+    </div>
+
+    <div class="np-nav">
+      <a>◄ Previous story</a>
+      <span style="color:#888;">Page 1 of 3</span>
+      <a>Next story ►</a>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SUMMARY -->
+<div style="padding: 40px; max-width: 800px; margin: 0 auto; text-align: center;">
+  <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">How It Works</h2>
+  <p style="font-size: 13px; color: #888; max-width: 500px; margin: 0 auto; line-height: 1.6;">
+    Theme selector buttons sit near the experience section. Clicking one morphs the entire presentation — frame, typography, colors, layout — while the data stays the same. Each theme uses only CSS class swapping + different font loading. Zero layout shift, instant switch.
+  </p>
+</div>
+
+</body>
+</html>

@@ -9,6 +9,65 @@
   --muted: #6c6355;
   --accent: #2d6f66;
   --accent-soft: #dce9e6;
+
+  /* Ambient: Noise */
+  --noise-opacity: 0.025;
+  --noise-blend: multiply;
+  --noise-invert: 0;
+
+  /* Ambient: Aurora */
+  --aurora-1: rgba(45, 111, 102, 0.08);
+  --aurora-2: rgba(180, 140, 100, 0.06);
+  --aurora-3: rgba(140, 120, 180, 0.05);
+  --aurora-blur: 140px;
+
+  /* Ambient: Cursor glow */
+  --cursor-glow-color: rgba(45, 111, 102, 0.06);
+  --cursor-glow-size: 600px;
+
+  /* Ambient: Scroll wash */
+  --wash-hero: rgba(45, 111, 102, 0.04);
+  --wash-projects: rgba(100, 80, 160, 0.03);
+  --wash-code: rgba(180, 140, 80, 0.03);
+  --wash-experience: rgba(45, 111, 102, 0.03);
+  --wash-contact: rgba(80, 120, 160, 0.03);
+
+  /* Ambient: Dot grid */
+  --dot-color: rgba(23, 20, 17, 0.10);
+  --dot-size: 1px;
+  --dot-gap: 24px;
+
+  /* Syntax highlighting — light mode (GitHub-inspired) */
+  --syn-keyword: #8250df;
+  --syn-string: #0a3069;
+  --syn-type: #953800;
+  --syn-function: #8250df;
+  --syn-number: #0550ae;
+  --syn-comment: #6e7781;
+  --syn-property: #953800;
+  --syn-punctuation: #24292f;
+  --syn-plain: #24292f;
+
+  /* Retro monitor — light mode */
+  --monitor-bg: linear-gradient(180deg, #e0d8c8 0%, #d4c8a0 3%, #c8b88a 50%, #b0a070 100%);
+  --monitor-chin-text: #8a7a5a;
+  --monitor-stand: linear-gradient(180deg, #a89868, #c8b88a);
+  --monitor-base: linear-gradient(180deg, #c8b88a, #a89868);
+
+  /* Editor chrome — light mode */
+  --editor-bg: #fafafa;
+  --editor-tab-bg: #f0f0f0;
+  --editor-border: rgba(0, 0, 0, 0.08);
+  --syn-operator: #0550ae;
+
+  /* Diff colors — light mode */
+  --diff-add-bg: #e6ffec;
+  --diff-add-text: #1a7f37;
+  --diff-del-bg: #ffebe9;
+  --diff-del-text: #cf222e;
+  --diff-border: #d0d7de;
+  --diff-header-bg: #f6f8fa;
+  --diff-bg: #ffffff;
 }
 
 .dark {
@@ -20,6 +79,65 @@
   --muted: #afa798;
   --accent: #8ac9bd;
   --accent-soft: #213733;
+
+  /* Ambient: Noise */
+  --noise-opacity: 0.04;
+  --noise-blend: soft-light;
+  --noise-invert: 1;
+
+  /* Ambient: Aurora */
+  --aurora-1: rgba(138, 201, 189, 0.15);
+  --aurora-2: rgba(120, 80, 200, 0.12);
+  --aurora-3: rgba(80, 160, 200, 0.10);
+  --aurora-blur: 100px;
+
+  /* Ambient: Cursor glow */
+  --cursor-glow-color: rgba(138, 201, 189, 0.08);
+  --cursor-glow-size: 600px;
+
+  /* Ambient: Scroll wash */
+  --wash-hero: rgba(138, 201, 189, 0.06);
+  --wash-projects: rgba(140, 100, 220, 0.05);
+  --wash-code: rgba(200, 170, 100, 0.04);
+  --wash-experience: rgba(138, 201, 189, 0.04);
+  --wash-contact: rgba(100, 160, 220, 0.04);
+
+  /* Ambient: Dot grid */
+  --dot-color: rgba(243, 240, 233, 0.07);
+  --dot-size: 1px;
+  --dot-gap: 24px;
+
+  /* Syntax highlighting — dark mode (One Dark Pro) */
+  --syn-keyword: #c678dd;
+  --syn-string: #98c379;
+  --syn-type: #e5c07b;
+  --syn-function: #61afef;
+  --syn-number: #d19a66;
+  --syn-comment: #5c6370;
+  --syn-property: #e06c75;
+  --syn-punctuation: #abb2bf;
+  --syn-plain: #abb2bf;
+
+  /* Retro monitor — dark mode */
+  --monitor-bg: linear-gradient(180deg, #4a4a4a 0%, #3d3d3d 3%, #353535 50%, #2a2a2a 100%);
+  --monitor-chin-text: #666;
+  --monitor-stand: linear-gradient(180deg, #333, #2a2a2a);
+  --monitor-base: linear-gradient(180deg, #2a2a2a, #222);
+
+  /* Editor chrome — dark mode */
+  --editor-bg: #282c34;
+  --editor-tab-bg: #21252b;
+  --editor-border: rgba(255, 255, 255, 0.06);
+  --syn-operator: #56b6c2;
+
+  /* Diff colors — dark mode */
+  --diff-add-bg: rgba(63, 185, 80, 0.15);
+  --diff-add-text: #3fb950;
+  --diff-del-bg: rgba(248, 81, 73, 0.15);
+  --diff-del-text: #f85149;
+  --diff-border: #30363d;
+  --diff-header-bg: #161b22;
+  --diff-bg: #0d1117;
 }
 
 @theme inline {
@@ -51,10 +169,6 @@
     min-height: 100vh;
     overflow-x: clip;
     background-color: var(--background);
-    background-image:
-      radial-gradient(circle at top left, rgba(45, 111, 102, 0.08), transparent 24%),
-      radial-gradient(circle at top right, rgba(255, 255, 255, 0.42), transparent 28%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 28%);
     color: var(--text);
     font-family: var(--font-manrope), sans-serif;
     text-rendering: optimizeLegibility;
@@ -168,6 +282,16 @@
     min-width: 0;
   }
 
+  .dot-grid {
+    background-image: radial-gradient(
+      circle,
+      var(--dot-color) var(--dot-size),
+      transparent var(--dot-size)
+    );
+    background-size: var(--dot-gap) var(--dot-gap);
+    background-position: center center;
+  }
+
   .nav-scroll-edge {
     -webkit-mask-image: linear-gradient(
       90deg,
@@ -215,6 +339,11 @@
 /* Conic gradient orbits behind the Inner Stage. The Outer Shell
    clips with overflow-hidden and the opaque Inner Stage covers
    the center — gradient only visible in the Outer Shell padding. */
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
 
 @keyframes border-orbit {
   0%   { transform: translate(-50%, -50%) rotate(0deg); }
