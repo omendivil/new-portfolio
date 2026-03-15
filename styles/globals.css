@@ -36,6 +36,26 @@
   --dot-color: rgba(23, 20, 17, 0.10);
   --dot-size: 1px;
   --dot-gap: 24px;
+
+  /* Syntax highlighting — light mode (GitHub-inspired) */
+  --syn-keyword: #8250df;
+  --syn-string: #0a3069;
+  --syn-type: #953800;
+  --syn-function: #8250df;
+  --syn-number: #0550ae;
+  --syn-comment: #6e7781;
+  --syn-property: #953800;
+  --syn-punctuation: #24292f;
+  --syn-plain: #24292f;
+
+  /* Diff colors — light mode */
+  --diff-add-bg: #e6ffec;
+  --diff-add-text: #1a7f37;
+  --diff-del-bg: #ffebe9;
+  --diff-del-text: #cf222e;
+  --diff-border: #d0d7de;
+  --diff-header-bg: #f6f8fa;
+  --diff-bg: #ffffff;
 }
 
 .dark {
@@ -74,6 +94,26 @@
   --dot-color: rgba(243, 240, 233, 0.07);
   --dot-size: 1px;
   --dot-gap: 24px;
+
+  /* Syntax highlighting — dark mode (One Dark Pro) */
+  --syn-keyword: #c678dd;
+  --syn-string: #98c379;
+  --syn-type: #e5c07b;
+  --syn-function: #61afef;
+  --syn-number: #d19a66;
+  --syn-comment: #5c6370;
+  --syn-property: #e06c75;
+  --syn-punctuation: #abb2bf;
+  --syn-plain: #abb2bf;
+
+  /* Diff colors — dark mode */
+  --diff-add-bg: rgba(63, 185, 80, 0.15);
+  --diff-add-text: #3fb950;
+  --diff-del-bg: rgba(248, 81, 73, 0.15);
+  --diff-del-text: #f85149;
+  --diff-border: #30363d;
+  --diff-header-bg: #161b22;
+  --diff-bg: #0d1117;
 }
 
 @theme inline {
