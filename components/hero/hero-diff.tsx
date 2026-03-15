@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence } from "framer-motion";
-import { useCallback, useSyncExternalStore, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { useMotionPreference } from "@/lib/motion";
 
@@ -10,33 +10,31 @@ import { DiffView } from "./diff-view";
 
 const STORAGE_KEY = "portfolio-build-seen";
 
-const emptySubscribe = () => () => {};
+let firstVisitChecked = false;
+let isFirstVisit = false;
 
-function useFirstVisit(): boolean {
-  return useSyncExternalStore(
-    emptySubscribe,
-    () => {
-      try {
-        const seen = sessionStorage.getItem(STORAGE_KEY);
-        if (!seen) {
-          sessionStorage.setItem(STORAGE_KEY, "1");
-          return true;
-        }
-        return false;
-      } catch {
-        return true;
-      }
-    },
-    () => false,
-  );
+function getIsFirstVisit(): boolean {
+  if (firstVisitChecked) return isFirstVisit;
+  firstVisitChecked = true;
+  if (typeof window === "undefined") return false;
+  try {
+    const seen = sessionStorage.getItem(STORAGE_KEY);
+    if (!seen) {
+      sessionStorage.setItem(STORAGE_KEY, "1");
+      isFirstVisit = true;
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
 }
 
 export function HeroDiff() {
-  const isFirstVisit = useFirstVisit();
   const { reduceMotion } = useMotionPreference();
+  const shouldShowTerminal = getIsFirstVisit() && !reduceMotion;
   const [dismissed, setDismissed] = useState(false);
-
-  const terminalVisible = isFirstVisit && !reduceMotion && !dismissed;
+  const terminalVisible = shouldShowTerminal && !dismissed;
 
   const handleTerminalComplete = useCallback(() => {
     setDismissed(true);
