@@ -1,5 +1,5 @@
 import { CodeEditorSection } from "@/components/code-editor/code-editor-section";
-import { ExperienceCardStack } from "@/components/experience/experience-card-stack";
+import { RetroComputer } from "@/components/experience/retro-computer";
 import { HeroDiff } from "@/components/hero/hero-diff";
 import { StickyNav } from "@/components/navigation/sticky-nav";
 import { ProjectsSection } from "@/components/sections/projects-section";
@@ -26,7 +26,7 @@ export function HomePage() {
             Experience
           </div>
         </div>
-        <ExperienceCardStack experiences={experience} />
+        <RetroComputer experiences={experience} />
       </section>
     </main>
   );
