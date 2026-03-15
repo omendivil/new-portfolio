@@ -151,7 +151,6 @@ function EditorContent({
                 setPaused(true);
               } else {
                 setPaused(false);
-                onComplete();
               }
             }}
             className="rounded px-2 py-0.5 font-mono text-[9px] transition-colors hover:brightness-125 sm:text-[10px]"
@@ -439,18 +438,15 @@ export function CodeEditorAnimation() {
             border: "1px solid rgba(255,255,255,0.04)",
           }}
         >
-          <div className="flex items-start gap-2">
-            <span style={{ color: "#5c6370" }}>
-              {new Date().toLocaleTimeString("en-US", { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" })}
-            </span>
+          <div>
             <span style={{ color: "#28c840" }}>{logEntry.level}</span>
-            <span style={{ color: "#5c6370" }}>[</span>
+            <span style={{ color: "#5c6370" }}> [</span>
             <span style={{ color: "#528bff" }}>{logEntry.tag}</span>
-            <span style={{ color: "#5c6370" }}>]</span>
+            <span style={{ color: "#5c6370" }}>] </span>
             <span style={{ color: "#abb2bf" }}>{logEntry.message}</span>
           </div>
-          <div className="mt-0.5 pl-[4.5rem]">
-            <span style={{ color: "#5c6370" }}>↳ </span>
+          <div className="mt-0.5">
+            <span style={{ color: "#5c6370" }}>  ↳ </span>
             <span style={{ color: "#666" }}>{logEntry.detail}</span>
           </div>
         </div>

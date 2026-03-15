@@ -81,7 +81,7 @@ export function BuildTerminal({ onComplete }: BuildTerminalProps) {
         transition: { duration: 0.5, ease: motionEase },
       }}
     >
-      <div className="w-full max-w-lg overflow-hidden rounded-xl border border-[#30363d] bg-[#0d1117] shadow-2xl">
+      <div className="mx-4 w-full max-w-md overflow-hidden rounded-xl border border-[#30363d] bg-[#0d1117] shadow-2xl sm:mx-0 sm:max-w-lg">
         {/* Title bar */}
         <div className="flex items-center gap-2 border-b border-[#30363d] px-3 py-2">
           <div className="flex gap-1.5">
