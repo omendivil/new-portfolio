@@ -272,8 +272,8 @@ function PixelBattle() {
               height: 36,
               background: "#ff2020",
               boxShadow: "0 0 14px rgba(255,32,32,0.8), 0 0 28px rgba(255,32,32,0.3)",
-              left: -20,
-              top: -4,
+              left: -28,
+              top: -6,
               transformOrigin: "50% 90%",
             }}
             animate={{ rotate: [-35, -10, -35] }}
