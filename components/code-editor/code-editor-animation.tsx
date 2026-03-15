@@ -8,6 +8,13 @@ import { CODE_EDITOR_DWELL_TIME, CODE_SNIPPETS, type CodeSnippet } from "@/data/
 import { TypedCode } from "./typed-code";
 import { useTypingAnimation } from "./use-typing-animation";
 
+const LANGUAGE_LABELS: Record<string, string> = {
+  tsx: "TypeScript",
+  swift: "Swift",
+  jsx: "JavaScript",
+  bash: "Bash",
+};
+
 function EditorContent({
   snippet,
   onComplete,
@@ -17,7 +24,7 @@ function EditorContent({
 }) {
   const { charIndex, isComplete } = useTypingAnimation(
     snippet.lines,
-    snippet.typingSpeed ?? 15,
+    snippet.typingSpeed ?? 25,
   );
 
   return (
@@ -37,32 +44,52 @@ function EditorContent({
         </div>
       </div>
 
-      {/* Progress bar + project label */}
+      {/* Bottom bar: project name left, circular timer right */}
       <div
         className="flex items-center justify-between px-3 py-2 sm:px-4"
         style={{ borderTop: "1px solid var(--editor-border, rgba(255,255,255,0.06))" }}
       >
         <span className="font-mono text-[10px] sm:text-[11px]" style={{ color: "#5c6370" }}>
-          {snippet.projectName} / {snippet.filename}
+          {snippet.projectName}
         </span>
-      </div>
 
-      {/* Auto-advance progress bar */}
-      <div className="h-[2px]" style={{ background: "var(--editor-border, rgba(255,255,255,0.06))" }}>
-        <motion.div
-          className="h-full"
-          style={{ background: "linear-gradient(90deg, #528bff, #c678dd)" }}
-          initial={{ width: "0%" }}
-          animate={isComplete ? { width: "100%" } : { width: "0%" }}
-          transition={
-            isComplete
-              ? { duration: CODE_EDITOR_DWELL_TIME / 1000, ease: "linear" }
-              : { duration: 0 }
-          }
-          onAnimationComplete={() => {
-            if (isComplete) onComplete();
-          }}
-        />
+        {/* Circular timer */}
+        <div className="relative h-5 w-5">
+          <svg className="h-5 w-5 -rotate-90" viewBox="0 0 20 20">
+            <circle
+              cx="10"
+              cy="10"
+              r="8"
+              fill="none"
+              stroke="rgba(255,255,255,0.06)"
+              strokeWidth="2"
+            />
+            <motion.circle
+              cx="10"
+              cy="10"
+              r="8"
+              fill="none"
+              stroke="#528bff"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeDasharray={2 * Math.PI * 8}
+              initial={{ strokeDashoffset: 2 * Math.PI * 8 }}
+              animate={
+                isComplete
+                  ? { strokeDashoffset: 0 }
+                  : { strokeDashoffset: 2 * Math.PI * 8 }
+              }
+              transition={
+                isComplete
+                  ? { duration: CODE_EDITOR_DWELL_TIME / 1000, ease: "linear" }
+                  : { duration: 0 }
+              }
+              onAnimationComplete={() => {
+                if (isComplete) onComplete();
+              }}
+            />
+          </svg>
+        </div>
       </div>
     </>
   );
@@ -80,12 +107,42 @@ export function CodeEditorAnimation() {
     setActiveTab(index);
   }, []);
 
+  // Collect unique languages from snippets
+  const languages = CODE_SNIPPETS.map((s) => ({
+    key: s.language,
+    label: LANGUAGE_LABELS[s.language] ?? s.language,
+  })).filter((v, i, a) => a.findIndex((t) => t.key === v.key) === i);
+
   return (
     <div className="mx-auto w-full max-w-2xl sm:max-w-3xl lg:max-w-4xl">
-      <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.15em] text-muted/50">
-        from my projects
+      {/* Section heading */}
+      <div className="mb-6">
+        <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.15em] text-muted/50">
+          Skills & Languages
+        </div>
+
+        {/* Language badges */}
+        <div className="flex flex-wrap gap-2">
+          {languages.map((lang) => {
+            const isActive = snippet.language === lang.key;
+            return (
+              <span
+                key={lang.key}
+                className="rounded-md px-2.5 py-1 font-mono text-[11px] transition-all sm:text-xs"
+                style={{
+                  background: isActive ? "rgba(82, 139, 255, 0.12)" : "rgba(255,255,255,0.03)",
+                  border: `1px solid ${isActive ? "rgba(82, 139, 255, 0.3)" : "rgba(255,255,255,0.06)"}`,
+                  color: isActive ? "#528bff" : "#5c6370",
+                }}
+              >
+                {lang.label}
+              </span>
+            );
+          })}
+        </div>
       </div>
 
+      {/* Editor container with glow */}
       <div
         className="overflow-hidden rounded-xl"
         style={{
@@ -133,6 +190,11 @@ export function CodeEditorAnimation() {
           snippet={snippet}
           onComplete={advanceTab}
         />
+      </div>
+
+      {/* Subtle context line */}
+      <div className="mt-3 text-center font-mono text-[10px] text-muted/30 sm:text-[11px]">
+        real code from real projects
       </div>
     </div>
   );
