@@ -465,11 +465,11 @@ export function CodeEditorAnimation() {
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); handleCloseTab(i); }}
-                className="mr-1 flex h-4 w-4 items-center justify-center rounded opacity-40 transition-opacity hover:bg-white/10 hover:opacity-100"
-                style={{ color: "#5c6370" }}
+                className="mr-1.5 flex h-5 w-5 items-center justify-center rounded opacity-60 transition-opacity hover:bg-white/10 hover:opacity-100"
+                style={{ color: "#ffffff" }}
                 aria-label={`Close ${s.filename}`}
               >
-                <X className="h-2.5 w-2.5" />
+                <X className="h-3 w-3" />
               </button>
               {i === activeTab && (
                 <motion.div
