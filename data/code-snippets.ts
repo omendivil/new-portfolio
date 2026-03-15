@@ -172,6 +172,63 @@ export const CODE_SNIPPETS: CodeSnippet[] = [
   },
 ];
 
+// Bonus snippets — revealed when user clicks "+" on the tab bar
+export const BONUS_SNIPPETS: CodeSnippet[] = [
+  // Order.swift — Appetizer App
+  {
+    filename: "Order.swift",
+    language: "swift",
+    projectName: "Appetizer App",
+    lines: [
+      [kw("final"), plain(" "), kw("class"), plain(" "), typ("Order"), op(":"), plain(" "), typ("ObservableObject"), plain(" "), punc("{")],
+      [plain("    "), dec("@Published"), plain(" "), kw("var"), plain(" items"), op(":"), plain(" "), punc("["), typ("Appetizer"), punc("]"), plain(" "), op("="), plain(" "), punc("["), punc("]")],
+      [plain("")],
+      [plain("    "), kw("var"), plain(" totalPrice"), op(":"), plain(" "), typ("Double"), plain(" "), punc("{")],
+      [plain("        items."), fn("reduce"), punc("("), num("0"), punc(")"), plain(" "), punc("{"), plain(" $0 "), op("+"), plain(" $1.price "), punc("}")],
+      [plain("    "), punc("}")],
+      [plain("")],
+      [plain("    "), kw("func"), plain(" "), fn("add"), punc("("), plain("_ appetizer"), op(":"), plain(" "), typ("Appetizer"), punc(")"), plain(" "), punc("{")],
+      [plain("        items."), fn("append"), punc("("), plain("appetizer"), punc(")")],
+      [plain("    "), punc("}")],
+      [plain("")],
+      [plain("    "), kw("func"), plain(" "), fn("deleteItems"), punc("("), plain("at offsets"), op(":"), plain(" "), typ("IndexSet"), punc(")"), plain(" "), punc("{")],
+      [plain("        items."), fn("remove"), punc("("), plain("atOffsets"), op(":"), plain(" offsets"), punc(")")],
+      [plain("    "), punc("}")],
+      [punc("}")],
+    ],
+  },
+
+  // Slot.js — Anime YouTube App
+  {
+    filename: "Slot.js",
+    language: "jsx",
+    projectName: "Anime YouTube App",
+    lines: [
+      [kw("export"), plain(" "), kw("default"), plain(" "), kw("function"), plain(" "), fn("Slot"), punc("("), punc("{"), plain(" anime "), punc("}"), punc(")"), plain(" "), punc("{")],
+      [plain("  "), kw("if"), plain(" "), punc("("), op("!"), plain("anime"), punc(")"), plain(" "), punc("{")],
+      [plain("    "), kw("return"), plain(" "), punc("(")],
+      [plain("      "), op("<"), plain("div"), op(">")],
+      [plain("        "), op("<"), plain("div "), prop("className"), op("="), str('"aspect-2/3 rounded-sm bg-[#19222E]"'), plain(" "), op("/"), op(">")],
+      [plain("      "), op("<"), op("/"), plain("div"), op(">")],
+      [plain("    "), punc(")")],
+      [plain("  "), punc("}")],
+      [plain("  "), kw("return"), plain(" "), punc("(")],
+      [plain("    "), op("<"), plain("div"), op(">")],
+      [plain("      "), op("<"), plain("img "), prop("src"), op("="), punc("{"), plain("anime.images.jpg.image_url"), punc("}")],
+      [plain("        "), prop("className"), op("="), str('"aspect-2/3 rounded-sm"'), plain(" "), op("/"), op(">")],
+      [plain("      "), op("<"), plain("p "), prop("className"), op("="), str('"line-clamp-2 text-xs"'), op(">")],
+      [plain("        "), punc("{"), plain("anime.title_english"), punc("}")],
+      [plain("      "), op("<"), op("/"), plain("p"), op(">")],
+      [plain("    "), op("<"), op("/"), plain("div"), op(">")],
+      [plain("  "), punc(")")],
+      [punc("}")],
+    ],
+  },
+];
+
+// Helper for bonus snippets that need decorator type
+function dec(t: string): CodeToken { return { text: t, type: "decorator" }; }
+
 export const CODE_EDITOR_DWELL_TIME = 4000;
 
 export const TOKEN_COLORS: Record<TokenType, string> = {
