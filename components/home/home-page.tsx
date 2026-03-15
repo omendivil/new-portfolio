@@ -1,3 +1,4 @@
+import { CodeEditorSection } from "@/components/code-editor/code-editor-section";
 import { HeroDiff } from "@/components/hero/hero-diff";
 import { StickyNav } from "@/components/navigation/sticky-nav";
 import { ExperienceSection } from "@/components/sections/experience-section";
@@ -15,8 +16,11 @@ export function HomePage() {
       </a>
       <StickyNav sections={navSections} />
       <HeroDiff />
-      <div className="mx-auto max-w-6xl space-y-4 px-2.5 sm:space-y-5 sm:px-4 lg:space-y-6">
+      <div className="mx-auto max-w-6xl px-2.5 sm:px-4">
         <ProjectsSection />
+      </div>
+      <CodeEditorSection />
+      <div className="mx-auto max-w-6xl px-2.5 sm:px-4">
         <ExperienceSection />
       </div>
     </main>

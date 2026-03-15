@@ -48,6 +48,12 @@
   --syn-punctuation: #24292f;
   --syn-plain: #24292f;
 
+  /* Editor chrome — light mode */
+  --editor-bg: #fafafa;
+  --editor-tab-bg: #f0f0f0;
+  --editor-border: rgba(0, 0, 0, 0.08);
+  --syn-operator: #0550ae;
+
   /* Diff colors — light mode */
   --diff-add-bg: #e6ffec;
   --diff-add-text: #1a7f37;
@@ -105,6 +111,12 @@
   --syn-property: #e06c75;
   --syn-punctuation: #abb2bf;
   --syn-plain: #abb2bf;
+
+  /* Editor chrome — dark mode */
+  --editor-bg: #282c34;
+  --editor-tab-bg: #21252b;
+  --editor-border: rgba(255, 255, 255, 0.06);
+  --syn-operator: #56b6c2;
 
   /* Diff colors — dark mode */
   --diff-add-bg: rgba(63, 185, 80, 0.15);
