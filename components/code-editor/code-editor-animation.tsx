@@ -94,6 +94,7 @@ function EditorContent({
     snippet.lines,
     snippet.typingSpeed ?? 25,
   );
+  const [paused, setPaused] = useState(false);
 
   return (
     <>
@@ -109,9 +110,9 @@ function EditorContent({
         <div className="relative flex-1 overflow-x-auto py-4 pr-4 font-mono text-[11px] leading-[1.7em] sm:text-xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <TypedCode
             lines={snippet.lines}
-            charIndex={charIndex}
-            isComplete={isComplete}
-            showGhost={!isComplete}
+            charIndex={paused ? totalChars : charIndex}
+            isComplete={paused || isComplete}
+            showGhost={!paused && !isComplete}
           />
         </div>
       </div>
@@ -124,7 +125,7 @@ function EditorContent({
           <span className="font-mono text-[10px] sm:text-[11px]" style={{ color: "#5c6370" }}>
             {snippet.projectName}
           </span>
-          {!isComplete && (
+          {!isComplete && !paused && (
             <button
               type="button"
               onClick={() => skip(totalChars)}
@@ -140,18 +141,45 @@ function EditorContent({
           )}
         </div>
 
-        <div className="relative h-5 w-5">
-          <svg className="h-5 w-5 -rotate-90" viewBox="0 0 20 20">
-            <circle cx="10" cy="10" r="8" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="2" />
-            <motion.circle
-              cx="10" cy="10" r="8" fill="none" stroke="#528bff" strokeWidth="2" strokeLinecap="round"
-              strokeDasharray={2 * Math.PI * 8}
-              initial={{ strokeDashoffset: 2 * Math.PI * 8 }}
-              animate={isComplete ? { strokeDashoffset: 0 } : { strokeDashoffset: 2 * Math.PI * 8 }}
-              transition={isComplete ? { duration: CODE_EDITOR_DWELL_TIME / 1000, ease: "linear" } : { duration: 0 }}
-              onAnimationComplete={() => { if (isComplete) onComplete(); }}
-            />
-          </svg>
+        <div className="flex items-center gap-2">
+          {/* Show & pause / resume button */}
+          <button
+            type="button"
+            onClick={() => {
+              if (!paused) {
+                skip(totalChars);
+                setPaused(true);
+              } else {
+                setPaused(false);
+                onComplete();
+              }
+            }}
+            className="rounded px-2 py-0.5 font-mono text-[9px] transition-colors hover:brightness-125 sm:text-[10px]"
+            style={{
+              background: paused ? "rgba(40, 200, 64, 0.1)" : "rgba(255,255,255,0.04)",
+              border: `1px solid ${paused ? "rgba(40, 200, 64, 0.25)" : "rgba(255,255,255,0.08)"}`,
+              color: paused ? "#28c840" : "#5c6370",
+            }}
+          >
+            {paused ? "▸ resume" : "⏸ pause"}
+          </button>
+
+          {/* Circular timer */}
+          <div className="relative h-5 w-5">
+            <svg className="h-5 w-5 -rotate-90" viewBox="0 0 20 20">
+              <circle cx="10" cy="10" r="8" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="2" />
+              {!paused && (
+                <motion.circle
+                  cx="10" cy="10" r="8" fill="none" stroke="#528bff" strokeWidth="2" strokeLinecap="round"
+                  strokeDasharray={2 * Math.PI * 8}
+                  initial={{ strokeDashoffset: 2 * Math.PI * 8 }}
+                  animate={isComplete ? { strokeDashoffset: 0 } : { strokeDashoffset: 2 * Math.PI * 8 }}
+                  transition={isComplete ? { duration: CODE_EDITOR_DWELL_TIME / 1000, ease: "linear" } : { duration: 0 }}
+                  onAnimationComplete={() => { if (isComplete && !paused) onComplete(); }}
+                />
+              )}
+            </svg>
+          </div>
         </div>
       </div>
     </>

@@ -16,8 +16,8 @@ import { cn } from "@/lib/utils";
 
 const SWIPE_VELOCITY_THRESHOLD = 500;
 const SWIPE_DISTANCE_THRESHOLD = 100;
-const STACK_OFFSET = 8;
-const STACK_SCALE_STEP = 0.03;
+const STACK_OFFSET = 10;
+const STACK_SCALE_STEP = 0.035;
 
 type CardTheme = {
   gradient: string;
@@ -114,6 +114,8 @@ function SwipeCard({
   experience,
   stackIndex,
   isTop,
+  isDismissed,
+  dismissDirection,
   showWiggle,
   onDismiss,
   onAnimationDone,
@@ -122,6 +124,8 @@ function SwipeCard({
   experience: Experience;
   stackIndex: number;
   isTop: boolean;
+  isDismissed: boolean;
+  dismissDirection: 1 | -1 | null;
   showWiggle: boolean;
   onDismiss: (direction: 1 | -1) => void;
   onAnimationDone: () => void;
@@ -152,29 +156,40 @@ function SwipeCard({
     [animateCard, scope, onDismiss],
   );
 
+  // Dismissed cards stay off-screen, rewind brings them back
+  const animateTarget = isDismissed
+    ? {
+        x: (dismissDirection ?? 1) * (typeof window !== "undefined" ? window.innerWidth : 800) * 1.2,
+        rotate: (dismissDirection ?? 1) * 18,
+        opacity: 0,
+        y: 0,
+        scale: 1,
+      }
+    : showWiggle
+      ? { x: [0, -6, 6, -3, 3, 0], y: target.y, scale: target.scale, opacity: target.opacity }
+      : { x: 0, y: target.y, scale: target.scale, opacity: target.opacity };
+
   return (
     <motion.div
       ref={scope}
       className="absolute inset-x-0 top-0"
-      animate={
-        showWiggle
-          ? { x: [0, -6, 6, -3, 3, 0], y: target.y, scale: target.scale, opacity: target.opacity }
-          : { x: 0, y: target.y, scale: target.scale, opacity: target.opacity }
-      }
+      animate={animateTarget}
       transition={
-        showWiggle
-          ? { x: { delay: 1.5, duration: 0.5, ease: "easeInOut" }, default: { type: "spring", stiffness: 300, damping: 25, mass: 0.8 } }
-          : { type: "spring", stiffness: 300, damping: 25, mass: 0.8 }
+        isDismissed
+          ? { duration: 0 }
+          : showWiggle
+            ? { x: { delay: 1.5, duration: 0.5, ease: "easeInOut" }, default: { type: "spring", stiffness: 300, damping: 25, mass: 0.8 } }
+            : { type: "spring", stiffness: 200, damping: 28, mass: 1 }
       }
       onAnimationComplete={() => {
         if (showWiggle) onWiggleDone();
         else onAnimationDone();
       }}
       style={{
-        zIndex: 30 - stackIndex * 10,
-        ...(isTop ? { x, rotate } : {}),
+        zIndex: isDismissed ? 0 : 30 - stackIndex * 10,
+        ...(isTop && !isDismissed ? { x, rotate } : {}),
       }}
-      {...(isTop
+      {...(isTop && !isDismissed
         ? {
             drag: "x" as const,
             dragSnapToOrigin: true,
@@ -185,17 +200,17 @@ function SwipeCard({
     >
       <article
         className={cn(
-          "overflow-hidden rounded-[1.6rem] border bg-gradient-to-br p-5 sm:p-6",
+          "overflow-hidden rounded-[1.8rem] border bg-gradient-to-br p-6 sm:p-8",
           "border-border/60 bg-background/80",
           theme?.gradient,
-          isTop && "cursor-grab active:cursor-grabbing",
+          isTop && !isDismissed && "cursor-grab active:cursor-grabbing",
           !isTop && "pointer-events-none",
         )}
       >
         {/* Badge */}
         {theme?.badge && (
           <div
-            className="absolute right-4 top-4 rounded-sm border-2 border-current px-2 py-0.5 font-mono text-[0.6rem] font-bold uppercase tracking-[0.2em] opacity-50"
+            className="absolute right-5 top-5 rounded-sm border-2 border-current px-2.5 py-1 font-mono text-[0.65rem] font-bold uppercase tracking-[0.2em] opacity-60 sm:right-7 sm:top-7"
             style={{ transform: `rotate(${theme.badge.rotation}deg)`, color: theme.accentColor }}
           >
             {theme.badge.label}
@@ -204,11 +219,11 @@ function SwipeCard({
 
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div className="space-y-1.5">
-            <h3 className="text-xl font-semibold tracking-[-0.03em] text-text">
+          <div className="space-y-2">
+            <h3 className="text-2xl font-bold tracking-[-0.03em] text-text sm:text-3xl">
               {experience.role}
             </h3>
-            <p className="text-sm text-muted">
+            <p className="text-sm text-muted sm:text-base">
               {experience.organization} · {experience.location}
             </p>
           </div>
@@ -217,29 +232,29 @@ function SwipeCard({
           </p>
         </div>
 
-        {/* Summary */}
-        <p className="mt-4 max-w-3xl text-sm leading-6 text-muted">
-          {experience.summary}
-        </p>
-
         {/* Stat */}
         {theme?.stat && (
-          <div className="mt-4 flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold tracking-tight" style={{ color: theme.accentColor }}>
+          <div className="mt-5 flex items-baseline gap-2">
+            <span className="text-3xl font-bold tracking-tight sm:text-4xl" style={{ color: theme.accentColor }}>
               {theme.stat.value}
             </span>
-            <span className="text-xs uppercase tracking-[0.15em] text-muted">
+            <span className="text-sm uppercase tracking-[0.12em] text-muted">
               {theme.stat.label}
             </span>
           </div>
         )}
 
+        {/* Summary */}
+        <p className="mt-4 max-w-3xl text-sm leading-7 text-muted sm:text-base sm:leading-7">
+          {experience.summary}
+        </p>
+
         {/* Bullets */}
-        <ul className="mt-5 space-y-2">
+        <ul className="mt-6 space-y-2.5">
           {experience.bullets.map((bullet) => (
             <li
               key={bullet}
-              className="rounded-xl border border-border/40 bg-surface/50 px-4 py-3 text-sm leading-6 text-text"
+              className="rounded-xl border border-border/40 bg-surface/50 px-5 py-3.5 text-sm leading-6 text-text sm:text-[15px]"
             >
               {bullet}
             </li>
@@ -322,18 +337,21 @@ export function ExperienceCardStack({ experiences }: ExperienceCardStackProps) {
       className="rounded-[1.6rem] outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-4 focus-visible:ring-offset-background"
     >
       {/* Card stack */}
-      <div className="relative" style={{ height: "calc(var(--card-height, 320px) + 20px)" }}>
+      <div className="relative min-h-[420px] sm:min-h-[380px]">
         {experiences.map((exp, i) => {
           const stackIndex = i - state.currentIndex;
-          const isVisible = stackIndex >= 0 && stackIndex < 3;
+          const isDismissed = stackIndex < 0;
+          const isVisible = (stackIndex >= 0 && stackIndex < 3) || isDismissed;
           if (!isVisible) return null;
 
           return (
             <SwipeCard
               key={exp.id}
               experience={exp}
-              stackIndex={stackIndex}
+              stackIndex={isDismissed ? 0 : stackIndex}
               isTop={stackIndex === 0}
+              isDismissed={isDismissed}
+              dismissDirection={state.dismissHistory.find((d) => d.index === i)?.direction ?? null}
               showWiggle={!state.hasWiggled && stackIndex === 0 && i === 0}
               onDismiss={handleDismiss}
               onAnimationDone={() => dispatch({ type: "ANIMATION_DONE" })}
@@ -344,7 +362,7 @@ export function ExperienceCardStack({ experiences }: ExperienceCardStackProps) {
 
         {/* All dismissed state */}
         {state.currentIndex >= total && (
-          <div className="flex h-full items-center justify-center">
+          <div className="flex min-h-[420px] items-center justify-center sm:min-h-[380px]">
             <p className="font-mono text-xs text-muted/40">swipe back or press ↑ to review</p>
           </div>
         )}
