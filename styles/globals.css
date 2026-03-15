@@ -316,6 +316,11 @@
    clips with overflow-hidden and the opaque Inner Stage covers
    the center — gradient only visible in the Outer Shell padding. */
 
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 @keyframes border-orbit {
   0%   { transform: translate(-50%, -50%) rotate(0deg); }
   100% { transform: translate(-50%, -50%) rotate(360deg); }

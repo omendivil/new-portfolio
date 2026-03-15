@@ -42,13 +42,6 @@ export function StickyNav({ sections }: StickyNavProps) {
 
           {/* Left: terminal prompt + nav links (desktop) */}
           <div className="flex items-center">
-            {/* Traffic lights + title (like a real terminal) */}
-            <div className="mr-4 hidden items-center gap-1.5 sm:flex">
-              <div className="h-[9px] w-[9px] rounded-full bg-[#ff5f57]/70" />
-              <div className="h-[9px] w-[9px] rounded-full bg-[#febc2e]/70" />
-              <div className="h-[9px] w-[9px] rounded-full bg-[#28c840]/70" />
-            </div>
-
             {/* Desktop breadcrumb */}
             <div className="hidden items-center font-mono text-[13px] sm:flex">
               <span className="font-medium text-accent">~/omar</span>
@@ -76,7 +69,7 @@ export function StickyNav({ sections }: StickyNavProps) {
                       {section.label.toLowerCase()}
                     </a>
                     {isActive && (
-                      <span className="ml-0.5 inline-block h-[14px] w-[1.5px] animate-pulse bg-accent" />
+                      <span className="ml-0.5 inline-block h-[14px] w-[1.5px] bg-accent animate-[blink_1s_step-end_infinite]" />
                     )}
                   </span>
                 );
@@ -138,7 +131,7 @@ export function StickyNav({ sections }: StickyNavProps) {
                       <span className="text-accent/50">›</span>
                       {section.label.toLowerCase()}
                       {isActive && (
-                        <span className="inline-block h-[13px] w-[1.5px] animate-pulse bg-accent" />
+                        <span className="inline-block h-[13px] w-[1.5px] bg-accent animate-[blink_1s_step-end_infinite]" />
                       )}
                     </a>
                   </motion.div>
