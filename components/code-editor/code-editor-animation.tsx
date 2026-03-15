@@ -178,35 +178,35 @@ function PixelSprite({ pixels, scale = 4 }: { pixels: string[]; scale?: number }
 }
 
 function PixelBattle() {
-  // Stormtrooper: white helmet with T-visor, body armor, blaster arm out right
+  // Stormtrooper: 9 wide, white helmet with black T-visor, armor, blaster arm pointing right
   const trooper = [
-    "..WWW..",
-    ".WWWWW.",
-    ".WB.BW.",
-    ".WBBBW.",
-    ".WWWWW.",
-    "..GGG..",
-    ".WWWWW.",
-    "WWWWWWG",
-    ".WW.WWG",
-    ".WW.WW.",
-    "..W..W.",
+    "..WWW....",
+    ".WWWWW...",
+    ".WB.BW...",
+    ".WBBBW...",
+    "..WWW....",
+    "..GGG....",
+    ".WWWWW...",
+    ".WWWWWWGG",
+    ".WW.WWGG.",
+    ".WW..WW..",
+    "..W...W..",
   ];
 
-  // Darth Vader: rounded dome helmet, chest panel with red lights, cape
+  // Darth Vader: 9 wide, black dome, mask with angular eyes, chest box with lights, cape
   const vader = [
-    "..KKK..",
-    ".KKKKK.",
-    "KKKKKKK",
-    "KKbKbKK",
-    "KKKKKKK",
-    ".KgggK.",
-    "DKKKKKD",
-    "DKRKRKD",
-    "DKKKKKD",
-    ".KK.KK.",
-    ".KK.KK.",
-    "..K..K.",
+    "...KKK...",
+    "..KKKKK..",
+    ".KKKKKKK.",
+    ".KKbKbKK.",
+    ".KKKKKKK.",
+    "..KgggK..",
+    "DKKKKKKK.",
+    "DKKRKRKK.",
+    "DKKKKKKK.",
+    "DKK..KKD.",
+    ".KK..KK..",
+    "..K...K..",
   ];
 
   return (
@@ -223,25 +223,19 @@ function PixelBattle() {
           <PixelSprite pixels={trooper} scale={4} />
         </div>
 
-        {/* Laser bolts flying from troopers toward Vader */}
-        <div className="absolute left-[28%] right-[28%] top-[30%] flex flex-col gap-5">
+        {/* Laser bolts — 2 bolts from blaster, stop before Vader */}
+        <div className="absolute left-[32%] top-[38%] flex flex-col gap-6">
+          <motion.div
+            className="h-[3px] w-10 rounded-full"
+            style={{ background: "#ff2020", boxShadow: "0 0 10px rgba(255,32,32,0.8), 0 0 20px rgba(255,32,32,0.3)" }}
+            animate={{ x: [0, 70, 70], opacity: [1, 1, 0] }}
+            transition={{ duration: 1.2, repeat: Infinity, delay: 0, times: [0, 0.7, 1] }}
+          />
           <motion.div
             className="h-[3px] w-8 rounded-full"
-            style={{ background: "#ff2020", boxShadow: "0 0 10px rgba(255,32,32,0.7), 0 0 20px rgba(255,32,32,0.3)" }}
-            animate={{ x: [0, 100], opacity: [1, 0.8, 0] }}
-            transition={{ duration: 0.9, repeat: Infinity, delay: 0 }}
-          />
-          <motion.div
-            className="h-[3px] w-6 rounded-full"
-            style={{ background: "#ff3030", boxShadow: "0 0 8px rgba(255,48,48,0.6)" }}
-            animate={{ x: [0, 80], y: [0, -15], opacity: [1, 0.8, 0] }}
-            transition={{ duration: 0.8, repeat: Infinity, delay: 0.6 }}
-          />
-          <motion.div
-            className="h-[3px] w-9 rounded-full"
-            style={{ background: "#ff2020", boxShadow: "0 0 10px rgba(255,32,32,0.6)" }}
-            animate={{ x: [0, 90], y: [0, 10], opacity: [1, 0.8, 0] }}
-            transition={{ duration: 1.0, repeat: Infinity, delay: 1.2 }}
+            style={{ background: "#ff3030", boxShadow: "0 0 8px rgba(255,48,48,0.7), 0 0 16px rgba(255,48,48,0.3)" }}
+            animate={{ x: [0, 65, 65], y: [0, -6, -6], opacity: [1, 1, 0] }}
+            transition={{ duration: 1.1, repeat: Infinity, delay: 0.7, times: [0, 0.7, 1] }}
           />
         </div>
 
