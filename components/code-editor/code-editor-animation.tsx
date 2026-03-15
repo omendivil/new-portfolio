@@ -466,7 +466,7 @@ export function CodeEditorAnimation() {
                 type="button"
                 onClick={(e) => { e.stopPropagation(); handleCloseTab(i); }}
                 className="mr-1.5 flex h-5 w-5 items-center justify-center rounded opacity-60 transition-opacity hover:bg-white/10 hover:opacity-100"
-                style={{ color: "#ffffff" }}
+                style={{ color: i === activeTab ? "#ffffff" : "#5c6370" }}
                 aria-label={`Close ${s.filename}`}
               >
                 <X className="h-3 w-3" />
