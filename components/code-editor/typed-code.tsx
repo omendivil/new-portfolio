@@ -7,10 +7,12 @@ type TypedCodeProps = {
   lines: CodeLine[];
   charIndex: number;
   isComplete: boolean;
+  showGhost?: boolean;
 };
 
+type TokenRender = { token: CodeToken; visible: number; total: number };
 type LineRenderState = {
-  tokens: Array<{ token: CodeToken; visible: number }>;
+  tokens: TokenRender[];
   showCursor: boolean;
 };
 
@@ -22,23 +24,22 @@ function computeRenderState(lines: CodeLine[], charIndex: number): LineRenderSta
   for (const line of lines) {
     if (remaining <= 0 && !cursorPlaced) {
       cursorPlaced = true;
-      result.push({ tokens: [], showCursor: true });
+      result.push({ tokens: line.map((t) => ({ token: t, visible: 0, total: t.text.length })), showCursor: true });
       continue;
     }
     if (remaining <= 0) {
-      result.push({ tokens: [], showCursor: false });
+      result.push({ tokens: line.map((t) => ({ token: t, visible: 0, total: t.text.length })), showCursor: false });
       continue;
     }
 
-    const tokens: LineRenderState["tokens"] = [];
+    const tokens: TokenRender[] = [];
     for (const token of line) {
-      if (remaining <= 0) break;
       const visible = Math.min(remaining, token.text.length);
       remaining -= token.text.length;
-      tokens.push({ token, visible });
+      tokens.push({ token, visible, total: token.text.length });
     }
 
-    remaining -= 1; // newline
+    remaining -= 1;
     const isCurrentLine = remaining <= 0 && !cursorPlaced;
     if (isCurrentLine) cursorPlaced = true;
 
@@ -60,7 +61,7 @@ const CompletedLine = memo(function CompletedLine({ tokens }: { tokens: CodeToke
   );
 });
 
-export function TypedCode({ lines, charIndex, isComplete }: TypedCodeProps) {
+export function TypedCode({ lines, charIndex, isComplete, showGhost }: TypedCodeProps) {
   const renderState = useMemo(
     () => computeRenderState(lines, charIndex),
     [lines, charIndex],
@@ -81,9 +82,20 @@ export function TypedCode({ lines, charIndex, isComplete }: TypedCodeProps) {
     <>
       {renderState.map((lineState, lineIdx) => (
         <div key={lineIdx} className="code-line min-h-[1.7em]">
-          {lineState.tokens.map(({ token, visible }, tokenIdx) => (
-            <span key={tokenIdx} style={{ color: TOKEN_COLORS[token.type] }}>
-              {token.text.substring(0, visible)}
+          {lineState.tokens.map(({ token, visible, total }, tokenIdx) => (
+            <span key={tokenIdx}>
+              {/* Typed portion */}
+              {visible > 0 && (
+                <span style={{ color: TOKEN_COLORS[token.type] }}>
+                  {token.text.substring(0, visible)}
+                </span>
+              )}
+              {/* Ghost portion — upcoming text shown faded */}
+              {showGhost && visible < total && (
+                <span style={{ color: TOKEN_COLORS[token.type], opacity: 0.15 }}>
+                  {token.text.substring(visible)}
+                </span>
+              )}
             </span>
           ))}
           {lineState.showCursor && (

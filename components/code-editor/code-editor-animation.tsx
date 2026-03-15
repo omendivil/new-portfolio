@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Plus } from "lucide-react";
+import { ChevronDown, Plus } from "lucide-react";
 import { useCallback, useState } from "react";
 
 import {
@@ -14,37 +14,48 @@ import {
 import { TypedCode } from "./typed-code";
 import { useTypingAnimation } from "./use-typing-animation";
 
-const ALL_LANGUAGES = [
-  "JavaScript",
-  "TypeScript",
-  "React",
-  "Swift",
-  "SwiftUI",
-  "Python",
-  "C",
-  "Java",
-  "Flutter",
-  "SQL",
-  "HTML/CSS",
-  "Bash",
-];
+const VISIBLE_LANGUAGES = ["TypeScript", "Swift", "JavaScript", "Python"];
+const HIDDEN_LANGUAGES = ["C", "Java", "SQL", "HTML/CSS", "Bash"];
 
 const SNIPPET_LANGUAGE_MAP: Record<string, string[]> = {
-  tsx: ["TypeScript", "React", "Next.js"],
-  swift: ["Swift", "SwiftUI"],
-  jsx: ["JavaScript", "React"],
+  tsx: ["TypeScript"],
+  swift: ["Swift"],
+  jsx: ["JavaScript"],
   bash: ["Bash"],
 };
 
-const SNIPPET_DESCRIPTIONS: Record<string, string> = {
-  "AnimatedText.tsx": "Scroll-triggered word-by-word text reveal with IntersectionObserver",
-  "MessageRow.swift": "Declarative chat bubble layout that mirrors based on message role",
-  "List.js": "Infinite scroll with IntersectionObserver and debounce cooldown",
-  "NetworkManager.swift": "Two-tier image cache with async/await network fallback",
-  "config.sh": "Safe config parser with regex validation — no eval",
-  "Order.swift": "ObservableObject cart model with computed total via reduce",
-  "Slot.js": "Skeleton-aware card component with shimmer placeholders",
+const SNIPPET_LOGS: Record<string, { tag: string; message: string }> = {
+  "AnimatedText.tsx": {
+    tag: "scroll-reveal",
+    message: "Word-by-word text animation triggered by IntersectionObserver — stagger delay computed per word index",
+  },
+  "MessageRow.swift": {
+    tag: "swiftui-layout",
+    message: "Chat bubble mirrors layout based on message.role — conditional Spacer + ternary modifiers for user vs AI styling",
+  },
+  "List.js": {
+    tag: "infinite-scroll",
+    message: "IntersectionObserver ref callback with cooldown guard prevents duplicate fetches during rapid scroll",
+  },
+  "NetworkManager.swift": {
+    tag: "image-cache",
+    message: "Three-tier cache waterfall: NSCache memory → URLCache disk → async network fetch with error handling",
+  },
+  "config.sh": {
+    tag: "shell-parser",
+    message: "Reads key=value config without eval — validates booleans and hex colors via regex, rejects unknown keys",
+  },
+  "Order.swift": {
+    tag: "state-model",
+    message: "ObservableObject cart with reduce-computed total — IndexSet deletion for SwiftUI list integration",
+  },
+  "Slot.js": {
+    tag: "skeleton-ui",
+    message: "Early-return skeleton branch renders shimmer placeholders while API data loads, swaps to real content on arrival",
+  },
 };
+
+const INITIAL_TAB_COUNT = 3;
 
 function EditorContent({
   snippet,
@@ -70,8 +81,13 @@ function EditorContent({
             <div key={i}>{i + 1}</div>
           ))}
         </div>
-        <div className="flex-1 overflow-x-auto py-4 pr-4 font-mono text-[11px] leading-[1.7em] sm:text-xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <TypedCode lines={snippet.lines} charIndex={charIndex} isComplete={isComplete} />
+        <div className="relative flex-1 overflow-x-auto py-4 pr-4 font-mono text-[11px] leading-[1.7em] sm:text-xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <TypedCode
+            lines={snippet.lines}
+            charIndex={charIndex}
+            isComplete={isComplete}
+            showGhost={!isComplete}
+          />
         </div>
       </div>
 
@@ -88,14 +104,14 @@ function EditorContent({
             <button
               type="button"
               onClick={() => skip(totalChars)}
-              className="rounded px-2 py-0.5 font-mono text-[9px] transition-colors hover:brightness-125 sm:text-[10px]"
+              className="rounded px-2 py-0.5 font-mono text-[9px] animate-[blink_2s_ease-in-out_infinite] sm:text-[10px]"
               style={{
                 background: "rgba(82, 139, 255, 0.1)",
                 border: "1px solid rgba(82, 139, 255, 0.2)",
                 color: "#528bff",
               }}
             >
-              ⌘ autofill
+              tab ⇥ autofill
             </button>
           )}
         </div>
@@ -121,36 +137,54 @@ function EditorContent({
 
 export function CodeEditorAnimation() {
   const [activeTab, setActiveTab] = useState(0);
-  const [showBonus, setShowBonus] = useState(false);
-
-  const allSnippets = showBonus ? [...CODE_SNIPPETS, ...BONUS_SNIPPETS] : CODE_SNIPPETS;
-  const snippet = allSnippets[activeTab];
+  const [revealedBonusCount, setRevealedBonusCount] = useState(0);
+  const [showAllLanguages, setShowAllLanguages] = useState(false);
 
   const advanceTab = useCallback(() => {
-    setActiveTab((prev) => (prev + 1) % allSnippets.length);
-  }, [allSnippets.length]);
+    setActiveTab((prev) => (prev + 1) % visibleSnippets.length);
+  }, [visibleSnippets.length]);
 
   const selectTab = useCallback((index: number) => {
     setActiveTab(index);
   }, []);
 
-  const handleShowBonus = useCallback(() => {
-    setShowBonus(true);
-  }, []);
+  const handleRevealNext = useCallback(() => {
+    const remainingMain = CODE_SNIPPETS.length - INITIAL_TAB_COUNT;
+    const totalRevealed = revealedBonusCount + 1;
 
-  const activeSkills = snippet ? (SNIPPET_LANGUAGE_MAP[snippet.language] ?? []) : [];
+    if (totalRevealed <= remainingMain) {
+      // Reveal from remaining main snippets
+      setRevealedBonusCount(totalRevealed);
+    } else {
+      // Reveal from bonus snippets
+      setRevealedBonusCount(totalRevealed);
+    }
+
+    // Navigate to the newly revealed tab
+    const newIndex = INITIAL_TAB_COUNT + revealedBonusCount;
+    setActiveTab(newIndex);
+  }, [revealedBonusCount]);
+
+  // Recalculate visible snippets with revealed items
+  const allAvailable = [...CODE_SNIPPETS, ...BONUS_SNIPPETS];
+  const displaySnippets = allAvailable.slice(0, INITIAL_TAB_COUNT + revealedBonusCount);
+  const currentSnippet = displaySnippets[activeTab] ?? displaySnippets[0];
+  const hasMore = INITIAL_TAB_COUNT + revealedBonusCount < allAvailable.length;
+
+  const activeSkills = currentSnippet ? (SNIPPET_LANGUAGE_MAP[currentSnippet.language] ?? []) : [];
+  const logEntry = currentSnippet ? SNIPPET_LOGS[currentSnippet.filename] : null;
 
   return (
     <div className="mx-auto w-full max-w-2xl sm:max-w-3xl lg:max-w-4xl">
       {/* Section heading */}
-      <div className="mb-6">
+      <div className="mb-4">
         <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.15em] text-muted/50">
-          Skills & Languages
+          Languages
         </div>
 
-        {/* All language badges — always visible */}
+        {/* Language badges — show 4, expand for rest */}
         <div className="flex flex-wrap items-center gap-2">
-          {ALL_LANGUAGES.map((lang) => {
+          {VISIBLE_LANGUAGES.map((lang) => {
             const isActive = activeSkills.includes(lang);
             return (
               <span
@@ -166,8 +200,53 @@ export function CodeEditorAnimation() {
               </span>
             );
           })}
+
+          {showAllLanguages && HIDDEN_LANGUAGES.map((lang) => {
+            const isActive = activeSkills.includes(lang);
+            return (
+              <motion.span
+                key={lang}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="rounded-md px-2.5 py-1 font-mono text-[11px] transition-all sm:text-xs"
+                style={{
+                  background: isActive ? "rgba(82, 139, 255, 0.12)" : "rgba(255,255,255,0.03)",
+                  border: `1px solid ${isActive ? "rgba(82, 139, 255, 0.3)" : "rgba(255,255,255,0.06)"}`,
+                  color: isActive ? "#528bff" : "#555",
+                }}
+              >
+                {lang}
+              </motion.span>
+            );
+          })}
+
+          {!showAllLanguages && (
+            <button
+              type="button"
+              onClick={() => setShowAllLanguages(true)}
+              className="flex items-center gap-0.5 rounded-md px-2 py-1 font-mono text-[11px] transition-colors hover:text-text sm:text-xs"
+              style={{
+                background: "rgba(255,255,255,0.02)",
+                border: "1px solid rgba(255,255,255,0.06)",
+                color: "#555",
+              }}
+            >
+              +{HIDDEN_LANGUAGES.length}
+              <ChevronDown className="h-3 w-3" />
+            </button>
+          )}
         </div>
       </div>
+
+      {/* Log entry — terminal-style description */}
+      {logEntry && (
+        <div className="mb-4 font-mono text-[11px] leading-relaxed sm:text-xs">
+          <span style={{ color: "#5c6370" }}>[</span>
+          <span style={{ color: "#528bff" }}>{logEntry.tag}</span>
+          <span style={{ color: "#5c6370" }}>]</span>
+          <span style={{ color: "#888" }}> {logEntry.message}</span>
+        </div>
+      )}
 
       {/* Editor container */}
       <div
@@ -186,7 +265,7 @@ export function CodeEditorAnimation() {
             borderBottom: "1px solid var(--editor-border, rgba(255,255,255,0.06))",
           }}
         >
-          {allSnippets.map((s, i) => (
+          {displaySnippets.map((s, i) => (
             <button
               key={s.filename}
               type="button"
@@ -210,33 +289,26 @@ export function CodeEditorAnimation() {
             </button>
           ))}
 
-          {/* + button to reveal bonus snippets */}
-          {!showBonus && (
+          {hasMore && (
             <button
               type="button"
-              onClick={handleShowBonus}
+              onClick={handleRevealNext}
               className="flex shrink-0 items-center gap-1 px-3 py-2 font-mono text-[11px] transition-colors hover:text-[#abb2bf] sm:text-xs"
               style={{ color: "#5c6370" }}
-              title="Show more code examples"
+              title="Open another code example"
             >
               <Plus className="h-3 w-3" />
             </button>
           )}
         </div>
 
-        {/* Editor content — key remount on tab switch */}
-        {snippet && (
+        {currentSnippet && (
           <EditorContent
             key={activeTab}
-            snippet={snippet}
+            snippet={currentSnippet}
             onComplete={advanceTab}
           />
         )}
-      </div>
-
-      {/* Snippet description */}
-      <div className="mt-3 text-center font-mono text-[10px] text-muted/40 sm:text-[11px]">
-        {snippet ? (SNIPPET_DESCRIPTIONS[snippet.filename] ?? "real code from real projects") : ""}
       </div>
     </div>
   );
