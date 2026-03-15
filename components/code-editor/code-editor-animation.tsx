@@ -264,7 +264,7 @@ function PixelBattle() {
 
         {/* Darth Vader with red lightsaber */}
         <div className="relative z-10">
-          {/* Red lightsaber — angled outward, slow deliberate swing */}
+          {/* Red lightsaber — left side facing troopers, slow deliberate swing */}
           <motion.div
             className="absolute rounded-full"
             style={{
@@ -272,11 +272,11 @@ function PixelBattle() {
               height: 36,
               background: "#ff2020",
               boxShadow: "0 0 14px rgba(255,32,32,0.8), 0 0 28px rgba(255,32,32,0.3)",
-              left: -14,
+              right: -14,
               top: 0,
               transformOrigin: "50% 90%",
             }}
-            animate={{ rotate: [-35, -10, -35] }}
+            animate={{ rotate: [35, 10, 35] }}
             transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
           />
           <PixelSprite pixels={vader} scale={4} />
