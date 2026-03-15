@@ -63,7 +63,7 @@ export function RetroComputer({ experiences }: RetroComputerProps) {
 
   useEffect(() => {
     if (isInView && !booted) {
-      const t = setTimeout(() => setBooted(true), reduceMotion ? 0 : 800);
+      const t = setTimeout(() => setBooted(true), reduceMotion ? 0 : 1200);
       return () => clearTimeout(t);
     }
   }, [isInView, booted, reduceMotion]);
@@ -73,11 +73,11 @@ export function RetroComputer({ experiences }: RetroComputerProps) {
 
   return (
     <div ref={ref} className="mx-auto w-full max-w-3xl lg:max-w-4xl">
-      {/* Monitor body */}
+      {/* Monitor body — dark in dark mode, beige in light mode */}
       <div
         className="relative rounded-2xl p-4 sm:p-5"
         style={{
-          background: "linear-gradient(180deg, #4a4a4a 0%, #3d3d3d 3%, #353535 50%, #2a2a2a 100%)",
+          background: "var(--monitor-bg, linear-gradient(180deg, #4a4a4a 0%, #3d3d3d 3%, #353535 50%, #2a2a2a 100%))",
           boxShadow: "0 10px 40px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(0,0,0,0.2)",
         }}
       >
@@ -103,7 +103,7 @@ export function RetroComputer({ experiences }: RetroComputerProps) {
                   className="w-full bg-white"
                   initial={{ scaleY: 0, opacity: 0 }}
                   animate={{ scaleY: [0, 0.004, 0.004, 1, 1], opacity: [0, 1, 1, 0.8, 0] }}
-                  transition={{ duration: 0.8, times: [0, 0.1, 0.25, 0.7, 1], ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 1.1, times: [0, 0.08, 0.2, 0.65, 1], ease: [0.16, 1, 0.3, 1] }}
                   style={{ height: "100%", transformOrigin: "center" }}
                 />
               </div>
@@ -222,7 +222,7 @@ export function RetroComputer({ experiences }: RetroComputerProps) {
 
         {/* Monitor chin */}
         <div className="flex items-center justify-between px-2 pt-2">
-          <span className="font-mono text-[8px] font-bold uppercase tracking-widest text-[#666] sm:text-[9px]">MENDIVIL SYS</span>
+          <span className="font-mono text-[8px] font-bold uppercase tracking-widest sm:text-[9px]" style={{ color: "var(--monitor-chin-text, #666)", textShadow: "0 1px 0 rgba(255,255,255,0.15)" }}>MENDIVIL SYS</span>
           <div className="flex items-center gap-2">
             <div className="h-1.5 w-1.5 rounded-full bg-[#33cc33] animate-[blink_3s_ease-in-out_infinite]" style={{ boxShadow: "0 0 4px #33cc33, 0 0 8px #33cc33" }} />
             <div className="h-2 w-4 rounded-sm" style={{ background: "linear-gradient(180deg, #555, #444, #333)", border: "1px solid rgba(0,0,0,0.3)" }} />
@@ -231,8 +231,8 @@ export function RetroComputer({ experiences }: RetroComputerProps) {
       </div>
 
       {/* Stand */}
-      <div className="mx-auto h-2.5 w-[50%] rounded-b" style={{ background: "linear-gradient(180deg, #333, #2a2a2a)", boxShadow: "0 4px 8px rgba(0,0,0,0.3)" }} />
-      <div className="mx-auto h-1.5 w-[65%] rounded-b-lg" style={{ background: "linear-gradient(180deg, #2a2a2a, #222)", boxShadow: "0 3px 8px rgba(0,0,0,0.2)" }} />
+      <div className="mx-auto h-2.5 w-[50%] rounded-b" style={{ background: "var(--monitor-stand)", boxShadow: "0 4px 8px rgba(0,0,0,0.3)" }} />
+      <div className="mx-auto h-1.5 w-[65%] rounded-b-lg" style={{ background: "var(--monitor-base)", boxShadow: "0 3px 8px rgba(0,0,0,0.2)" }} />
     </div>
   );
 }

@@ -48,6 +48,12 @@
   --syn-punctuation: #24292f;
   --syn-plain: #24292f;
 
+  /* Retro monitor — light mode */
+  --monitor-bg: linear-gradient(180deg, #e0d8c8 0%, #d4c8a0 3%, #c8b88a 50%, #b0a070 100%);
+  --monitor-chin-text: #8a7a5a;
+  --monitor-stand: linear-gradient(180deg, #a89868, #c8b88a);
+  --monitor-base: linear-gradient(180deg, #c8b88a, #a89868);
+
   /* Editor chrome — light mode */
   --editor-bg: #fafafa;
   --editor-tab-bg: #f0f0f0;
@@ -111,6 +117,12 @@
   --syn-property: #e06c75;
   --syn-punctuation: #abb2bf;
   --syn-plain: #abb2bf;
+
+  /* Retro monitor — dark mode */
+  --monitor-bg: linear-gradient(180deg, #4a4a4a 0%, #3d3d3d 3%, #353535 50%, #2a2a2a 100%);
+  --monitor-chin-text: #666;
+  --monitor-stand: linear-gradient(180deg, #333, #2a2a2a);
+  --monitor-base: linear-gradient(180deg, #2a2a2a, #222);
 
   /* Editor chrome — dark mode */
   --editor-bg: #282c34;
