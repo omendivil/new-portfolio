@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Windows 95 Experience Section — Concept</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; font-family: Tahoma, Arial, sans-serif; font-size: 11px; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+
+  /* ===== DESKTOP ===== */
+  .desktop {
+    flex: 1;
+    background-color: #008080;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  /* ===== DESKTOP ICONS ===== */
+  .desktop-icons {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .desktop-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    width: 64px;
+    cursor: default;
+    user-select: none;
+  }
+  .desktop-icon-img {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+  .desktop-icon-label {
+    font-size: 11px;
+    color: #fff;
+    text-shadow: 1px 1px 1px #000;
+    text-align: center;
+    padding: 1px 3px;
+    line-height: 1.2;
+  }
+
+  /* ===== WINDOW ===== */
+  .win95-window {
+    background: #c0c0c0;
+    box-shadow:
+      inset -1px -1px #0a0a0a,
+      inset 1px 1px #fff,
+      inset -2px -2px #808080,
+      inset 2px 2px #dfdfdf,
+      4px 4px 10px rgba(0,0,0,0.3);
+    padding: 3px;
+    display: flex;
+    flex-direction: column;
+    width: 660px;
+    max-width: 95vw;
+    max-height: 85vh;
+    cursor: default;
+  }
+
+  /* ===== TITLE BAR ===== */
+  .title-bar {
+    background: linear-gradient(to right, #000080, #1084d0);
+    color: #fff;
+    font-weight: bold;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 3px 2px 4px;
+    height: 20px;
+    user-select: none;
+    cursor: grab;
+  }
+  .title-bar:active { cursor: grabbing; }
+  .title-bar-text {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .title-bar-icon { font-size: 14px; }
+  .title-bar-controls { display: flex; gap: 2px; }
+  .title-bar-controls button {
+    width: 16px;
+    height: 14px;
+    background: #c0c0c0;
+    border: none;
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+    font-size: 8px;
+    font-weight: bold;
+    line-height: 1;
+    padding: 0;
+    color: #000;
+  }
+  .title-bar-controls button:active {
+    box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080;
+    padding: 1px 0 0 1px;
+  }
+
+  /* ===== MENU BAR ===== */
+  .menu-bar {
+    display: flex;
+    background: #c0c0c0;
+    border-bottom: 1px solid #808080;
+  }
+  .menu-bar button {
+    background: none;
+    border: none;
+    padding: 3px 8px;
+    font-family: inherit;
+    font-size: 11px;
+    cursor: default;
+  }
+  .menu-bar button:hover {
+    box-shadow: inset -1px -1px #808080, inset 1px 1px #fff;
+  }
+
+  /* ===== TOOLBAR ===== */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 4px;
+    border-bottom: 1px solid #808080;
+    background: #c0c0c0;
+  }
+  .toolbar button {
+    background: #c0c0c0;
+    border: none;
+    box-shadow: inset -1px -1px #808080, inset 1px 1px #fff;
+    padding: 2px 6px;
+    font-family: inherit;
+    font-size: 10px;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .toolbar button:active {
+    box-shadow: inset -1px -1px #fff, inset 1px 1px #808080;
+  }
+  .toolbar-sep {
+    width: 2px;
+    height: 18px;
+    box-shadow: inset 1px 0 #808080, inset -1px 0 #fff;
+    margin: 0 2px;
+  }
+  .toolbar select {
+    font-family: inherit;
+    font-size: 11px;
+    padding: 1px;
+    border: none;
+    box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080;
+    background: #fff;
+  }
+
+  /* ===== CONTENT AREA ===== */
+  .window-body {
+    flex: 1;
+    margin: 0 3px;
+    box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080;
+    background: #fff;
+    padding: 12px 16px;
+    overflow-y: auto;
+    font-family: "Times New Roman", Georgia, serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #000;
+    min-height: 300px;
+  }
+
+  .window-body h1 {
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    border-bottom: 2px solid #000;
+    padding-bottom: 4px;
+    margin-bottom: 16px;
+  }
+  .window-body h2 {
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    margin: 16px 0 2px;
+  }
+  .window-body .subtitle {
+    font-style: italic;
+    font-size: 12px;
+    color: #444;
+    margin-bottom: 6px;
+  }
+  .window-body .summary {
+    margin-bottom: 8px;
+  }
+  .window-body ul {
+    padding-left: 24px;
+    margin-bottom: 8px;
+  }
+  .window-body li { margin-bottom: 3px; }
+  .window-body .stat {
+    display: inline-block;
+    background: #000080;
+    color: #fff;
+    padding: 2px 8px;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    margin: 4px 0;
+  }
+  .window-body hr {
+    border: none;
+    border-top: 1px solid #c0c0c0;
+    margin: 16px 0;
+  }
+
+  /* Navigation buttons inside content */
+  .record-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    padding-top: 8px;
+    border-top: 1px solid #c0c0c0;
+  }
+  .record-nav button {
+    background: #c0c0c0;
+    border: none;
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+    padding: 4px 16px;
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 11px;
+    cursor: default;
+  }
+  .record-nav button:active {
+    box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a;
+    padding: 5px 15px 3px 17px;
+  }
+  .record-nav span {
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 11px;
+    color: #444;
+  }
+
+  /* ===== STATUS BAR ===== */
+  .status-bar {
+    display: flex;
+    margin: 3px;
+    height: 18px;
+  }
+  .status-bar span {
+    padding: 1px 6px;
+    box-shadow: inset -1px -1px #dfdfdf, inset 1px 1px #808080;
+    font-size: 11px;
+    line-height: 16px;
+    color: #000;
+  }
+  .status-bar span:first-child { flex: 1; }
+
+  /* ===== TASKBAR ===== */
+  .taskbar {
+    height: 30px;
+    background: #c0c0c0;
+    box-shadow: inset 0 1px 0 #fff, inset 0 2px 0 #dfdfdf;
+    display: flex;
+    align-items: center;
+    padding: 2px 4px;
+    gap: 4px;
+  }
+  .start-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    height: 22px;
+    background: #c0c0c0;
+    border: none;
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+    font-weight: bold;
+    font-size: 11px;
+    font-family: inherit;
+    cursor: default;
+  }
+  .start-btn:active {
+    box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a;
+  }
+  .start-flag { font-size: 14px; }
+  .taskbar-sep {
+    width: 2px;
+    height: 20px;
+    box-shadow: inset 1px 0 #808080, inset -1px 0 #fff;
+  }
+  .taskbar-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    height: 22px;
+    max-width: 160px;
+    background: #c0c0c0;
+    border: none;
+    font-family: inherit;
+    font-size: 11px;
+    cursor: default;
+    box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080;
+    background: repeating-conic-gradient(#c0c0c0 0% 25%, #fff 0% 50%) 50% / 2px 2px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .sys-tray {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    padding: 1px 8px;
+    height: 22px;
+    box-shadow: inset -1px -1px #dfdfdf, inset 1px 1px #808080;
+    font-size: 11px;
+  }
+
+  /* ===== INFO BELOW ===== */
+  .info {
+    background: #0a0a0a;
+    padding: 30px 20px;
+    text-align: center;
+    color: #f3f0e9;
+    font-family: -apple-system, sans-serif;
+  }
+  .info h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .info p { font-size: 13px; color: #888; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+  .info .features { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 12px; }
+  .info .feat { padding: 3px 10px; border-radius: 6px; font-size: 11px; background: rgba(0,128,128,0.1); border: 1px solid rgba(0,128,128,0.2); color: #008080; }
+</style>
+</head>
+<body>
+
+<!-- DESKTOP -->
+<div class="desktop">
+
+  <!-- Desktop icons -->
+  <div class="desktop-icons">
+    <div class="desktop-icon">
+      <div class="desktop-icon-img">💻</div>
+      <div class="desktop-icon-label">My Computer</div>
+    </div>
+    <div class="desktop-icon">
+      <div class="desktop-icon-img">📁</div>
+      <div class="desktop-icon-label">Projects</div>
+    </div>
+    <div class="desktop-icon">
+      <div class="desktop-icon-img">🌐</div>
+      <div class="desktop-icon-label">Portfolio</div>
+    </div>
+    <div class="desktop-icon">
+      <div class="desktop-icon-img">🗑️</div>
+      <div class="desktop-icon-label">Recycle Bin</div>
+    </div>
+  </div>
+
+  <!-- THE WINDOW -->
+  <div class="win95-window">
+    <!-- Title bar -->
+    <div class="title-bar">
+      <div class="title-bar-text">
+        <span class="title-bar-icon">📝</span>
+        resume.doc — WordPad
+      </div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize">_</button>
+        <button aria-label="Maximize">□</button>
+        <button aria-label="Close">×</button>
+      </div>
+    </div>
+
+    <!-- Menu bar -->
+    <div class="menu-bar">
+      <button><u>F</u>ile</button>
+      <button><u>E</u>dit</button>
+      <button><u>V</u>iew</button>
+      <button><u>I</u>nsert</button>
+      <button>F<u>o</u>rmat</button>
+      <button><u>H</u>elp</button>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <select style="width: 120px;"><option>Times New Roman</option></select>
+      <select style="width: 40px;"><option>12</option></select>
+      <div class="toolbar-sep"></div>
+      <button><b>B</b></button>
+      <button><i>I</i></button>
+      <button><u>U</u></button>
+    </div>
+
+    <!-- Content: WordPad document -->
+    <div class="window-body">
+      <h1>Omar Mendivil — Experience</h1>
+
+      <h2>Perception Triage Engineer</h2>
+      <div class="subtitle">Apple · Cupertino, CA · Jun 2025 – Nov 2025</div>
+      <div class="stat">TOP 10% — Career Experience Program</div>
+      <div class="summary">
+        Selected into a program only the top 10% of the company is accepted into.
+        Triaged perception system issues across the product integrity pipeline.
+      </div>
+      <ul>
+        <li>Led weekly triage meetings with the Product Integrity team, analyzing radar data and communicating issues to engineers.</li>
+        <li>Helped the QE team better understand system behavior, reducing unnecessary radars and making testing more targeted.</li>
+        <li>Identified a recurring issue pattern across multiple radars that helped engineers isolate and fix a perception bug.</li>
+      </ul>
+
+      <hr>
+
+      <h2>Web Developer</h2>
+      <div class="subtitle">Aer Digital · Remote · May 2022 – Jun 2025</div>
+      <div class="stat">3+ YEARS — Client Delivery</div>
+      <div class="summary">
+        Designed and shipped client websites with custom JavaScript functionality, focused on
+        converting business requirements into polished web experiences.
+      </div>
+      <ul>
+        <li>Built and customized websites for clients with a focus on usability, visual polish, and practical business needs.</li>
+        <li>Implemented custom functionality using JavaScript and HTML embeds when built-in site builder features weren't enough.</li>
+      </ul>
+
+      <hr>
+
+      <h2>Independent Developer</h2>
+      <div class="subtitle">Self-directed · Arizona · 2024 – Present</div>
+      <div class="stat">6+ SHIPPED PROJECTS</div>
+      <div class="summary">
+        Building product concepts across Swift, SwiftUI, React, and TypeScript — from interface study through functional demo.
+      </div>
+      <ul>
+        <li>Shipping apps, developer tools, and this portfolio with an emphasis on motion, architecture, and craft.</li>
+        <li>Creating dev content and walkthroughs to document the build process.</li>
+      </ul>
+
+      <!-- Record navigation -->
+      <div class="record-nav">
+        <button>◄ Previous</button>
+        <span>Record 1 of 3</span>
+        <button>Next ►</button>
+      </div>
+    </div>
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span>Ready</span>
+      <span style="width: 80px;">Page 1</span>
+    </div>
+  </div>
+</div>
+
+<!-- TASKBAR -->
+<div class="taskbar">
+  <button class="start-btn">
+    <span class="start-flag">🪟</span> Start
+  </button>
+  <div class="taskbar-sep"></div>
+  <button class="taskbar-btn">📝 resume.doc — WordPad</button>
+  <div class="sys-tray">
+    🔊 3:42 PM
+  </div>
+</div>
+
+<!-- INFO -->
+<div class="info">
+  <h2>Windows 95 Desktop — Experience Section</h2>
+  <p>
+    A retro Windows desktop with a draggable WordPad window displaying your experience.
+    The window can be moved around on desktop. On mobile, just the window frame (no desktop).
+    Record navigation at the bottom flips between entries.
+  </p>
+  <div class="features">
+    <span class="feat">Draggable window</span>
+    <span class="feat">3D beveled borders</span>
+    <span class="feat">WordPad content</span>
+    <span class="feat">Desktop icons</span>
+    <span class="feat">Taskbar + Start</span>
+    <span class="feat">Record navigation</span>
+  </div>
+</div>
+
+</body>
+</html>
