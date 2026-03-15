@@ -613,45 +613,44 @@ export const skills: Skill[] = [
 export const experience: Experience[] = [
   {
     bullets: [
-      "Design and implement single-purpose product experiences with tight feedback loops.",
-      "Translate rough concepts into demo-ready interfaces that communicate intent quickly.",
-      "Use motion sparingly to improve orientation instead of decoration.",
+      "Led weekly triage meetings with the Product Integrity team, analyzing radar data and communicating issues to engineers.",
+      "Helped the QE team better understand system behavior, reducing unnecessary radars and making testing more targeted.",
+      "Identified a recurring issue pattern across multiple radars that helped engineers isolate and fix a perception bug.",
     ],
-    id: "independent-product",
+    id: "apple-triage",
+    location: "Cupertino, CA",
+    organization: "Apple",
+    period: "Jun 2025 - Nov 2025",
+    role: "Perception Triage Engineer",
+    summary:
+      "Career Experience Program — selected into a program only the top 10% of the company is accepted into. Triaged perception system issues across the product integrity pipeline.",
+  },
+  {
+    bullets: [
+      "Built and customized websites for clients with a focus on usability, visual polish, and practical business needs.",
+      "Implemented custom functionality using JavaScript and HTML embeds when built-in site builder features weren't enough.",
+    ],
+    id: "aer-digital",
+    location: "Remote",
+    organization: "Aer Digital",
+    period: "May 2022 - Jun 2025",
+    role: "Web Developer",
+    summary:
+      "Designed and shipped client websites with custom JavaScript functionality, focused on converting business requirements into polished web experiences.",
+  },
+  {
+    bullets: [
+      "Building product concepts across Swift, SwiftUI, React, and TypeScript — from interface study through functional demo.",
+      "Shipping apps, developer tools, and this portfolio with an emphasis on motion, architecture, and craft.",
+      "Creating dev content and walkthroughs to document the build process.",
+    ],
+    id: "independent-dev",
     location: "Arizona",
-    organization: "Self-directed work",
+    organization: "Self-directed",
     period: "2024 - Present",
-    role: "Independent Product Developer",
+    role: "Independent Developer",
     summary:
-      "Building focused product concepts from interface study through functional demo, with most of the effort spent on clarity, pacing, and interaction quality.",
-  },
-  {
-    bullets: [
-      "Ship SwiftUI prototypes that feel close to finished products.",
-      "Prototype detail flows, browse states, and lightweight information systems.",
-      "Use captured demos to refine pacing and handoff between screens.",
-    ],
-    id: "ios-builds",
-    location: "Remote",
-    organization: "Selected app experiments",
-    period: "2023 - Present",
-    role: "iOS Application Builder",
-    summary:
-      "A run of iOS app concepts centered on browse-heavy flows, polished transitions, and legible information density.",
-  },
-  {
-    bullets: [
-      "Build interfaces where list browsing and detail inspection stay fast on any screen size.",
-      "Prioritize keyboard support and performance constraints from the start.",
-      "Keep client bundles small by isolating interactivity to the surfaces that need it.",
-    ],
-    id: "frontend-systems",
-    location: "Remote",
-    organization: "Web projects",
-    period: "2022 - Present",
-    role: "Frontend Interaction Builder",
-    summary:
-      "Exploring how compact web experiences can still feel premium through responsive layout, micro state handling, and disciplined motion.",
+      "6+ shipped projects across iOS and web. Building focused product concepts with clean architecture and no compromises on design.",
   },
 ];
 

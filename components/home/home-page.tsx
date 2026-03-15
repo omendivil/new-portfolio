@@ -1,9 +1,9 @@
 import { CodeEditorSection } from "@/components/code-editor/code-editor-section";
+import { ExperienceCardStack } from "@/components/experience/experience-card-stack";
 import { HeroDiff } from "@/components/hero/hero-diff";
 import { StickyNav } from "@/components/navigation/sticky-nav";
-import { ExperienceSection } from "@/components/sections/experience-section";
 import { ProjectsSection } from "@/components/sections/projects-section";
-import { navSections } from "@/data/site";
+import { experience, navSections } from "@/data/site";
 
 export function HomePage() {
   return (
@@ -20,9 +20,14 @@ export function HomePage() {
         <ProjectsSection />
       </div>
       <CodeEditorSection />
-      <div className="mx-auto max-w-6xl px-2.5 sm:px-4">
-        <ExperienceSection />
-      </div>
+      <section id="experience" className="section-anchor mx-auto max-w-2xl px-4 py-16 sm:max-w-3xl sm:py-24 lg:max-w-4xl">
+        <div className="mb-6">
+          <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.15em] text-muted/50">
+            Experience
+          </div>
+        </div>
+        <ExperienceCardStack experiences={experience} />
+      </section>
     </main>
   );
 }
