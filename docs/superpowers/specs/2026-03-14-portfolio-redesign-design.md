@@ -406,6 +406,45 @@ data/
 
 ---
 
+## Reviewer Fixes
+
+### Experience Data Changes
+Replace the 3 existing generic entries in `data/site.ts` with real experience:
+1. Apple — Perception Triage Engineer (Career Experience Program, Jun–Nov 2025)
+2. Aer Digital — Web Developer (May 2022–Jun 2025)
+3. Independent Developer — Self-directed (2024–Present)
+
+Add to `Experience` type: `stat?: { value: string; label: string }`, `gradient?: string`, `accentColor?: string`.
+
+### NavSectionId Update
+New union: `"hero" | "projects" | "code" | "experience" | "contact"`. The footer keeps `id="contact"` for scroll target compatibility. Code Editor gets `id="code"` but no nav link (it's between projects and experience, discovered by scrolling). Update `navSections` array accordingly.
+
+### Section Container Strategy
+`SectionShell` is kept for vertical spacing and `id` anchoring but `section-surface` class is removed from all sections. Sections sit directly on the page background. Vertical spacing via the existing `space-y` gap on the parent container in `home-page.tsx`. The hero is full-viewport, no max-width constraint. All other sections keep `max-w-6xl` via `SectionShell`.
+
+### Build Log SSR Hydration
+Server renders the diff view (no terminal). Client `useEffect` checks `sessionStorage` — if first visit, mounts the terminal overlay on top. This avoids hydration mismatch and layout shift. Default state: `showTerminal = false`. Set to `true` in `useEffect` if `sessionStorage` says not seen.
+
+### Body Background
+Remove the existing `background-image` gradients from `body` in `globals.css`. The `AmbientBackground` component replaces them entirely.
+
+### Performance: Filter Clarification
+`filter: blur()` on aurora blobs and `filter: invert()` on noise are applied once (static). They are NOT animated. The "no filter" rule applies to dynamic/per-frame animation only. The build terminal exit blur is a one-shot exit animation (0.5s), acceptable.
+
+### Canvas Bounds and Coordinates
+Canvas has soft bounds with rubber-band resistance past content edges. Zoom range: 0.15–3.0. Default zoom: 0.5 (overview showing all projects). Home button resets to default view. Project canvas coordinates will be defined during implementation based on frame sizes and visual balance. Keyboard: Tab cycles through project frames, Enter opens project detail.
+
+### Deprecated Types
+Remove from `data/types.ts`: `HeroContent` (replaced by diff data), `WritingEntry` (section removed). Remove `hero`, `writing` from `SiteContent`. Keep `contact` field for footer email/phone data. Remove `skills` from `SiteContent` (replaced by code snippets separate data file).
+
+### LinkedIn and Writing Data
+LinkedIn URL will be hardcoded in footer (not from data layer — it's a stable external link). The 2 essay writing entries are dropped. The 1 video walkthrough URL moves to its project's `youtubeUrl` field.
+
+### SEO
+Keep existing `<title>` and add an updated `description` meta. The diff view text is real DOM content (not canvas/image), so search engines can index the green addition lines which contain the key descriptors.
+
+---
+
 ## Implementation Order
 
 1. **Ambient layer** — noise, aurora, cursor glow (foundation for everything)
