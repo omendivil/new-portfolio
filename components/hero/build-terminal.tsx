@@ -18,9 +18,9 @@ const BUILD_STEPS: BuildStep[] = [
   { label: "applying motion system", result: "✓" },
 ];
 
-const TYPING_SPEED = 20;
-const RESULT_DELAY = 180;
-const STEP_GAP = 80;
+const TYPING_SPEED = 28;
+const RESULT_DELAY = 220;
+const STEP_GAP = 100;
 
 type BuildTerminalProps = {
   onComplete: () => void;

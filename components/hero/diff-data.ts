@@ -9,7 +9,7 @@ type TokenType =
   | "punctuation"
   | "plain";
 
-export type Token = { text: string; type: TokenType };
+export type Token = { text: string; type: TokenType; strike?: boolean };
 
 export type DiffLine = {
   type: "context" | "addition" | "deletion" | "blank";
@@ -18,13 +18,13 @@ export type DiffLine = {
 };
 
 function kw(text: string): Token { return { text, type: "keyword" }; }
-function str(text: string): Token { return { text, type: "string" }; }
-function typ(text: string): Token { return { text, type: "type" }; }
-function fn(text: string): Token { return { text, type: "function" }; }
+function str(text: string, strike = false): Token { return { text, type: "string", strike }; }
+function typ(text: string, strike = false): Token { return { text, type: "type", strike }; }
+function fn(text: string, strike = false): Token { return { text, type: "function", strike }; }
 function cmt(text: string): Token { return { text, type: "comment" }; }
-function prop(text: string): Token { return { text, type: "property" }; }
-function punc(text: string): Token { return { text, type: "punctuation" }; }
-function plain(text: string): Token { return { text, type: "plain" }; }
+function prop(text: string, strike = false): Token { return { text, type: "property", strike }; }
+function punc(text: string, strike = false): Token { return { text, type: "punctuation", strike }; }
+function plain(text: string, strike = false): Token { return { text, type: "plain", strike }; }
 
 export const DIFF_FILENAME = "about-omar.ts";
 export const DIFF_ADDITIONS = 10;
@@ -43,7 +43,7 @@ export const DIFF_LINES: DiffLine[] = [
   },
   {
     type: "deletion",
-    tokens: [kw("const"), plain(" role "), punc("="), plain(" "), str('"Full Stack Developer"'), punc(";")],
+    tokens: [kw("const"), plain(" role "), punc("="), plain(" "), str('"Full Stack Developer"', true), punc(";", true)],
     plainText: 'const role = "Full Stack Developer";',
   },
   {
@@ -58,7 +58,7 @@ export const DIFF_LINES: DiffLine[] = [
   },
   {
     type: "deletion",
-    tokens: [kw("const"), plain(" skills "), punc("="), plain(" "), punc("["), str('"HTML"'), punc(","), plain(" "), str('"CSS"'), punc(","), plain(" "), str('"JavaScript"'), punc("]"), punc(";")],
+    tokens: [kw("const"), plain(" skills "), punc("="), plain(" "), punc("[", true), str('"HTML"', true), punc(",", true), plain(" ", true), str('"CSS"', true), punc(",", true), plain(" ", true), str('"JavaScript"', true), punc("]", true), punc(";", true)],
     plainText: 'const skills = ["HTML", "CSS", "JavaScript"];',
   },
   {
@@ -73,17 +73,17 @@ export const DIFF_LINES: DiffLine[] = [
   },
   {
     type: "deletion",
-    tokens: [kw("const"), plain(" portfolio "), punc("="), plain(" "), fn("genericTemplate"), punc("("), punc("{")],
+    tokens: [kw("const"), plain(" portfolio "), punc("="), plain(" "), fn("genericTemplate", true), punc("(", true), punc("{", true)],
     plainText: "const portfolio = genericTemplate({",
   },
   {
     type: "deletion",
-    tokens: [plain("  "), prop("headshot"), punc(":"), plain(" "), kw("true"), punc(","), plain(" "), prop("tagline"), punc(":"), plain(" "), str('"I build things"'), punc(",")],
+    tokens: [plain("  "), prop("headshot", true), punc(":", true), plain(" ", true), kw("true"), punc(",", true), plain(" "), prop("tagline", true), punc(":", true), plain(" "), str('"I build things"', true), punc(",", true)],
     plainText: '  headshot: true, tagline: "I build things",',
   },
   {
     type: "deletion",
-    tokens: [punc("}"), punc(")"), punc(";")],
+    tokens: [punc("}", true), punc(")", true), punc(";", true)],
     plainText: "});",
   },
   {
@@ -118,7 +118,7 @@ export const DIFF_LINES: DiffLine[] = [
   },
   {
     type: "deletion",
-    tokens: [kw("export"), plain(" "), kw("default"), plain(" "), typ("BoringPortfolio"), punc(";")],
+    tokens: [kw("export"), plain(" "), kw("default"), plain(" "), typ("BoringPortfolio", true), punc(";", true)],
     plainText: "export default BoringPortfolio;",
   },
   {

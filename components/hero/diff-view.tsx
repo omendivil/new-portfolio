@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { motionEase } from "@/lib/motion";
 
@@ -42,7 +42,14 @@ function SyntaxTokens({ tokens }: { tokens: Token[] }) {
   return (
     <>
       {tokens.map((token, i) => (
-        <span key={i} style={{ color: TOKEN_COLORS[token.type] }}>
+        <span
+          key={i}
+          style={{
+            color: TOKEN_COLORS[token.type],
+            textDecoration: token.strike ? "line-through" : undefined,
+            opacity: token.strike ? 0.6 : undefined,
+          }}
+        >
           {token.text}
         </span>
       ))}
@@ -82,10 +89,7 @@ function DiffLineRow({ line }: { line: DiffLine }) {
       >
         {line.type !== "blank" ? markerChar : ""}
       </span>
-      <span
-        className="flex-1 px-3 sm:px-4"
-        style={isDeletion ? { textDecoration: "line-through", opacity: 0.7 } : undefined}
-      >
+      <span className="flex-1 px-3 sm:px-4">
         <SyntaxTokens tokens={line.tokens} />
       </span>
     </div>
@@ -98,6 +102,22 @@ type DiffViewProps = {
 
 export function DiffView({ startAnimation }: DiffViewProps) {
   const [reviewed, setReviewed] = useState(false);
+  const [merging, setMerging] = useState(false);
+  const [merged, setMerged] = useState(false);
+
+  const handleMerge = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    if (merging || merged) return;
+
+    setMerging(true);
+    setTimeout(() => {
+      setMerged(true);
+      setReviewed(true);
+      setTimeout(() => {
+        document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
+      }, 600);
+    }, 1200);
+  }, [merging, merged]);
 
   return (
     <div
@@ -144,16 +164,17 @@ export function DiffView({ startAnimation }: DiffViewProps) {
 
       {/* Review bar */}
       <div
-        className="flex items-center justify-between border-t px-3 py-3 sm:px-5"
+        className="flex items-center justify-between border-t px-3 py-2 sm:px-5"
         style={{ borderColor: "var(--diff-border)" }}
       >
         <button
           type="button"
           onClick={() => setReviewed((r) => !r)}
-          className="flex items-center gap-2 transition-opacity hover:opacity-80"
+          className="flex items-center gap-1.5 rounded-md px-2 py-1 transition-all hover:opacity-80"
+          style={{ background: reviewed ? "var(--diff-add-bg)" : "transparent" }}
         >
           <div
-            className="flex h-4 w-4 items-center justify-center rounded-sm border text-[10px] transition-colors"
+            className="flex h-3.5 w-3.5 items-center justify-center rounded-[3px] border text-[9px] transition-colors"
             style={{
               borderColor: "var(--diff-add-text)",
               color: reviewed ? "var(--diff-bg)" : "var(--diff-add-text)",
@@ -162,21 +183,24 @@ export function DiffView({ startAnimation }: DiffViewProps) {
           >
             ✓
           </div>
-          <span className="text-xs sm:text-sm" style={{ color: "var(--syn-comment)" }}>
-            {reviewed ? "Reviewed — looks good" : "Mark as reviewed"}
+          <span className="text-[11px] sm:text-xs" style={{ color: reviewed ? "var(--diff-add-text)" : "var(--syn-comment)" }}>
+            {reviewed ? "Reviewed" : "Review"}
           </span>
         </button>
-        <a
-          href="#projects"
-          className="rounded-md px-3 py-1.5 text-xs font-medium transition-all hover:brightness-110 hover:shadow-md sm:px-4 sm:py-2 sm:text-sm"
+
+        <button
+          type="button"
+          onClick={handleMerge}
+          disabled={merged}
+          className="rounded-md px-3 py-1 text-[11px] font-medium transition-all hover:brightness-110 hover:shadow-md disabled:opacity-50 sm:px-4 sm:py-1.5 sm:text-xs"
           style={{
-            background: "var(--diff-add-bg)",
-            color: "var(--diff-add-text)",
-            border: "1px solid var(--diff-add-text)",
+            background: merged ? "var(--diff-add-text)" : "var(--diff-add-bg)",
+            color: merged ? "var(--diff-bg)" : "var(--diff-add-text)",
+            border: `1px solid var(--diff-add-text)`,
           }}
         >
-          Merge &amp; continue ↓
-        </a>
+          {merged ? "✓ Merged" : merging ? "Merging..." : "Merge & continue ↓"}
+        </button>
       </div>
     </div>
   );
