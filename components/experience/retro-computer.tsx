@@ -25,26 +25,26 @@ function ExperienceRecord({ experience }: { experience: Experience }) {
 
   return (
     <div>
-      <h2 className="font-[Arial,sans-serif] text-[13px] font-bold sm:text-[15px]">
+      <h2 className="font-[Arial,sans-serif] text-[12px] font-bold sm:text-[14px]">
         {experience.role}
       </h2>
-      <div className="text-[10px] italic text-[#444] sm:text-[11px]">
+      <div className="text-[9px] italic text-[#444] sm:text-[10px]">
         {experience.organization} · {experience.location} · {experience.period}
       </div>
       {theme?.badge && (
         <div
-          className="mt-1 inline-block px-1.5 py-px font-[Arial,sans-serif] text-[9px] font-bold text-white sm:text-[10px]"
+          className="mt-1 inline-block px-1.5 py-px font-[Arial,sans-serif] text-[8px] font-bold text-white sm:text-[9px]"
           style={{ background: theme.badgeColor }}
         >
           {theme.badge}
         </div>
       )}
-      <div className="mt-1.5 text-[11px] leading-[1.5] sm:text-[12px]">
+      <div className="mt-1 text-[10px] leading-[1.4] sm:text-[11px]">
         {experience.summary}
       </div>
-      <ul className="mt-1.5 list-disc pl-4 text-[11px] leading-[1.5] sm:text-[12px]">
+      <ul className="mt-1 list-disc pl-4 text-[10px] leading-[1.4] sm:text-[11px]">
         {experience.bullets.map((b) => (
-          <li key={b} className="mb-0.5">{b}</li>
+          <li key={b}>{b}</li>
         ))}
       </ul>
     </div>
@@ -108,7 +108,7 @@ export function RetroComputer({ experiences }: RetroComputerProps) {
             {/* Windows 95 Desktop */}
             <motion.div
               className="relative flex bg-[#008080]"
-              style={{ minHeight: 340 }}
+              style={{ minHeight: 300, aspectRatio: "4/3" }}
               initial={reduceMotion ? false : { opacity: 0 }}
               animate={isInView ? { opacity: 1 } : { opacity: 0 }}
               transition={{ duration: 0.5 }}
@@ -135,7 +135,7 @@ export function RetroComputer({ experiences }: RetroComputerProps) {
                   background: "#c0c0c0",
                   boxShadow: "inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf, 2px 2px 6px rgba(0,0,0,0.2)",
                   padding: 3,
-                  maxHeight: 316,
+                  maxHeight: "calc(100% - 26px)",
                 }}
                 drag={typeof window !== "undefined" && window.innerWidth >= 640}
                 dragControls={dragControls}
@@ -197,7 +197,7 @@ export function RetroComputer({ experiences }: RetroComputerProps) {
                     color: "#000",
                   }}
                 >
-                  <h1 className="mb-2 border-b-2 border-black pb-1 font-[Arial,sans-serif] text-[14px] font-bold sm:mb-3 sm:text-[17px]">
+                  <h1 className="mb-1.5 border-b-2 border-black pb-1 font-[Arial,sans-serif] text-[13px] font-bold sm:mb-2 sm:text-[15px]">
                     Omar Mendivil — Experience
                   </h1>
 
