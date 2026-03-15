@@ -6,7 +6,7 @@ import { navSections } from "@/data/site";
 
 export function HomePage() {
   return (
-    <main className="overflow-x-clip pb-14 pt-3 sm:pb-16 sm:pt-4">
+    <main className="overflow-x-clip pb-14 sm:pb-16">
       <a
         href="#hero"
         className="sr-only absolute left-3 top-3 z-40 rounded-full border border-border bg-surface px-4 py-2 text-sm text-text focus:not-sr-only sm:left-4 sm:top-4"

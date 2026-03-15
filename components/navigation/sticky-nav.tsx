@@ -33,58 +33,68 @@ export function StickyNav({ sections }: StickyNavProps) {
 
   return (
     <nav
-      className="sticky top-0 z-30"
+      className="sticky -top-px z-30"
       aria-label="Section navigation"
     >
-      <div className="bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
-          {/* Desktop: Terminal breadcrumb */}
-          <div className="hidden items-center gap-0 font-mono text-sm sm:flex">
-            <span className="text-accent font-medium">~/omar</span>
-            <span className="mx-2 text-muted/40">›</span>
+      {/* Terminal bar */}
+      <div className="border-b border-border/30 bg-background/90 backdrop-blur-lg">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2.5 sm:px-6">
 
-            {sections.map((section, i) => {
-              const isActive = activeSection === section.id;
+          {/* Left: terminal prompt + nav links (desktop) */}
+          <div className="flex items-center">
+            {/* Traffic lights + title (like a real terminal) */}
+            <div className="mr-4 hidden items-center gap-1.5 sm:flex">
+              <div className="h-[9px] w-[9px] rounded-full bg-[#ff5f57]/70" />
+              <div className="h-[9px] w-[9px] rounded-full bg-[#febc2e]/70" />
+              <div className="h-[9px] w-[9px] rounded-full bg-[#28c840]/70" />
+            </div>
 
-              return (
-                <span key={section.id} className="flex items-center">
-                  {i > 0 && (
-                    <span className="mx-2 text-muted/30">/</span>
-                  )}
-                  <a
-                    href={`#${section.id}`}
-                    onClick={() => handleNavClick(section.id)}
-                    className={cn(
-                      "transition-colors",
-                      isActive
-                        ? "font-medium text-text"
-                        : "text-muted/50 hover:text-text",
+            {/* Desktop breadcrumb */}
+            <div className="hidden items-center font-mono text-[13px] sm:flex">
+              <span className="font-medium text-accent">~/omar</span>
+              <span className="mx-2 text-muted/40">›</span>
+
+              {sections.map((section, i) => {
+                const isActive = activeSection === section.id;
+
+                return (
+                  <span key={section.id} className="flex items-center">
+                    {i > 0 && (
+                      <span className="mx-2 text-muted/25">/</span>
                     )}
-                    aria-current={isActive ? "page" : undefined}
-                  >
-                    {section.label.toLowerCase()}
-                  </a>
-                  {isActive && (
-                    <span className="ml-0.5 inline-block h-[15px] w-[1.5px] animate-pulse bg-accent" />
-                  )}
-                </span>
-              );
-            })}
+                    <a
+                      href={`#${section.id}`}
+                      onClick={() => handleNavClick(section.id)}
+                      className={cn(
+                        "transition-colors",
+                        isActive
+                          ? "font-medium text-text"
+                          : "text-muted/45 hover:text-text",
+                      )}
+                      aria-current={isActive ? "page" : undefined}
+                    >
+                      {section.label.toLowerCase()}
+                    </a>
+                    {isActive && (
+                      <span className="ml-0.5 inline-block h-[14px] w-[1.5px] animate-pulse bg-accent" />
+                    )}
+                  </span>
+                );
+              })}
+            </div>
+
+            {/* Mobile: prompt only */}
+            <span className="font-mono text-[13px] font-medium text-accent sm:hidden">~/omar</span>
           </div>
 
-          {/* Mobile: Logo + hamburger */}
-          <div className="flex items-center sm:hidden">
-            <span className="font-mono text-sm font-medium text-accent">~/omar</span>
-          </div>
+          {/* Right: theme toggle + hamburger */}
+          <div className="flex items-center gap-1.5">
+            <ThemeToggle className="h-7 w-7 shrink-0" />
 
-          <div className="flex items-center gap-2">
-            <ThemeToggle className="h-8 w-8 shrink-0" />
-
-            {/* Mobile hamburger */}
             <button
               type="button"
               onClick={() => setMobileOpen((o) => !o)}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-border/40 text-muted transition-colors hover:text-text sm:hidden"
+              className="flex h-7 w-7 items-center justify-center text-muted transition-colors hover:text-text sm:hidden"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
             >
               {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
@@ -100,11 +110,11 @@ export function StickyNav({ sections }: StickyNavProps) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25, ease: motionEase }}
-            className="overflow-hidden border-b border-border/30 bg-background/95 backdrop-blur-md sm:hidden"
+            transition={{ duration: 0.2, ease: motionEase }}
+            className="overflow-hidden border-b border-border/20 bg-background/95 backdrop-blur-lg sm:hidden"
           >
-            <div className="px-4 py-3 font-mono text-sm">
-              <div className="mb-2 text-[11px] text-muted/40">$ ls sections/</div>
+            <div className="px-4 py-3 font-mono text-[13px]">
+              <div className="mb-2 text-[11px] text-muted/30">$ ls sections/</div>
               {sections.map((section, i) => {
                 const isActive = activeSection === section.id;
 
@@ -113,19 +123,19 @@ export function StickyNav({ sections }: StickyNavProps) {
                     key={section.id}
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05, duration: 0.2, ease: motionEase }}
+                    transition={{ delay: i * 0.05, duration: 0.15, ease: motionEase }}
                   >
                     <a
                       href={`#${section.id}`}
                       onClick={() => handleNavClick(section.id)}
                       className={cn(
-                        "flex items-center gap-2 py-2 transition-colors",
+                        "flex items-center gap-2 py-2.5 transition-colors",
                         isActive
                           ? "font-medium text-text"
-                          : "text-muted/60 hover:text-text",
+                          : "text-muted/50 hover:text-text",
                       )}
                     >
-                      <span className="text-accent/60">›</span>
+                      <span className="text-accent/50">›</span>
                       {section.label.toLowerCase()}
                       {isActive && (
                         <span className="inline-block h-[13px] w-[1.5px] animate-pulse bg-accent" />
