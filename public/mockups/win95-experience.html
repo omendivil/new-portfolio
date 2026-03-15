@@ -3,78 +3,178 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Windows 95 Experience Section — Concept</title>
+<title>Windows 95 Experience — With Computer Frame</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0a0a0a; font-family: Tahoma, Arial, sans-serif; font-size: 11px; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+  body { background: #11100d; font-family: Tahoma, Arial, sans-serif; font-size: 11px; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 40px 16px; }
 
-  /* ===== DESKTOP ===== */
-  .desktop {
-    flex: 1;
-    background-color: #008080;
+  .scene { max-width: 820px; width: 100%; }
+
+  /* ===== MONITOR BODY ===== */
+  .monitor-body {
+    background: linear-gradient(180deg, #e0d8c8 0%, #d4c8a0 3%, #c8b88a 50%, #b0a070 100%);
+    border-radius: 16px;
+    padding: 24px 24px 12px;
+    box-shadow:
+      0 10px 40px rgba(0,0,0,0.5),
+      0 2px 8px rgba(0,0,0,0.3),
+      inset 0 2px 0 rgba(255,255,255,0.4),
+      inset 0 -2px 0 rgba(0,0,0,0.1),
+      inset 2px 0 0 rgba(255,255,255,0.2),
+      inset -2px 0 0 rgba(0,0,0,0.05);
     position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
   }
 
-  /* ===== DESKTOP ICONS ===== */
-  .desktop-icons {
+  /* Plastic texture */
+  .monitor-body::before {
+    content: '';
     position: absolute;
-    top: 12px;
-    left: 12px;
+    inset: 0;
+    border-radius: inherit;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.015) 2px, rgba(0,0,0,0.015) 4px);
+    pointer-events: none;
+  }
+
+  /* Screen bezel recess */
+  .screen-bezel {
+    background: linear-gradient(145deg, rgba(0,0,0,0.35), rgba(0,0,0,0.15), rgba(255,255,255,0.03));
+    border-radius: 8px;
+    padding: 6px;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(0,0,0,0.2);
+  }
+
+  /* CRT Screen area */
+  .crt-screen {
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0,128,128,0.08);
+  }
+
+  /* Subtle scanlines */
+  .crt-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px);
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* Glass reflection */
+  .crt-screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 101;
+    border-radius: inherit;
+  }
+
+  /* Monitor chin */
+  .monitor-chin {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 8px 4px;
+  }
+  .monitor-brand {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #8a7a5a;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+  }
+  .monitor-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .power-led {
+    width: 6px;
+    height: 6px;
+    background: #33cc33;
+    border-radius: 50%;
+    box-shadow: 0 0 4px #33cc33, 0 0 8px #33cc33, inset 0 -1px 2px rgba(0,0,0,0.3);
+  }
+  .power-btn {
+    width: 18px;
+    height: 10px;
+    background: linear-gradient(180deg, #888, #666, #555);
+    border-radius: 2px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+    border: 1px solid rgba(0,0,0,0.3);
+  }
+
+  /* Stand */
+  .stand-neck {
+    width: 50%;
+    margin: 0 auto;
+    height: 10px;
+    background: linear-gradient(180deg, #a89868, #c8b88a);
+    border-radius: 0 0 3px 3px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  .stand-base {
+    width: 70%;
+    margin: 0 auto;
+    height: 6px;
+    background: linear-gradient(180deg, #c8b88a, #a89868);
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+
+  /* ===== WINDOWS 95 DESKTOP INSIDE CRT ===== */
+  .win-desktop {
+    background: #008080;
+    min-height: 380px;
+    position: relative;
+    display: flex;
+    padding: 8px;
+  }
+
+  /* Desktop icons */
+  .desk-icons {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
+    width: 56px;
+    flex-shrink: 0;
   }
-  .desktop-icon {
+  .desk-icon {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
-    width: 64px;
+    gap: 1px;
     cursor: default;
     user-select: none;
   }
-  .desktop-icon-img {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-  }
-  .desktop-icon-label {
-    font-size: 11px;
+  .desk-icon-img { font-size: 20px; }
+  .desk-icon-lbl {
+    font-size: 9px;
     color: #fff;
     text-shadow: 1px 1px 1px #000;
     text-align: center;
-    padding: 1px 3px;
-    line-height: 1.2;
+    line-height: 1.1;
   }
 
-  /* ===== WINDOW ===== */
-  .win95-window {
+  /* Window inside desktop */
+  .win-window {
+    flex: 1;
     background: #c0c0c0;
-    box-shadow:
-      inset -1px -1px #0a0a0a,
-      inset 1px 1px #fff,
-      inset -2px -2px #808080,
-      inset 2px 2px #dfdfdf,
-      4px 4px 10px rgba(0,0,0,0.3);
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf, 2px 2px 6px rgba(0,0,0,0.2);
     padding: 3px;
     display: flex;
     flex-direction: column;
-    width: 660px;
-    max-width: 95vw;
-    max-height: 85vh;
-    cursor: default;
+    margin-left: 8px;
+    max-height: 364px;
   }
 
-  /* ===== TITLE BAR ===== */
-  .title-bar {
+  /* Title bar */
+  .w-titlebar {
     background: linear-gradient(to right, #000080, #1084d0);
     color: #fff;
     font-weight: bold;
@@ -83,422 +183,210 @@
     align-items: center;
     justify-content: space-between;
     padding: 2px 3px 2px 4px;
-    height: 20px;
-    user-select: none;
-    cursor: grab;
-  }
-  .title-bar:active { cursor: grabbing; }
-  .title-bar-text {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-  .title-bar-icon { font-size: 14px; }
-  .title-bar-controls { display: flex; gap: 2px; }
-  .title-bar-controls button {
-    width: 16px;
-    height: 14px;
-    background: #c0c0c0;
-    border: none;
-    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: default;
-    font-size: 8px;
-    font-weight: bold;
-    line-height: 1;
-    padding: 0;
-    color: #000;
-  }
-  .title-bar-controls button:active {
-    box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080;
-    padding: 1px 0 0 1px;
-  }
-
-  /* ===== MENU BAR ===== */
-  .menu-bar {
-    display: flex;
-    background: #c0c0c0;
-    border-bottom: 1px solid #808080;
-  }
-  .menu-bar button {
-    background: none;
-    border: none;
-    padding: 3px 8px;
-    font-family: inherit;
-    font-size: 11px;
-    cursor: default;
-  }
-  .menu-bar button:hover {
-    box-shadow: inset -1px -1px #808080, inset 1px 1px #fff;
-  }
-
-  /* ===== TOOLBAR ===== */
-  .toolbar {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    padding: 2px 4px;
-    border-bottom: 1px solid #808080;
-    background: #c0c0c0;
-  }
-  .toolbar button {
-    background: #c0c0c0;
-    border: none;
-    box-shadow: inset -1px -1px #808080, inset 1px 1px #fff;
-    padding: 2px 6px;
-    font-family: inherit;
-    font-size: 10px;
-    cursor: default;
-    display: flex;
-    align-items: center;
-    gap: 2px;
-  }
-  .toolbar button:active {
-    box-shadow: inset -1px -1px #fff, inset 1px 1px #808080;
-  }
-  .toolbar-sep {
-    width: 2px;
     height: 18px;
-    box-shadow: inset 1px 0 #808080, inset -1px 0 #fff;
-    margin: 0 2px;
+    user-select: none;
   }
-  .toolbar select {
-    font-family: inherit;
-    font-size: 11px;
-    padding: 1px;
-    border: none;
-    box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080;
-    background: #fff;
+  .w-titlebar-text { display: flex; align-items: center; gap: 3px; overflow: hidden; white-space: nowrap; }
+  .w-titlebar-btns { display: flex; gap: 2px; }
+  .w-titlebar-btns button {
+    width: 14px; height: 12px; background: #c0c0c0; border: none;
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+    font-size: 7px; font-weight: bold; cursor: default; padding: 0; color: #000;
+    display: flex; align-items: center; justify-content: center;
   }
 
-  /* ===== CONTENT AREA ===== */
-  .window-body {
+  /* Menu */
+  .w-menu { display: flex; background: #c0c0c0; border-bottom: 1px solid #808080; }
+  .w-menu button { background: none; border: none; padding: 2px 6px; font-size: 10px; font-family: inherit; cursor: default; }
+
+  /* Content */
+  .w-body {
     flex: 1;
-    margin: 0 3px;
+    margin: 2px 3px;
     box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080;
     background: #fff;
-    padding: 12px 16px;
+    padding: 8px 10px;
     overflow-y: auto;
     font-family: "Times New Roman", Georgia, serif;
-    font-size: 14px;
-    line-height: 1.6;
-    color: #000;
-    min-height: 300px;
-  }
-
-  .window-body h1 {
-    font-family: Arial, sans-serif;
-    font-size: 20px;
-    font-weight: bold;
-    border-bottom: 2px solid #000;
-    padding-bottom: 4px;
-    margin-bottom: 16px;
-  }
-  .window-body h2 {
-    font-family: Arial, sans-serif;
-    font-size: 15px;
-    font-weight: bold;
-    margin: 16px 0 2px;
-  }
-  .window-body .subtitle {
-    font-style: italic;
     font-size: 12px;
-    color: #444;
-    margin-bottom: 6px;
+    line-height: 1.5;
+    color: #000;
   }
-  .window-body .summary {
-    margin-bottom: 8px;
-  }
-  .window-body ul {
-    padding-left: 24px;
-    margin-bottom: 8px;
-  }
-  .window-body li { margin-bottom: 3px; }
-  .window-body .stat {
-    display: inline-block;
-    background: #000080;
-    color: #fff;
-    padding: 2px 8px;
-    font-family: Arial, sans-serif;
-    font-size: 11px;
-    font-weight: bold;
-    margin: 4px 0;
-  }
-  .window-body hr {
-    border: none;
-    border-top: 1px solid #c0c0c0;
-    margin: 16px 0;
-  }
+  .w-body h1 { font-family: Arial, sans-serif; font-size: 15px; font-weight: bold; border-bottom: 2px solid #000; padding-bottom: 3px; margin-bottom: 10px; }
+  .w-body h2 { font-family: Arial, sans-serif; font-size: 13px; font-weight: bold; margin: 12px 0 2px; }
+  .w-body .sub { font-style: italic; font-size: 10px; color: #444; margin-bottom: 4px; }
+  .w-body .badge { display: inline-block; background: #000080; color: #fff; padding: 1px 6px; font-family: Arial; font-size: 9px; font-weight: bold; margin: 3px 0; }
+  .w-body .desc { margin-bottom: 6px; font-size: 11px; }
+  .w-body ul { padding-left: 18px; margin-bottom: 6px; font-size: 11px; }
+  .w-body li { margin-bottom: 2px; }
+  .w-body hr { border: none; border-top: 1px solid #c0c0c0; margin: 10px 0; }
 
-  /* Navigation buttons inside content */
-  .record-nav {
+  /* Record nav inside content */
+  .rec-nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 16px;
-    padding-top: 8px;
+    margin-top: 10px;
+    padding-top: 6px;
     border-top: 1px solid #c0c0c0;
   }
-  .record-nav button {
-    background: #c0c0c0;
-    border: none;
+  .rec-nav button {
+    background: #c0c0c0; border: none;
     box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
-    padding: 4px 16px;
-    font-family: Tahoma, Arial, sans-serif;
-    font-size: 11px;
-    cursor: default;
+    padding: 3px 12px; font-family: Tahoma, Arial; font-size: 10px; cursor: default;
   }
-  .record-nav button:active {
-    box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a;
-    padding: 5px 15px 3px 17px;
-  }
-  .record-nav span {
-    font-family: Tahoma, Arial, sans-serif;
-    font-size: 11px;
-    color: #444;
-  }
+  .rec-nav span { font-size: 10px; color: #666; font-family: Tahoma, Arial; }
 
-  /* ===== STATUS BAR ===== */
-  .status-bar {
-    display: flex;
-    margin: 3px;
-    height: 18px;
-  }
-  .status-bar span {
-    padding: 1px 6px;
-    box-shadow: inset -1px -1px #dfdfdf, inset 1px 1px #808080;
-    font-size: 11px;
-    line-height: 16px;
-    color: #000;
-  }
-  .status-bar span:first-child { flex: 1; }
+  /* Status bar */
+  .w-status { display: flex; margin: 2px 3px 3px; height: 16px; }
+  .w-status span { padding: 1px 4px; box-shadow: inset -1px -1px #dfdfdf, inset 1px 1px #808080; font-size: 10px; line-height: 14px; }
+  .w-status span:first-child { flex: 1; }
 
-  /* ===== TASKBAR ===== */
-  .taskbar {
-    height: 30px;
+  /* Taskbar inside CRT */
+  .w-taskbar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 24px;
     background: #c0c0c0;
-    box-shadow: inset 0 1px 0 #fff, inset 0 2px 0 #dfdfdf;
+    box-shadow: inset 0 1px 0 #fff;
     display: flex;
     align-items: center;
     padding: 2px 4px;
-    gap: 4px;
+    gap: 3px;
+    z-index: 50;
   }
-  .start-btn {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 2px 8px;
-    height: 22px;
-    background: #c0c0c0;
-    border: none;
+  .w-start {
+    display: flex; align-items: center; gap: 3px; padding: 1px 6px; height: 18px;
+    background: #c0c0c0; border: none;
     box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
-    font-weight: bold;
-    font-size: 11px;
-    font-family: inherit;
-    cursor: default;
+    font-weight: bold; font-size: 10px; font-family: inherit; cursor: default;
   }
-  .start-btn:active {
+  .w-tbar-sep { width: 2px; height: 16px; box-shadow: inset 1px 0 #808080, inset -1px 0 #fff; }
+  .w-tbar-btn {
+    padding: 1px 6px; height: 18px; background: #c0c0c0; border: none; font-size: 10px; font-family: inherit;
     box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a;
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 140px;
   }
-  .start-flag { font-size: 14px; }
-  .taskbar-sep {
-    width: 2px;
-    height: 20px;
-    box-shadow: inset 1px 0 #808080, inset -1px 0 #fff;
-  }
-  .taskbar-btn {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 2px 8px;
-    height: 22px;
-    max-width: 160px;
-    background: #c0c0c0;
-    border: none;
-    font-family: inherit;
-    font-size: 11px;
-    cursor: default;
-    box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080;
-    background: repeating-conic-gradient(#c0c0c0 0% 25%, #fff 0% 50%) 50% / 2px 2px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-  .sys-tray {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    padding: 1px 8px;
-    height: 22px;
-    box-shadow: inset -1px -1px #dfdfdf, inset 1px 1px #808080;
-    font-size: 11px;
-  }
+  .w-systray { margin-left: auto; padding: 1px 6px; height: 18px; box-shadow: inset -1px -1px #dfdfdf, inset 1px 1px #808080; font-size: 10px; line-height: 16px; }
 
-  /* ===== INFO BELOW ===== */
-  .info {
-    background: #0a0a0a;
-    padding: 30px 20px;
-    text-align: center;
-    color: #f3f0e9;
-    font-family: -apple-system, sans-serif;
-  }
-  .info h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  /* ===== INFO ===== */
+  .info { text-align: center; margin-top: 40px; font-family: -apple-system, sans-serif; }
+  .info h2 { font-size: 18px; color: #f3f0e9; font-weight: 700; margin-bottom: 6px; }
   .info p { font-size: 13px; color: #888; max-width: 500px; margin: 0 auto; line-height: 1.6; }
-  .info .features { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 12px; }
-  .info .feat { padding: 3px 10px; border-radius: 6px; font-size: 11px; background: rgba(0,128,128,0.1); border: 1px solid rgba(0,128,128,0.2); color: #008080; }
 </style>
 </head>
 <body>
 
-<!-- DESKTOP -->
-<div class="desktop">
+<div class="scene">
+  <!-- MONITOR -->
+  <div class="monitor-body">
+    <div class="screen-bezel">
+      <div class="crt-screen">
+        <!-- Windows 95 Desktop -->
+        <div class="win-desktop">
 
-  <!-- Desktop icons -->
-  <div class="desktop-icons">
-    <div class="desktop-icon">
-      <div class="desktop-icon-img">💻</div>
-      <div class="desktop-icon-label">My Computer</div>
+          <!-- Desktop icons -->
+          <div class="desk-icons">
+            <div class="desk-icon"><div class="desk-icon-img">💻</div><div class="desk-icon-lbl">My Computer</div></div>
+            <div class="desk-icon"><div class="desk-icon-img">📁</div><div class="desk-icon-lbl">Projects</div></div>
+            <div class="desk-icon"><div class="desk-icon-img">🌐</div><div class="desk-icon-lbl">Portfolio</div></div>
+            <div class="desk-icon"><div class="desk-icon-img">🗑️</div><div class="desk-icon-lbl">Recycle Bin</div></div>
+          </div>
+
+          <!-- WordPad Window -->
+          <div class="win-window">
+            <div class="w-titlebar">
+              <div class="w-titlebar-text">📝 resume.doc — WordPad</div>
+              <div class="w-titlebar-btns">
+                <button>_</button>
+                <button>□</button>
+                <button>×</button>
+              </div>
+            </div>
+            <div class="w-menu">
+              <button><u>F</u>ile</button>
+              <button><u>E</u>dit</button>
+              <button><u>V</u>iew</button>
+              <button><u>H</u>elp</button>
+            </div>
+            <div class="w-body">
+              <h1>Omar Mendivil — Experience</h1>
+
+              <h2>Perception Triage Engineer</h2>
+              <div class="sub">Apple · Cupertino, CA · Jun 2025 – Nov 2025</div>
+              <div class="badge">TOP 10% — Career Experience Program</div>
+              <div class="desc">Selected into a program only the top 10% of the company is accepted into. Triaged perception system issues across the product integrity pipeline.</div>
+              <ul>
+                <li>Led weekly triage meetings with Product Integrity, analyzing radar data.</li>
+                <li>Helped QE team understand system behavior, reducing unnecessary radars.</li>
+                <li>Identified recurring issue pattern — helped engineers fix a perception bug.</li>
+              </ul>
+
+              <hr>
+
+              <h2>Web Developer</h2>
+              <div class="sub">Aer Digital · Remote · May 2022 – Jun 2025</div>
+              <div class="badge">3+ YEARS — Client Delivery</div>
+              <div class="desc">Shipped client websites with custom JavaScript, converting business requirements into polished web experiences.</div>
+              <ul>
+                <li>Built and customized websites focused on usability and visual polish.</li>
+                <li>Implemented custom JS/HTML when built-in tools weren't enough.</li>
+              </ul>
+
+              <hr>
+
+              <h2>Independent Developer</h2>
+              <div class="sub">Self-directed · Arizona · 2024 – Present</div>
+              <div class="badge">6+ SHIPPED PROJECTS</div>
+              <div class="desc">Building product concepts across Swift, SwiftUI, React, and TypeScript.</div>
+              <ul>
+                <li>Shipping apps, tools, and this portfolio with emphasis on craft.</li>
+                <li>Creating dev content and walkthroughs.</li>
+              </ul>
+
+              <div class="rec-nav">
+                <button>◄ Previous</button>
+                <span>Record 1 of 3</span>
+                <button>Next ►</button>
+              </div>
+            </div>
+            <div class="w-status">
+              <span>Ready</span>
+              <span style="width:60px;">Pg 1</span>
+            </div>
+          </div>
+
+          <!-- Taskbar -->
+          <div class="w-taskbar">
+            <button class="w-start">🪟 <b>Start</b></button>
+            <div class="w-tbar-sep"></div>
+            <button class="w-tbar-btn">📝 resume.doc</button>
+            <div class="w-systray">🔊 3:42 PM</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="desktop-icon">
-      <div class="desktop-icon-img">📁</div>
-      <div class="desktop-icon-label">Projects</div>
-    </div>
-    <div class="desktop-icon">
-      <div class="desktop-icon-img">🌐</div>
-      <div class="desktop-icon-label">Portfolio</div>
-    </div>
-    <div class="desktop-icon">
-      <div class="desktop-icon-img">🗑️</div>
-      <div class="desktop-icon-label">Recycle Bin</div>
+
+    <!-- Monitor chin -->
+    <div class="monitor-chin">
+      <div class="monitor-brand">MENDIVIL SYS</div>
+      <div class="monitor-controls">
+        <div class="power-led"></div>
+        <div class="power-btn"></div>
+      </div>
     </div>
   </div>
 
-  <!-- THE WINDOW -->
-  <div class="win95-window">
-    <!-- Title bar -->
-    <div class="title-bar">
-      <div class="title-bar-text">
-        <span class="title-bar-icon">📝</span>
-        resume.doc — WordPad
-      </div>
-      <div class="title-bar-controls">
-        <button aria-label="Minimize">_</button>
-        <button aria-label="Maximize">□</button>
-        <button aria-label="Close">×</button>
-      </div>
-    </div>
+  <!-- Stand -->
+  <div class="stand-neck"></div>
+  <div class="stand-base"></div>
 
-    <!-- Menu bar -->
-    <div class="menu-bar">
-      <button><u>F</u>ile</button>
-      <button><u>E</u>dit</button>
-      <button><u>V</u>iew</button>
-      <button><u>I</u>nsert</button>
-      <button>F<u>o</u>rmat</button>
-      <button><u>H</u>elp</button>
-    </div>
-
-    <!-- Toolbar -->
-    <div class="toolbar">
-      <select style="width: 120px;"><option>Times New Roman</option></select>
-      <select style="width: 40px;"><option>12</option></select>
-      <div class="toolbar-sep"></div>
-      <button><b>B</b></button>
-      <button><i>I</i></button>
-      <button><u>U</u></button>
-    </div>
-
-    <!-- Content: WordPad document -->
-    <div class="window-body">
-      <h1>Omar Mendivil — Experience</h1>
-
-      <h2>Perception Triage Engineer</h2>
-      <div class="subtitle">Apple · Cupertino, CA · Jun 2025 – Nov 2025</div>
-      <div class="stat">TOP 10% — Career Experience Program</div>
-      <div class="summary">
-        Selected into a program only the top 10% of the company is accepted into.
-        Triaged perception system issues across the product integrity pipeline.
-      </div>
-      <ul>
-        <li>Led weekly triage meetings with the Product Integrity team, analyzing radar data and communicating issues to engineers.</li>
-        <li>Helped the QE team better understand system behavior, reducing unnecessary radars and making testing more targeted.</li>
-        <li>Identified a recurring issue pattern across multiple radars that helped engineers isolate and fix a perception bug.</li>
-      </ul>
-
-      <hr>
-
-      <h2>Web Developer</h2>
-      <div class="subtitle">Aer Digital · Remote · May 2022 – Jun 2025</div>
-      <div class="stat">3+ YEARS — Client Delivery</div>
-      <div class="summary">
-        Designed and shipped client websites with custom JavaScript functionality, focused on
-        converting business requirements into polished web experiences.
-      </div>
-      <ul>
-        <li>Built and customized websites for clients with a focus on usability, visual polish, and practical business needs.</li>
-        <li>Implemented custom functionality using JavaScript and HTML embeds when built-in site builder features weren't enough.</li>
-      </ul>
-
-      <hr>
-
-      <h2>Independent Developer</h2>
-      <div class="subtitle">Self-directed · Arizona · 2024 – Present</div>
-      <div class="stat">6+ SHIPPED PROJECTS</div>
-      <div class="summary">
-        Building product concepts across Swift, SwiftUI, React, and TypeScript — from interface study through functional demo.
-      </div>
-      <ul>
-        <li>Shipping apps, developer tools, and this portfolio with an emphasis on motion, architecture, and craft.</li>
-        <li>Creating dev content and walkthroughs to document the build process.</li>
-      </ul>
-
-      <!-- Record navigation -->
-      <div class="record-nav">
-        <button>◄ Previous</button>
-        <span>Record 1 of 3</span>
-        <button>Next ►</button>
-      </div>
-    </div>
-
-    <!-- Status bar -->
-    <div class="status-bar">
-      <span>Ready</span>
-      <span style="width: 80px;">Page 1</span>
-    </div>
-  </div>
-</div>
-
-<!-- TASKBAR -->
-<div class="taskbar">
-  <button class="start-btn">
-    <span class="start-flag">🪟</span> Start
-  </button>
-  <div class="taskbar-sep"></div>
-  <button class="taskbar-btn">📝 resume.doc — WordPad</button>
-  <div class="sys-tray">
-    🔊 3:42 PM
-  </div>
-</div>
-
-<!-- INFO -->
-<div class="info">
-  <h2>Windows 95 Desktop — Experience Section</h2>
-  <p>
-    A retro Windows desktop with a draggable WordPad window displaying your experience.
-    The window can be moved around on desktop. On mobile, just the window frame (no desktop).
-    Record navigation at the bottom flips between entries.
-  </p>
-  <div class="features">
-    <span class="feat">Draggable window</span>
-    <span class="feat">3D beveled borders</span>
-    <span class="feat">WordPad content</span>
-    <span class="feat">Desktop icons</span>
-    <span class="feat">Taskbar + Start</span>
-    <span class="feat">Record navigation</span>
+  <!-- Info -->
+  <div class="info">
+    <h2>Retro Computer — Experience Section</h2>
+    <p>A chunky beige monitor with a Windows 95 desktop inside. The WordPad window is draggable on desktop. On mobile, the computer frame stays but the window is full-width inside it.</p>
   </div>
 </div>
 
