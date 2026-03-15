@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Game Theme — 3 Options</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cinzel:wght@400;700;900&family=Crimson+Text:ital@0;1&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; color: #f3f0e9; font-family: -apple-system, sans-serif; }
+
+  .section { padding: 30px 20px 60px; max-width: 800px; margin: 0 auto; }
+  .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: #8ac9bd; margin-bottom: 8px; font-weight: 600; }
+  .title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+  .desc { font-size: 13px; color: #888; margin-bottom: 20px; line-height: 1.6; max-width: 600px; }
+  .divider { border-top: 1px solid rgba(255,255,255,0.04); margin: 0 20px; }
+  .header { padding: 40px 20px 20px; text-align: center; }
+  .header h1 { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+  .header p { font-size: 13px; color: #888; }
+
+  /* ============================================
+     OPTION A: RETRO 8-BIT NES
+     ============================================ */
+  .nes-frame {
+    background: #000;
+    padding: 24px;
+    position: relative;
+    min-height: 320px;
+    image-rendering: pixelated;
+  }
+
+  /* NES text box border */
+  .nes-box {
+    border: 3px solid #f8f8f8;
+    box-shadow: inset 0 0 0 3px #000, inset 0 0 0 6px #f8f8f8;
+    padding: 16px;
+    margin-bottom: 12px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    line-height: 2;
+    color: #f8f8f8;
+  }
+  .nes-box.small { padding: 8px 16px; text-align: center; }
+
+  .nes-yellow { color: #f8d848; }
+  .nes-blue { color: #58a8f8; }
+  .nes-green { color: #48c848; }
+  .nes-gray { color: #a8a8a8; }
+
+  .nes-cursor {
+    display: inline-block;
+    animation: nes-blink 0.53s step-end infinite;
+  }
+  @keyframes nes-blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+
+  .nes-bullet { padding-left: 1.5em; position: relative; }
+  .nes-bullet::before { content: '▸'; position: absolute; left: 0; color: #48c848; }
+
+  .nes-nav {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: #a8a8a8;
+    margin-top: 8px;
+  }
+  .nes-nav .active { color: #f8f8f8; }
+  .nes-nav .active::before { content: '▶ '; color: #f8d848; }
+
+  /* Scanlines */
+  .nes-frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px);
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* ============================================
+     OPTION B: ADVENTURE GAME INVENTORY
+     ============================================ */
+  .inventory-bg {
+    background: #0d0b08;
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px;
+  }
+  .item-card {
+    background: #1a1814;
+    border: 1px solid #3a3428;
+    max-width: 480px;
+    width: 100%;
+    padding: 24px;
+    position: relative;
+  }
+  /* Ornate corners */
+  .item-card::before, .item-card::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: #c8a84e;
+    border-style: solid;
+  }
+  .item-card::before { top: 4px; left: 4px; border-width: 2px 0 0 2px; }
+  .item-card::after { top: 4px; right: 4px; border-width: 2px 2px 0 0; }
+  .corner-bl, .corner-br {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: #c8a84e;
+    border-style: solid;
+  }
+  .corner-bl { bottom: 4px; left: 4px; border-width: 0 0 2px 2px; }
+  .corner-br { bottom: 4px; right: 4px; border-width: 0 2px 2px 0; }
+
+  /* Item icon */
+  .item-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,168,78,0.15) 0%, transparent 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+  }
+
+  /* Item name + rarity */
+  .item-name {
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #e8dcc8;
+    margin-bottom: 4px;
+  }
+  .item-rarity {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .rarity-legendary { color: #ff8c00; }
+  .rarity-rare { color: #4488ff; }
+  .rarity-epic { color: #aa44ff; }
+
+  /* Stars */
+  .item-stars {
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+  .star-filled { color: #c8a84e; }
+  .star-empty { color: #3a3428; }
+
+  /* Separator */
+  .item-sep {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 12px 0;
+    color: #3a3428;
+  }
+  .item-sep::before, .item-sep::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #3a3428;
+  }
+  .item-sep span {
+    width: 6px;
+    height: 6px;
+    background: #c8a84e;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* Flavor text */
+  .item-flavor {
+    font-family: 'Crimson Text', serif;
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #8a7e68;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  /* Stats */
+  .item-stats {
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    color: #44cc88;
+  }
+  .item-stats div::before { content: '+ '; color: #44cc88; }
+
+  /* Metadata */
+  .item-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #2a2420;
+    font-size: 10px;
+    color: #6a5e48;
+    font-family: 'Fira Code', monospace;
+  }
+
+  /* Action prompt */
+  .item-prompt {
+    text-align: center;
+    margin-top: 16px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: #6a5e48;
+    animation: prompt-pulse 2s ease-in-out infinite;
+  }
+  @keyframes prompt-pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+  /* ============================================
+     OPTION C: FIGHTING GAME SELECT
+     ============================================ */
+  .fighter-bg {
+    background: #0a0a12;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Speed lines */
+  .fighter-bg::before {
+    content: '';
+    position: absolute;
+    inset: -50%;
+    background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.02) 10px, rgba(255,255,255,0.02) 12px);
+    animation: speed-shift 3s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes speed-shift { 0% { transform: translate(0,0); } 100% { transform: translate(24px, 24px); } }
+
+  .fighter-banner {
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 4px;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255,255,255,0.2);
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 2;
+  }
+  .fighter-sub {
+    text-align: center;
+    font-size: 10px;
+    color: #555;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .fighter-grid {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 2;
+  }
+  .fighter-card {
+    width: 140px;
+    height: 180px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+    position: relative;
+  }
+  .fighter-card.teal { background: linear-gradient(180deg, rgba(0,201,167,0.15), rgba(0,201,167,0.05)); }
+  .fighter-card.blue { background: linear-gradient(180deg, rgba(68,136,255,0.15), rgba(68,136,255,0.05)); }
+  .fighter-card.purple { background: linear-gradient(180deg, rgba(170,68,255,0.15), rgba(170,68,255,0.05)); }
+  .fighter-card.selected { transform: scale(1.05); }
+  .fighter-card.teal.selected { border-color: #00c9a7; box-shadow: 0 0 20px rgba(0,201,167,0.3); }
+  .fighter-card.blue.selected { border-color: #4488ff; box-shadow: 0 0 20px rgba(68,136,255,0.3); }
+  .fighter-card.purple.selected { border-color: #aa44ff; box-shadow: 0 0 20px rgba(170,68,255,0.3); }
+  .fighter-card:not(.selected) { opacity: 0.6; transform: scale(0.95); }
+
+  .fighter-icon { font-size: 40px; margin-bottom: 8px; }
+  .fighter-name { font-family: 'Bebas Neue', sans-serif; font-size: 14px; letter-spacing: 1px; color: #fff; text-align: center; }
+  .fighter-org { font-size: 9px; color: #888; text-align: center; margin-top: 2px; }
+
+  /* Stats panel */
+  .fighter-stats {
+    position: relative;
+    z-index: 2;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .fighter-stats h3 { font-family: 'Bebas Neue'; font-size: 20px; letter-spacing: 2px; margin-bottom: 4px; }
+  .fighter-stats .period { font-size: 10px; color: #666; margin-bottom: 8px; }
+  .fighter-stats .bio { font-size: 12px; color: #b0b0c0; line-height: 1.5; margin-bottom: 10px; }
+  .stat-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 10px; }
+  .stat-bar-label { width: 100px; color: #888; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+  .stat-bar-fill { height: 100%; border-radius: 3px; }
+  .stat-bar-fill.teal { background: linear-gradient(90deg, #00c9a7, #00e8c0); }
+  .stat-bar-fill.blue { background: linear-gradient(90deg, #4488ff, #66aaff); }
+  .stat-bar-fill.purple { background: linear-gradient(90deg, #aa44ff, #cc77ff); }
+
+  .fighter-ready {
+    text-align: center;
+    margin-top: 12px;
+    font-family: 'Bebas Neue';
+    font-size: 16px;
+    letter-spacing: 3px;
+    color: #ff4444;
+    animation: ready-pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes ready-pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+  .verdict { margin-top: 16px; padding: 14px; border-radius: 8px; font-size: 12px; line-height: 1.5; }
+  .pick { border: 1px solid rgba(152,195,121,0.3); background: rgba(152,195,121,0.04); color: #98c379; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Video Game Theme — 3 Options</h1>
+  <p>Pick one to join the 4-theme experience section</p>
+</div>
+
+<!-- OPTION A: 8-BIT NES -->
+<div class="section">
+  <div class="label">Option A — Retro 8-bit NES</div>
+  <div class="title">Dragon Quest Text Boxes</div>
+  <div class="desc">Pure black background, white pixel-bordered text boxes, typewriter text, blinking cursor. Most visually extreme — instant NES recognition. Text types in character-by-character.</div>
+
+  <div class="nes-frame">
+    <div class="nes-box small">★ QUEST LOG ★</div>
+    <div class="nes-box">
+      <div class="nes-yellow">PERCEPTION TRIAGE ENGINEER</div>
+      <div class="nes-gray">Guild: Apple  Region: Cupertino</div>
+      <div class="nes-gray">Duration: Jun 2025 - Nov 2025</div>
+      <div style="margin-top:8px;">Selected into a program only the top 10% of the company is accepted into.</div>
+      <div style="margin-top:8px;">
+        <div class="nes-bullet">Led weekly triage meetings</div>
+        <div class="nes-bullet">Helped QE team understand behavior</div>
+        <div class="nes-bullet">Identified recurring issue pattern</div>
+      </div>
+      <div style="margin-top:8px;" class="nes-blue">[STATUS: TOP 10% ACHIEVEMENT UNLOCKED]</div>
+    </div>
+    <div class="nes-nav">
+      <span>PREV</span>
+      <span class="active">QUEST 1/3</span>
+      <span>NEXT</span>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- OPTION B: ADVENTURE GAME INVENTORY -->
+<div class="section">
+  <div class="label">Option B — Adventure Game Inventory</div>
+  <div class="title">Legendary Item Card</div>
+  <div class="desc">Dark parchment card with gold ornate corners, rarity tags (Legendary/Rare/Epic), star ratings, stat bonuses with green "+" prefix. Each job is an item you've collected. Most mobile-friendly.</div>
+
+  <div class="inventory-bg">
+    <div class="item-card">
+      <div class="corner-bl"></div>
+      <div class="corner-br"></div>
+
+      <div class="item-icon">🔍</div>
+      <div class="item-name">Perception Triage Engineer</div>
+      <div class="item-rarity rarity-legendary">★ LEGENDARY ★</div>
+      <div class="item-stars">
+        <span class="star-filled">★</span>
+        <span class="star-filled">★</span>
+        <span class="star-filled">★</span>
+        <span class="star-filled">★</span>
+        <span class="star-filled">★</span>
+      </div>
+
+      <div class="item-sep"><span></span></div>
+
+      <div class="item-flavor">
+        "Selected into a program only the top 10% of the company is accepted into.
+        Triaged perception system issues across the product integrity pipeline."
+      </div>
+
+      <div class="item-sep"><span></span></div>
+
+      <div class="item-stats">
+        <div>Led weekly triage meetings with Product Integrity</div>
+        <div>Helped QE team understand system behavior</div>
+        <div>Identified recurring issue pattern across radars</div>
+      </div>
+
+      <div class="item-meta">
+        <span>Source: Apple</span>
+        <span>Cupertino, CA</span>
+        <span>Jun 2025</span>
+      </div>
+
+      <div class="item-prompt">[A] EQUIP &nbsp; [L][R] BROWSE COLLECTION</div>
+    </div>
+  </div>
+
+  <div class="verdict pick">My pick. Most unique, most charming, most mobile-friendly. The "Legendary" rarity tag on the Apple entry is a natural flex. Each job as a collectible item is clever without being forced.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- OPTION C: FIGHTING GAME SELECT -->
+<div class="section">
+  <div class="label">Option C — Fighting Game Select Screen</div>
+  <div class="title">Select Your Fighter</div>
+  <div class="desc">High-energy character select with portraits, stat bars, speed lines, and "READY?" prompt. All 3 entries visible as fighters to pick from. Most visually bold.</div>
+
+  <div class="fighter-bg">
+    <div class="fighter-banner">SELECT YOUR FIGHTER</div>
+    <div class="fighter-sub">Career Arena — 3 Contenders</div>
+
+    <div class="fighter-grid">
+      <div class="fighter-card teal selected">
+        <div class="fighter-icon">🍎</div>
+        <div class="fighter-name">TRIAGE<br>ENGINEER</div>
+        <div class="fighter-org">Apple</div>
+      </div>
+      <div class="fighter-card blue">
+        <div class="fighter-icon">🌐</div>
+        <div class="fighter-name">WEB<br>DEVELOPER</div>
+        <div class="fighter-org">Aer Digital</div>
+      </div>
+      <div class="fighter-card purple">
+        <div class="fighter-icon">⚡</div>
+        <div class="fighter-name">INDIE<br>DEVELOPER</div>
+        <div class="fighter-org">Self-directed</div>
+      </div>
+    </div>
+
+    <div class="fighter-stats">
+      <h3>PERCEPTION TRIAGE ENGINEER</h3>
+      <div class="period">Apple · Cupertino, CA · Jun 2025 – Nov 2025</div>
+      <div class="bio">Selected into a program only the top 10% of the company is accepted into. Triaged perception system issues.</div>
+
+      <div class="stat-bar-row">
+        <div class="stat-bar-label">Leadership</div>
+        <div class="stat-bar"><div class="stat-bar-fill teal" style="width:90%"></div></div>
+      </div>
+      <div class="stat-bar-row">
+        <div class="stat-bar-label">Technical</div>
+        <div class="stat-bar"><div class="stat-bar-fill teal" style="width:85%"></div></div>
+      </div>
+      <div class="stat-bar-row">
+        <div class="stat-bar-label">Impact</div>
+        <div class="stat-bar"><div class="stat-bar-fill teal" style="width:95%"></div></div>
+      </div>
+
+      <div class="fighter-ready">READY?</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SUMMARY -->
+<div style="padding: 40px 20px; max-width: 800px; margin: 0 auto;">
+  <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 12px; text-align: center;">Which One?</h2>
+  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; font-size: 12px;">
+    <div style="padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; text-align: center;">
+      <div style="font-size: 24px; margin-bottom: 6px;">👾</div>
+      <div style="font-weight: 600; margin-bottom: 4px;">8-bit NES</div>
+      <div style="color: #888;">Most retro. Typewriter text. Pure pixel aesthetic.</div>
+    </div>
+    <div style="padding: 16px; background: rgba(152,195,121,0.04); border: 1px solid rgba(152,195,121,0.15); border-radius: 8px; text-align: center;">
+      <div style="font-size: 24px; margin-bottom: 6px;">⚔️</div>
+      <div style="font-weight: 600; margin-bottom: 4px; color: #98c379;">Inventory Item ⭐</div>
+      <div style="color: #888;">Most unique. Legendary/Rare/Epic rarity. Mobile-perfect.</div>
+    </div>
+    <div style="padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; text-align: center;">
+      <div style="font-size: 24px; margin-bottom: 6px;">🥊</div>
+      <div style="font-weight: 600; margin-bottom: 4px;">Fighting Game</div>
+      <div style="color: #888;">Most bold. All 3 visible. Stat bars + speed lines.</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
