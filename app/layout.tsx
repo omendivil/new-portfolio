@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Manrope, Newsreader } from "next/font/google";
 
+import { AmbientBackground } from "@/components/ambient/ambient-background";
 import { SiteAnalytics } from "@/components/analytics/site-analytics";
 import { ThemeProvider } from "@/components/theme-provider";
 import "../styles/globals.css";
@@ -38,6 +39,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${sans.variable} ${mono.variable} ${display.variable} antialiased`}>
         <ThemeProvider>
+          <AmbientBackground />
           {children}
           <SiteAnalytics />
         </ThemeProvider>

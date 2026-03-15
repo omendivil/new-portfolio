@@ -9,6 +9,33 @@
   --muted: #6c6355;
   --accent: #2d6f66;
   --accent-soft: #dce9e6;
+
+  /* Ambient: Noise */
+  --noise-opacity: 0.025;
+  --noise-blend: multiply;
+  --noise-invert: 0;
+
+  /* Ambient: Aurora */
+  --aurora-1: rgba(45, 111, 102, 0.08);
+  --aurora-2: rgba(180, 140, 100, 0.06);
+  --aurora-3: rgba(140, 120, 180, 0.05);
+  --aurora-blur: 140px;
+
+  /* Ambient: Cursor glow */
+  --cursor-glow-color: rgba(45, 111, 102, 0.06);
+  --cursor-glow-size: 600px;
+
+  /* Ambient: Scroll wash */
+  --wash-hero: rgba(45, 111, 102, 0.04);
+  --wash-projects: rgba(100, 80, 160, 0.03);
+  --wash-code: rgba(180, 140, 80, 0.03);
+  --wash-experience: rgba(45, 111, 102, 0.03);
+  --wash-contact: rgba(80, 120, 160, 0.03);
+
+  /* Ambient: Dot grid */
+  --dot-color: rgba(23, 20, 17, 0.10);
+  --dot-size: 1px;
+  --dot-gap: 24px;
 }
 
 .dark {
@@ -20,6 +47,33 @@
   --muted: #afa798;
   --accent: #8ac9bd;
   --accent-soft: #213733;
+
+  /* Ambient: Noise */
+  --noise-opacity: 0.04;
+  --noise-blend: soft-light;
+  --noise-invert: 1;
+
+  /* Ambient: Aurora */
+  --aurora-1: rgba(138, 201, 189, 0.15);
+  --aurora-2: rgba(120, 80, 200, 0.12);
+  --aurora-3: rgba(80, 160, 200, 0.10);
+  --aurora-blur: 100px;
+
+  /* Ambient: Cursor glow */
+  --cursor-glow-color: rgba(138, 201, 189, 0.08);
+  --cursor-glow-size: 600px;
+
+  /* Ambient: Scroll wash */
+  --wash-hero: rgba(138, 201, 189, 0.06);
+  --wash-projects: rgba(140, 100, 220, 0.05);
+  --wash-code: rgba(200, 170, 100, 0.04);
+  --wash-experience: rgba(138, 201, 189, 0.04);
+  --wash-contact: rgba(100, 160, 220, 0.04);
+
+  /* Ambient: Dot grid */
+  --dot-color: rgba(243, 240, 233, 0.07);
+  --dot-size: 1px;
+  --dot-gap: 24px;
 }
 
 @theme inline {
@@ -51,10 +105,6 @@
     min-height: 100vh;
     overflow-x: clip;
     background-color: var(--background);
-    background-image:
-      radial-gradient(circle at top left, rgba(45, 111, 102, 0.08), transparent 24%),
-      radial-gradient(circle at top right, rgba(255, 255, 255, 0.42), transparent 28%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 28%);
     color: var(--text);
     font-family: var(--font-manrope), sans-serif;
     text-rendering: optimizeLegibility;
@@ -166,6 +216,16 @@
 
   .section-grid > * {
     min-width: 0;
+  }
+
+  .dot-grid {
+    background-image: radial-gradient(
+      circle,
+      var(--dot-color) var(--dot-size),
+      transparent var(--dot-size)
+    );
+    background-size: var(--dot-gap) var(--dot-gap);
+    background-position: center center;
   }
 
   .nav-scroll-edge {
