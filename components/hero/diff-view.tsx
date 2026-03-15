@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 import { motionEase } from "@/lib/motion";
 
@@ -56,7 +57,7 @@ function DiffLineRow({ line }: { line: DiffLine }) {
 
   return (
     <div
-      className="flex font-mono text-[11px] leading-[22px] sm:text-[13px] sm:leading-[24px]"
+      className="flex font-mono text-[11px] leading-[22px] sm:text-[13px] sm:leading-[26px] lg:text-[14px] lg:leading-[28px]"
       style={{
         backgroundColor: isDeletion
           ? "var(--diff-del-bg)"
@@ -96,9 +97,11 @@ type DiffViewProps = {
 };
 
 export function DiffView({ startAnimation }: DiffViewProps) {
+  const [reviewed, setReviewed] = useState(false);
+
   return (
     <div
-      className="mx-auto max-w-2xl overflow-hidden rounded-xl border sm:max-w-3xl"
+      className="mx-auto w-full max-w-2xl overflow-hidden rounded-xl border sm:max-w-3xl lg:max-w-4xl"
       style={{
         borderColor: "var(--diff-border)",
         background: "var(--diff-bg)",
@@ -108,17 +111,17 @@ export function DiffView({ startAnimation }: DiffViewProps) {
     >
       {/* File header */}
       <div
-        className="flex items-center justify-between border-b px-3 py-2 sm:px-4"
+        className="flex items-center justify-between border-b px-3 py-2.5 sm:px-5"
         style={{
           borderColor: "var(--diff-border)",
           background: "var(--diff-header-bg)",
         }}
         aria-hidden="true"
       >
-        <span className="font-mono text-xs" style={{ color: "var(--syn-plain)" }}>
+        <span className="font-mono text-xs sm:text-sm" style={{ color: "var(--syn-plain)" }}>
           📄 {DIFF_FILENAME}
         </span>
-        <span className="text-xs">
+        <span className="text-xs sm:text-sm">
           <span style={{ color: "var(--diff-del-text)" }}>−{DIFF_DELETIONS}</span>
           {" "}
           <span style={{ color: "var(--diff-add-text)" }}>+{DIFF_ADDITIONS}</span>
@@ -127,6 +130,7 @@ export function DiffView({ startAnimation }: DiffViewProps) {
 
       {/* Diff lines */}
       <motion.div
+        className="py-1 sm:py-2"
         variants={containerVariants}
         initial="hidden"
         animate={startAnimation ? "visible" : "hidden"}
@@ -138,28 +142,33 @@ export function DiffView({ startAnimation }: DiffViewProps) {
         ))}
       </motion.div>
 
-      {/* Merge button */}
+      {/* Review bar */}
       <div
-        className="flex items-center justify-between border-t px-3 py-2.5 sm:px-4"
+        className="flex items-center justify-between border-t px-3 py-3 sm:px-5"
         style={{ borderColor: "var(--diff-border)" }}
       >
-        <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setReviewed((r) => !r)}
+          className="flex items-center gap-2 transition-opacity hover:opacity-80"
+        >
           <div
-            className="flex h-4 w-4 items-center justify-center rounded-sm border text-[10px]"
+            className="flex h-4 w-4 items-center justify-center rounded-sm border text-[10px] transition-colors"
             style={{
               borderColor: "var(--diff-add-text)",
-              color: "var(--diff-add-text)",
+              color: reviewed ? "var(--diff-bg)" : "var(--diff-add-text)",
+              background: reviewed ? "var(--diff-add-text)" : "transparent",
             }}
           >
             ✓
           </div>
-          <span className="text-xs" style={{ color: "var(--syn-comment)" }}>
-            Reviewed — looks good
+          <span className="text-xs sm:text-sm" style={{ color: "var(--syn-comment)" }}>
+            {reviewed ? "Reviewed — looks good" : "Mark as reviewed"}
           </span>
-        </div>
+        </button>
         <a
           href="#projects"
-          className="rounded-md px-3 py-1.5 text-xs font-medium transition-colors"
+          className="rounded-md px-3 py-1.5 text-xs font-medium transition-all hover:brightness-110 hover:shadow-md sm:px-4 sm:py-2 sm:text-sm"
           style={{
             background: "var(--diff-add-bg)",
             color: "var(--diff-add-text)",

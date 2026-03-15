@@ -18,9 +18,9 @@ const BUILD_STEPS: BuildStep[] = [
   { label: "applying motion system", result: "✓" },
 ];
 
-const TYPING_SPEED = 35;
-const RESULT_DELAY = 300;
-const STEP_GAP = 150;
+const TYPING_SPEED = 20;
+const RESULT_DELAY = 180;
+const STEP_GAP = 80;
 
 type BuildTerminalProps = {
   onComplete: () => void;
@@ -38,8 +38,8 @@ export function BuildTerminal({ onComplete }: BuildTerminalProps) {
     if (currentStep >= BUILD_STEPS.length) {
       const t = setTimeout(() => {
         setIsDone(true);
-        setTimeout(onComplete, 600);
-      }, 400);
+        setTimeout(onComplete, 400);
+      }, 250);
       return () => clearTimeout(t);
     }
 
