@@ -224,6 +224,54 @@ export const BONUS_SNIPPETS: CodeSnippet[] = [
       [punc("}")],
     ],
   },
+  // sendMessage — Atlas Chat App (Swift async)
+  {
+    filename: "ChatViewModel.swift",
+    language: "swift",
+    projectName: "Atlas Chat App",
+    lines: [
+      [kw("func"), plain(" "), fn("sendMessage"), punc("("), plain("_ content"), op(":"), plain(" "), typ("String"), punc(")"), plain(" "), kw("async"), plain(" "), punc("{")],
+      [plain("    "), kw("guard"), plain(" "), op("!"), plain("content."), fn("isEmpty"), plain(" "), kw("else"), plain(" "), punc("{"), plain(" "), kw("return"), plain(" "), punc("}")],
+      [plain("")],
+      [plain("    "), kw("let"), plain(" userMsg "), op("="), plain(" "), typ("Message"), punc("("), prop("role"), op(":"), plain(" .user"), punc(","), plain(" "), prop("content"), op(":"), plain(" content"), punc(")")],
+      [plain("    messages."), fn("append"), punc("("), plain("userMsg"), punc(")")],
+      [plain("    isLoading "), op("="), plain(" "), kw("true")],
+      [plain("")],
+      [plain("    "), kw("do"), plain(" "), punc("{")],
+      [plain("      "), kw("let"), plain(" reply "), op("="), plain(" "), kw("try"), plain(" "), kw("await"), plain(" chatService."), fn("sendMessage"), punc("("), plain("content"), punc(")")],
+      [plain("      messages."), fn("append"), punc("("), plain("reply"), punc(")")],
+      [plain("    "), punc("}"), plain(" "), kw("catch"), plain(" "), punc("{")],
+      [plain("      messages."), fn("removeAll"), plain(" "), punc("{"), plain(" $0.id "), op("=="), plain(" userMsg.id "), punc("}")],
+      [plain("      errorMessage "), op("="), plain(" error."), prop("localizedDescription")],
+      [plain("    "), punc("}")],
+      [plain("    isLoading "), op("="), plain(" "), kw("false")],
+      [punc("}")],
+    ],
+  },
+
+  // blink.sh — Claude Notifier (Bash)
+  {
+    filename: "blink.sh",
+    language: "bash",
+    projectName: "Claude Notifier",
+    lines: [
+      [fn("run_blink"), punc("("), punc(")"), plain(" "), punc("{")],
+      [plain("  "), kw("local"), plain(" state"), op("="), str('"$1"')],
+      [plain("  "), fn("_kill_previous_blink")],
+      [plain("")],
+      [plain("  "), kw("case"), plain(" "), str('"$state"'), plain(" "), kw("in")],
+      [plain("    permission"), punc(")")],
+      [plain("      "), kw("for"), plain(" _ "), kw("in"), plain(" "), num("1"), plain(" "), num("2"), plain(" "), num("3"), punc(";"), plain(" "), kw("do")],
+      [plain("        "), fn("kitty_set_tab_color"), plain(" active_bg"), op("="), str('"#ffffff"')],
+      [plain("        "), fn("sleep"), plain(" "), str('"$fast"'), punc(";"), plain(" "), fn("kitty_set_tab_color"), plain(" active_bg"), op("="), plain("NONE")],
+      [plain("      "), kw("done"), plain(" "), punc(";"), punc(";")],
+      [plain("    done"), op("|"), plain("idle"), punc(")")],
+      [plain("      "), fn("kitty_set_tab_color"), plain(" active_bg"), op("="), str('"#ffffff"')],
+      [plain("      "), fn("sleep"), plain(" "), str('"$slow"'), plain(" "), punc(";"), punc(";")],
+      [plain("  "), kw("esac")],
+      [punc("}")],
+    ],
+  },
 ];
 
 // Helper for bonus snippets that need decorator type

@@ -27,45 +27,57 @@ const SNIPPET_LANGUAGE_MAP: Record<string, string[]> = {
 const SNIPPET_LOGS: Record<string, { level: string; tag: string; message: string; detail: string }> = {
   "AnimatedText.tsx": {
     level: "INFO",
-    tag: "scroll-reveal",
-    message: "IntersectionObserver triggers word-by-word animation",
-    detail: "stagger delay computed per word index · cubic-bezier easing · once-fire observer",
+    tag: "groundworks",
+    message: "Text that reveals itself word by word as you scroll down the page",
+    detail: "built for the Groundworks Studio website · watches when elements enter the screen",
   },
   "MessageRow.swift": {
     level: "INFO",
-    tag: "swiftui-layout",
-    message: "Chat bubble mirrors layout based on message role",
-    detail: "conditional Spacer + ternary modifiers · theme-driven colors · shadow depth",
+    tag: "atlas-chat",
+    message: "A chat bubble that flips sides depending on who sent the message",
+    detail: "part of an iOS chat app · user messages go right, AI responses go left",
   },
   "List.js": {
     level: "INFO",
-    tag: "infinite-scroll",
-    message: "IntersectionObserver pagination with cooldown guard",
-    detail: "ref callback pattern · prevents duplicate fetches · debounce via Date.now()",
+    tag: "anime-browser",
+    message: "Loads more content automatically as you scroll to the bottom",
+    detail: "built for an anime browsing app · prevents loading the same data twice",
   },
   "NetworkManager.swift": {
     level: "INFO",
-    tag: "image-cache",
-    message: "Three-tier cache: memory → disk → network",
-    detail: "NSCache + URLCache + async/await fetch · guard-based error flow",
+    tag: "appetizer",
+    message: "Saves images locally so the app doesn't re-download them every time",
+    detail: "checks memory first, then disk, then fetches from the network as a last resort",
   },
   "config.sh": {
     level: "INFO",
-    tag: "shell-parser",
-    message: "Safe key=value config reader — no eval",
-    detail: "regex validation for booleans + hex colors · case-based type dispatch",
+    tag: "claude-notifier",
+    message: "Reads settings from a config file and validates each value before using it",
+    detail: "a terminal tool I built to get notifications from Claude Code sessions",
   },
   "Order.swift": {
     level: "INFO",
-    tag: "state-model",
-    message: "ObservableObject cart with reduce-computed total",
-    detail: "IndexSet deletion for SwiftUI list · @Published reactive updates",
+    tag: "appetizer",
+    message: "A shopping cart that instantly updates the total when items are added or removed",
+    detail: "part of a food ordering app · uses SwiftUI's reactive state system",
   },
   "Slot.js": {
     level: "INFO",
-    tag: "skeleton-ui",
-    message: "Early-return skeleton with shimmer placeholders",
-    detail: "conditional branch renders loading state · deep property access on API response",
+    tag: "anime-browser",
+    message: "Shows placeholder shapes while real content loads from the API",
+    detail: "prevents layout jumping · swaps to real images once data arrives",
+  },
+  "ChatViewModel.swift": {
+    level: "INFO",
+    tag: "atlas-chat",
+    message: "Sends a message and waits for the AI to respond, rolls back if it fails",
+    detail: "optimistic UI update · appends message immediately, removes on error",
+  },
+  "blink.sh": {
+    level: "INFO",
+    tag: "claude-notifier",
+    message: "Flashes the terminal tab different colors based on what Claude is doing",
+    detail: "permission requests blink fast · completed tasks blink slow · PID-tracked",
   },
 };
 
@@ -146,51 +158,85 @@ function EditorContent({
   );
 }
 
-function PixelJedi() {
-  // Simple CSS pixel art — a jedi deflecting lasers
-  const rows = [
-    "..........RR..........",
-    "........RRRRRR........",
-    ".......RR.RR.RR.......",
-    ".......RRRRRRRR.......",
-    "........BBBBBB........",
-    ".......BBBBBBBB.......",
-    "GGGG..BBBB.BBBBB.....",
-    ".GGGG.BBB...BBBB.....",
-    "..GGGBBBB...BBBB.....",
-    "...GGBBBB..BBBBB.....",
-    "........BBBBBB........",
-    ".......BB....BB.......",
-    "......BB......BB......",
-  ];
-  const colors: Record<string, string> = { R: "#c8a87a", B: "#4a6fa5", G: "#28c840" };
-  const px = 3;
-
+function PixelBattle() {
   return (
-    <div className="flex flex-col items-center gap-4 py-12">
-      <div style={{ imageRendering: "pixelated" }}>
-        {rows.map((row, y) => (
-          <div key={y} className="flex">
-            {row.split("").map((cell, x) => (
-              <div
-                key={x}
-                style={{
-                  width: px,
-                  height: px,
-                  background: colors[cell] ?? "transparent",
-                }}
-              />
-            ))}
+    <div className="flex flex-col items-center py-10">
+      {/* Battle scene */}
+      <div className="relative flex w-full max-w-xs items-center justify-between px-6 py-8">
+        {/* Stormtrooper (left) */}
+        <div className="flex flex-col items-center gap-1" style={{ imageRendering: "pixelated" as React.CSSProperties["imageRendering"] }}>
+          <div className="grid grid-cols-5 gap-px">
+            {[
+              "WWWWW", ".WBW.", "WWWWW", ".GGG.", "GGGGG", "G.G.G", ".G.G.",
+            ].map((row, y) =>
+              row.split("").map((c, x) => (
+                <div key={`s1-${y}-${x}`} className="h-[4px] w-[4px]" style={{
+                  background: c === "W" ? "#e8e8e8" : c === "B" ? "#222" : c === "G" ? "#888" : "transparent",
+                }} />
+              ))
+            )}
           </div>
-        ))}
+        </div>
+
+        {/* Laser bolts flying right → left, some deflected */}
+        <div className="absolute inset-x-16 top-1/2 flex flex-col gap-3 -translate-y-1/2">
+          <motion.div
+            className="h-[2px] w-5 rounded bg-red-500"
+            style={{ boxShadow: "0 0 6px rgba(255,0,0,0.5)" }}
+            animate={{ x: [0, 60, 60], opacity: [1, 1, 0] }}
+            transition={{ duration: 1.2, repeat: Infinity, delay: 0 }}
+          />
+          <motion.div
+            className="h-[2px] w-4 rounded bg-red-500/80"
+            style={{ boxShadow: "0 0 4px rgba(255,0,0,0.4)" }}
+            animate={{ x: [0, 40, 40], y: [0, 0, -20], opacity: [1, 1, 0] }}
+            transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
+          />
+          <motion.div
+            className="h-[2px] w-6 rounded bg-red-500/90"
+            style={{ boxShadow: "0 0 5px rgba(255,0,0,0.5)" }}
+            animate={{ x: [0, 50, 50], y: [0, 0, 15], opacity: [1, 1, 0] }}
+            transition={{ duration: 1.1, repeat: Infinity, delay: 0.8 }}
+          />
+        </div>
+
+        {/* Jedi (right) with lightsaber */}
+        <div className="flex flex-col items-center gap-1" style={{ imageRendering: "pixelated" as React.CSSProperties["imageRendering"] }}>
+          <div className="grid grid-cols-5 gap-px">
+            {[
+              ".HHH.", "HHHHH", "H.H.H", ".BBB.", "BBBBB", "B.B.B", ".B.B.",
+            ].map((row, y) =>
+              row.split("").map((c, x) => (
+                <div key={`j-${y}-${x}`} className="h-[4px] w-[4px]" style={{
+                  background: c === "H" ? "#c8a87a" : c === "B" ? "#4a6fa5" : "transparent",
+                }} />
+              ))
+            )}
+          </div>
+          {/* Lightsaber */}
+          <motion.div
+            className="absolute -left-2 h-[2px] w-8 rounded"
+            style={{ background: "#28c840", boxShadow: "0 0 8px rgba(40,200,64,0.6)", top: "50%" }}
+            animate={{ rotate: [-10, 10, -10] }}
+            transition={{ duration: 0.6, repeat: Infinity }}
+          />
+        </div>
+
+        {/* Second stormtrooper (far left, smaller) */}
+        <div className="absolute left-2 top-2 opacity-40" style={{ imageRendering: "pixelated" as React.CSSProperties["imageRendering"] }}>
+          <div className="grid grid-cols-3 gap-px">
+            {["WWW", "WBW", "WWW", ".G.", "GGG"].map((row, y) =>
+              row.split("").map((c, x) => (
+                <div key={`s2-${y}-${x}`} className="h-[3px] w-[3px]" style={{
+                  background: c === "W" ? "#e8e8e8" : c === "B" ? "#222" : c === "G" ? "#888" : "transparent",
+                }} />
+              ))
+            )}
+          </div>
+        </div>
       </div>
-      {/* Laser bolts */}
-      <div className="flex items-center gap-1">
-        <div className="h-[2px] w-6 animate-pulse bg-red-500/60" />
-        <div className="h-[2px] w-4 animate-pulse bg-red-500/40" style={{ animationDelay: "0.3s" }} />
-        <div className="h-[2px] w-8 animate-pulse bg-red-500/50" style={{ animationDelay: "0.6s" }} />
-      </div>
-      <p className="font-mono text-[10px] text-muted/30">all tabs closed — open one to continue</p>
+
+      <p className="mt-2 font-mono text-[10px] text-muted/30">all tabs closed — open one to continue</p>
     </div>
   );
 }
@@ -405,7 +451,7 @@ export function CodeEditorAnimation() {
 
         {/* Editor content or easter egg */}
         {allClosed ? (
-          <PixelJedi />
+          <PixelBattle />
         ) : currentSnippet ? (
           <EditorContent
             key={`${currentSnippet.filename}-${activeTab}`}
