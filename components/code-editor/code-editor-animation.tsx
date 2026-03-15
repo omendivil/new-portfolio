@@ -160,9 +160,9 @@ function EditorContent({
 
 function PixelSprite({ pixels, scale = 4 }: { pixels: string[]; scale?: number }) {
   const colors: Record<string, string> = {
-    W: "#e8e8e8", w: "#ccc", B: "#1a1a1a", G: "#6b6b6b", g: "#888",
-    H: "#c8a87a", h: "#a07850", R: "#8b6040", r: "#6b4530",
-    T: "#4a6fa5", t: "#3a5a8a", S: "#28c840", s: "#1fa035",
+    W: "#e0e0e0", w: "#c0c0c0", B: "#111", b: "#333",
+    G: "#666", g: "#888", K: "#1a1a1a", k: "#2d2d2d",
+    R: "#cc2020", H: "#c8a87a", C: "#444", D: "#222",
   };
   return (
     <div style={{ imageRendering: "pixelated" }}>
@@ -178,88 +178,91 @@ function PixelSprite({ pixels, scale = 4 }: { pixels: string[]; scale?: number }
 }
 
 function PixelBattle() {
-  // 9-wide stormtrooper with helmet visor and blaster arm
+  // Stormtrooper: white helmet with T-visor, body armor, blaster arm out right
   const trooper = [
     "..WWW..",
     ".WWWWW.",
+    ".WB.BW.",
     ".WBBBW.",
     ".WWWWW.",
-    "..ggg..",
+    "..GGG..",
     ".WWWWW.",
-    "WWWWWWW",
-    ".WW.WW.",
+    "WWWWWWG",
+    ".WW.WWG",
     ".WW.WW.",
     "..W..W.",
   ];
 
-  // 9-wide Jedi with hood, robes, and saber arm extended left
-  const jedi = [
-    "..hhh..",
-    ".hhhhh.",
-    ".hHHhh.",
-    "..HHH..",
-    ".RRRRR.",
-    "TRRRRRT",
-    "TRRRRRT",
-    ".RR.RR.",
-    ".RR.RR.",
-    "..R..R.",
+  // Darth Vader: rounded dome helmet, chest panel with red lights, cape
+  const vader = [
+    "..KKK..",
+    ".KKKKK.",
+    "KKKKKKK",
+    "KKbKbKK",
+    "KKKKKKK",
+    ".KgggK.",
+    "DKKKKKD",
+    "DKRKRKD",
+    "DKKKKKD",
+    ".KK.KK.",
+    ".KK.KK.",
+    "..K..K.",
   ];
 
   return (
     <div className="flex flex-col items-center py-8">
-      <div className="relative flex w-full max-w-sm items-end justify-between px-4">
+      <div className="relative flex w-full max-w-md items-center justify-center gap-20 px-8">
 
-        {/* Stormtrooper 1 (back, smaller) */}
-        <div className="absolute left-6 top-0 opacity-40">
+        {/* Stormtrooper (back, faded) */}
+        <div className="absolute left-8 top-0 opacity-30">
           <PixelSprite pixels={trooper} scale={3} />
         </div>
 
-        {/* Stormtrooper 2 (front) */}
-        <div className="relative z-10 ml-4">
+        {/* Stormtrooper (front) */}
+        <div className="relative z-10">
           <PixelSprite pixels={trooper} scale={4} />
         </div>
 
-        {/* Laser bolts — flying left to right toward the Jedi */}
-        <div className="absolute left-[35%] right-[25%] top-[40%] flex flex-col gap-4">
+        {/* Laser bolts flying from troopers toward Vader */}
+        <div className="absolute left-[28%] right-[28%] top-[30%] flex flex-col gap-5">
+          <motion.div
+            className="h-[3px] w-8 rounded-full"
+            style={{ background: "#ff2020", boxShadow: "0 0 10px rgba(255,32,32,0.7), 0 0 20px rgba(255,32,32,0.3)" }}
+            animate={{ x: [0, 100], opacity: [1, 0.8, 0] }}
+            transition={{ duration: 0.9, repeat: Infinity, delay: 0 }}
+          />
           <motion.div
             className="h-[3px] w-6 rounded-full"
-            style={{ background: "#ff2020", boxShadow: "0 0 8px rgba(255,32,32,0.6)" }}
-            animate={{ x: [0, 80], opacity: [1, 0] }}
-            transition={{ duration: 0.8, repeat: Infinity, delay: 0 }}
+            style={{ background: "#ff3030", boxShadow: "0 0 8px rgba(255,48,48,0.6)" }}
+            animate={{ x: [0, 80], y: [0, -15], opacity: [1, 0.8, 0] }}
+            transition={{ duration: 0.8, repeat: Infinity, delay: 0.6 }}
           />
           <motion.div
-            className="h-[3px] w-5 rounded-full"
-            style={{ background: "#ff2020", boxShadow: "0 0 6px rgba(255,32,32,0.5)" }}
-            animate={{ x: [0, 60], y: [0, -12], opacity: [1, 0] }}
-            transition={{ duration: 0.7, repeat: Infinity, delay: 0.5 }}
-          />
-          <motion.div
-            className="h-[3px] w-7 rounded-full"
-            style={{ background: "#ff2020", boxShadow: "0 0 7px rgba(255,32,32,0.5)" }}
-            animate={{ x: [0, 70], y: [0, 8], opacity: [1, 0] }}
-            transition={{ duration: 0.9, repeat: Infinity, delay: 1.0 }}
+            className="h-[3px] w-9 rounded-full"
+            style={{ background: "#ff2020", boxShadow: "0 0 10px rgba(255,32,32,0.6)" }}
+            animate={{ x: [0, 90], y: [0, 10], opacity: [1, 0.8, 0] }}
+            transition={{ duration: 1.0, repeat: Infinity, delay: 1.2 }}
           />
         </div>
 
-        {/* Jedi with lightsaber */}
-        <div className="relative z-10 mr-4">
-          {/* Lightsaber blade — extends from the Jedi's left hand area */}
+        {/* Darth Vader with red lightsaber */}
+        <div className="relative z-10">
+          {/* Red lightsaber — held at chest height, swinging */}
           <motion.div
             className="absolute rounded-full"
             style={{
-              width: 3,
-              height: 28,
-              background: "#28c840",
-              boxShadow: "0 0 10px rgba(40,200,64,0.7), 0 0 20px rgba(40,200,64,0.3)",
-              left: -4,
-              top: 12,
-              transformOrigin: "bottom center",
+              width: 4,
+              height: 34,
+              background: "#ff2020",
+              boxShadow: "0 0 12px rgba(255,32,32,0.8), 0 0 24px rgba(255,32,32,0.4)",
+              left: -10,
+              top: 8,
+              transformOrigin: "50% 85%",
             }}
-            animate={{ rotate: [-15, 15, -15] }}
+            animate={{ rotate: [-25, 20, -25] }}
             transition={{ duration: 0.5, repeat: Infinity, ease: "easeInOut" }}
           />
-          <PixelSprite pixels={jedi} scale={4} />
+          <PixelSprite pixels={vader} scale={4} />
         </div>
       </div>
 
