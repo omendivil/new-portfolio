@@ -240,7 +240,7 @@ function PixelBattle() {
               boxShadow: "0 0 6px rgba(255,32,32,0.6)",
               right: -12, top: 18,
             }}
-            animate={{ x: [0, 90, 90], opacity: [1, 1, 0] }}
+            animate={{ x: [0, 70, 70], opacity: [1, 1, 0] }}
             transition={{ duration: 1.4, repeat: Infinity, delay: 0.4, times: [0, 0.7, 1] }}
           />
         </div>
@@ -257,7 +257,7 @@ function PixelBattle() {
               boxShadow: "0 0 10px rgba(255,32,32,0.8), 0 0 20px rgba(255,32,32,0.3)",
               right: -16, top: 28,
             }}
-            animate={{ x: [0, 80, 80], opacity: [1, 1, 0] }}
+            animate={{ x: [0, 55, 55], opacity: [1, 1, 0] }}
             transition={{ duration: 1.2, repeat: Infinity, delay: 0, times: [0, 0.7, 1] }}
           />
         </div>
@@ -272,8 +272,8 @@ function PixelBattle() {
               height: 36,
               background: "#ff2020",
               boxShadow: "0 0 14px rgba(255,32,32,0.8), 0 0 28px rgba(255,32,32,0.3)",
-              left: -14,
-              top: 0,
+              left: -20,
+              top: -4,
               transformOrigin: "50% 90%",
             }}
             animate={{ rotate: [-35, -10, -35] }}
