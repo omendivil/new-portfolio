@@ -34,11 +34,12 @@ function useFirstVisit(): boolean {
 export function HeroDiff() {
   const isFirstVisit = useFirstVisit();
   const { reduceMotion } = useMotionPreference();
-  const showBuild = isFirstVisit && !reduceMotion;
-  const [terminalVisible, setTerminalVisible] = useState(() => showBuild);
+  const [dismissed, setDismissed] = useState(false);
+
+  const terminalVisible = isFirstVisit && !reduceMotion && !dismissed;
 
   const handleTerminalComplete = useCallback(() => {
-    setTerminalVisible(false);
+    setDismissed(true);
   }, []);
 
   return (

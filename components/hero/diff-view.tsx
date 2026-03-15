@@ -51,48 +51,40 @@ function SyntaxTokens({ tokens }: { tokens: Token[] }) {
 
 function DiffLineRow({ line }: { line: DiffLine }) {
   const markerChar = line.type === "deletion" ? "−" : line.type === "addition" ? "+" : " ";
-
-  const bgClass =
-    line.type === "deletion"
-      ? "bg-[var(--diff-del-bg)]"
-      : line.type === "addition"
-        ? "bg-[var(--diff-add-bg)]"
-        : "";
-
-  const borderClass =
-    line.type === "deletion"
-      ? "border-l-[3px] border-l-[var(--diff-del-text)]"
-      : line.type === "addition"
-        ? "border-l-[3px] border-l-[var(--diff-add-text)]"
-        : "border-l-[3px] border-l-transparent";
-
-  const markerColor =
-    line.type === "deletion"
-      ? "var(--diff-del-text)"
-      : line.type === "addition"
-        ? "var(--diff-add-text)"
-        : "transparent";
+  const isDeletion = line.type === "deletion";
+  const isAddition = line.type === "addition";
 
   return (
     <div
-      className={`flex font-mono text-[11px] leading-[22px] sm:text-[13px] sm:leading-[24px] ${bgClass} ${borderClass}`}
+      className="flex font-mono text-[11px] leading-[22px] sm:text-[13px] sm:leading-[24px]"
+      style={{
+        backgroundColor: isDeletion
+          ? "var(--diff-del-bg)"
+          : isAddition
+            ? "var(--diff-add-bg)"
+            : undefined,
+        borderLeft: `3px solid ${isDeletion ? "var(--diff-del-text)" : isAddition ? "var(--diff-add-text)" : "transparent"}`,
+      }}
       role="text"
       aria-label={
-        line.type === "deletion"
+        isDeletion
           ? `Removed: ${line.plainText}`
-          : line.type === "addition"
+          : isAddition
             ? `Added: ${line.plainText}`
             : line.plainText
       }
     >
       <span
         className="w-6 shrink-0 select-none px-1 text-center sm:w-8 sm:px-2"
-        style={{ color: markerColor }}
+        style={{ color: isDeletion ? "var(--diff-del-text)" : isAddition ? "var(--diff-add-text)" : "transparent" }}
         aria-hidden="true"
       >
         {line.type !== "blank" ? markerChar : ""}
       </span>
-      <span className="flex-1 px-3 sm:px-4">
+      <span
+        className="flex-1 px-3 sm:px-4"
+        style={isDeletion ? { textDecoration: "line-through", opacity: 0.7 } : undefined}
+      >
         <SyntaxTokens tokens={line.tokens} />
       </span>
     </div>
