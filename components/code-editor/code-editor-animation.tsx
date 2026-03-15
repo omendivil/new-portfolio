@@ -158,85 +158,112 @@ function EditorContent({
   );
 }
 
-function PixelBattle() {
+function PixelSprite({ pixels, scale = 4 }: { pixels: string[]; scale?: number }) {
+  const colors: Record<string, string> = {
+    W: "#e8e8e8", w: "#ccc", B: "#1a1a1a", G: "#6b6b6b", g: "#888",
+    H: "#c8a87a", h: "#a07850", R: "#8b6040", r: "#6b4530",
+    T: "#4a6fa5", t: "#3a5a8a", S: "#28c840", s: "#1fa035",
+  };
   return (
-    <div className="flex flex-col items-center py-10">
-      {/* Battle scene */}
-      <div className="relative flex w-full max-w-xs items-center justify-between px-6 py-8">
-        {/* Stormtrooper (left) */}
-        <div className="flex flex-col items-center gap-1" style={{ imageRendering: "pixelated" as React.CSSProperties["imageRendering"] }}>
-          <div className="grid grid-cols-5 gap-px">
-            {[
-              "WWWWW", ".WBW.", "WWWWW", ".GGG.", "GGGGG", "G.G.G", ".G.G.",
-            ].map((row, y) =>
-              row.split("").map((c, x) => (
-                <div key={`s1-${y}-${x}`} className="h-[4px] w-[4px]" style={{
-                  background: c === "W" ? "#e8e8e8" : c === "B" ? "#222" : c === "G" ? "#888" : "transparent",
-                }} />
-              ))
-            )}
-          </div>
+    <div style={{ imageRendering: "pixelated" }}>
+      {pixels.map((row, y) => (
+        <div key={y} className="flex">
+          {row.split("").map((c, x) => (
+            <div key={x} style={{ width: scale, height: scale, background: colors[c] ?? "transparent" }} />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function PixelBattle() {
+  // 9-wide stormtrooper with helmet visor and blaster arm
+  const trooper = [
+    "..WWW..",
+    ".WWWWW.",
+    ".WBBBW.",
+    ".WWWWW.",
+    "..ggg..",
+    ".WWWWW.",
+    "WWWWWWW",
+    ".WW.WW.",
+    ".WW.WW.",
+    "..W..W.",
+  ];
+
+  // 9-wide Jedi with hood, robes, and saber arm extended left
+  const jedi = [
+    "..hhh..",
+    ".hhhhh.",
+    ".hHHhh.",
+    "..HHH..",
+    ".RRRRR.",
+    "TRRRRRT",
+    "TRRRRRT",
+    ".RR.RR.",
+    ".RR.RR.",
+    "..R..R.",
+  ];
+
+  return (
+    <div className="flex flex-col items-center py-8">
+      <div className="relative flex w-full max-w-sm items-end justify-between px-4">
+
+        {/* Stormtrooper 1 (back, smaller) */}
+        <div className="absolute left-6 top-0 opacity-40">
+          <PixelSprite pixels={trooper} scale={3} />
         </div>
 
-        {/* Laser bolts flying right → left, some deflected */}
-        <div className="absolute inset-x-16 top-1/2 flex flex-col gap-3 -translate-y-1/2">
+        {/* Stormtrooper 2 (front) */}
+        <div className="relative z-10 ml-4">
+          <PixelSprite pixels={trooper} scale={4} />
+        </div>
+
+        {/* Laser bolts — flying left to right toward the Jedi */}
+        <div className="absolute left-[35%] right-[25%] top-[40%] flex flex-col gap-4">
           <motion.div
-            className="h-[2px] w-5 rounded bg-red-500"
-            style={{ boxShadow: "0 0 6px rgba(255,0,0,0.5)" }}
-            animate={{ x: [0, 60, 60], opacity: [1, 1, 0] }}
-            transition={{ duration: 1.2, repeat: Infinity, delay: 0 }}
+            className="h-[3px] w-6 rounded-full"
+            style={{ background: "#ff2020", boxShadow: "0 0 8px rgba(255,32,32,0.6)" }}
+            animate={{ x: [0, 80], opacity: [1, 0] }}
+            transition={{ duration: 0.8, repeat: Infinity, delay: 0 }}
           />
           <motion.div
-            className="h-[2px] w-4 rounded bg-red-500/80"
-            style={{ boxShadow: "0 0 4px rgba(255,0,0,0.4)" }}
-            animate={{ x: [0, 40, 40], y: [0, 0, -20], opacity: [1, 1, 0] }}
-            transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
+            className="h-[3px] w-5 rounded-full"
+            style={{ background: "#ff2020", boxShadow: "0 0 6px rgba(255,32,32,0.5)" }}
+            animate={{ x: [0, 60], y: [0, -12], opacity: [1, 0] }}
+            transition={{ duration: 0.7, repeat: Infinity, delay: 0.5 }}
           />
           <motion.div
-            className="h-[2px] w-6 rounded bg-red-500/90"
-            style={{ boxShadow: "0 0 5px rgba(255,0,0,0.5)" }}
-            animate={{ x: [0, 50, 50], y: [0, 0, 15], opacity: [1, 1, 0] }}
-            transition={{ duration: 1.1, repeat: Infinity, delay: 0.8 }}
+            className="h-[3px] w-7 rounded-full"
+            style={{ background: "#ff2020", boxShadow: "0 0 7px rgba(255,32,32,0.5)" }}
+            animate={{ x: [0, 70], y: [0, 8], opacity: [1, 0] }}
+            transition={{ duration: 0.9, repeat: Infinity, delay: 1.0 }}
           />
         </div>
 
-        {/* Jedi (right) with lightsaber */}
-        <div className="flex flex-col items-center gap-1" style={{ imageRendering: "pixelated" as React.CSSProperties["imageRendering"] }}>
-          <div className="grid grid-cols-5 gap-px">
-            {[
-              ".HHH.", "HHHHH", "H.H.H", ".BBB.", "BBBBB", "B.B.B", ".B.B.",
-            ].map((row, y) =>
-              row.split("").map((c, x) => (
-                <div key={`j-${y}-${x}`} className="h-[4px] w-[4px]" style={{
-                  background: c === "H" ? "#c8a87a" : c === "B" ? "#4a6fa5" : "transparent",
-                }} />
-              ))
-            )}
-          </div>
-          {/* Lightsaber */}
+        {/* Jedi with lightsaber */}
+        <div className="relative z-10 mr-4">
+          {/* Lightsaber blade — extends from the Jedi's left hand area */}
           <motion.div
-            className="absolute -left-2 h-[2px] w-8 rounded"
-            style={{ background: "#28c840", boxShadow: "0 0 8px rgba(40,200,64,0.6)", top: "50%" }}
-            animate={{ rotate: [-10, 10, -10] }}
-            transition={{ duration: 0.6, repeat: Infinity }}
+            className="absolute rounded-full"
+            style={{
+              width: 3,
+              height: 28,
+              background: "#28c840",
+              boxShadow: "0 0 10px rgba(40,200,64,0.7), 0 0 20px rgba(40,200,64,0.3)",
+              left: -4,
+              top: 12,
+              transformOrigin: "bottom center",
+            }}
+            animate={{ rotate: [-15, 15, -15] }}
+            transition={{ duration: 0.5, repeat: Infinity, ease: "easeInOut" }}
           />
-        </div>
-
-        {/* Second stormtrooper (far left, smaller) */}
-        <div className="absolute left-2 top-2 opacity-40" style={{ imageRendering: "pixelated" as React.CSSProperties["imageRendering"] }}>
-          <div className="grid grid-cols-3 gap-px">
-            {["WWW", "WBW", "WWW", ".G.", "GGG"].map((row, y) =>
-              row.split("").map((c, x) => (
-                <div key={`s2-${y}-${x}`} className="h-[3px] w-[3px]" style={{
-                  background: c === "W" ? "#e8e8e8" : c === "B" ? "#222" : c === "G" ? "#888" : "transparent",
-                }} />
-              ))
-            )}
-          </div>
+          <PixelSprite pixels={jedi} scale={4} />
         </div>
       </div>
 
-      <p className="mt-2 font-mono text-[10px] text-muted/30">all tabs closed — open one to continue</p>
+      <p className="mt-6 font-mono text-[10px] text-muted/30">all tabs closed — open one to continue</p>
     </div>
   );
 }
