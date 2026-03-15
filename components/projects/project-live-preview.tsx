@@ -87,8 +87,8 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
   return (
     <motion.div
       ref={previewRef}
-      initial={reduceMotion ? false : { opacity: 0, y: 16, filter: "brightness(0.92)" }}
-      animate={reduceMotion ? undefined : { opacity: 1, y: 0, filter: "brightness(1)" }}
+      initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+      animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       transition={{ duration: 0.42, ease: motionEase }}
       className={cn(
         "preview-outer-shell relative overflow-hidden rounded-[2rem] p-3 sm:p-4",
@@ -193,7 +193,7 @@ export function ProjectLivePreview({ className, project }: ProjectLivePreviewPro
                   muted
                   playsInline
                   poster={previewVideo.poster}
-                  preload="metadata"
+                  preload="none"
                   className="h-full w-full bg-black object-cover"
                   onPlay={() => {
                     if (trackedPlaybackRef.current) {

@@ -5,14 +5,7 @@ import { useEffect, useState } from "react";
 import type { NavSectionId } from "@/data/types";
 
 export function useActiveSection(sectionIds: NavSectionId[]) {
-  const [activeSection, setActiveSection] = useState<NavSectionId>(() => {
-    if (typeof window === "undefined") {
-      return sectionIds[0];
-    }
-
-    const hash = window.location.hash.slice(1) as NavSectionId;
-    return hash && sectionIds.includes(hash) ? hash : sectionIds[0];
-  });
+  const [activeSection, setActiveSection] = useState<NavSectionId>(sectionIds[0]);
 
   useEffect(() => {
     const sections = sectionIds

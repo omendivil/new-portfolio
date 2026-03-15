@@ -140,36 +140,25 @@ export function CodeEditorAnimation() {
   const [revealedBonusCount, setRevealedBonusCount] = useState(0);
   const [showAllLanguages, setShowAllLanguages] = useState(false);
 
+  // Compute visible snippets
+  const allAvailable = [...CODE_SNIPPETS, ...BONUS_SNIPPETS];
+  const displaySnippets = allAvailable.slice(0, INITIAL_TAB_COUNT + revealedBonusCount);
+  const currentSnippet = displaySnippets[activeTab] ?? displaySnippets[0];
+  const hasMore = INITIAL_TAB_COUNT + revealedBonusCount < allAvailable.length;
+  const snippetCount = displaySnippets.length;
+
   const advanceTab = useCallback(() => {
-    setActiveTab((prev) => (prev + 1) % visibleSnippets.length);
-  }, [visibleSnippets.length]);
+    setActiveTab((prev) => (prev + 1) % snippetCount);
+  }, [snippetCount]);
 
   const selectTab = useCallback((index: number) => {
     setActiveTab(index);
   }, []);
 
   const handleRevealNext = useCallback(() => {
-    const remainingMain = CODE_SNIPPETS.length - INITIAL_TAB_COUNT;
-    const totalRevealed = revealedBonusCount + 1;
-
-    if (totalRevealed <= remainingMain) {
-      // Reveal from remaining main snippets
-      setRevealedBonusCount(totalRevealed);
-    } else {
-      // Reveal from bonus snippets
-      setRevealedBonusCount(totalRevealed);
-    }
-
-    // Navigate to the newly revealed tab
-    const newIndex = INITIAL_TAB_COUNT + revealedBonusCount;
-    setActiveTab(newIndex);
+    setRevealedBonusCount((prev) => prev + 1);
+    setActiveTab(INITIAL_TAB_COUNT + revealedBonusCount);
   }, [revealedBonusCount]);
-
-  // Recalculate visible snippets with revealed items
-  const allAvailable = [...CODE_SNIPPETS, ...BONUS_SNIPPETS];
-  const displaySnippets = allAvailable.slice(0, INITIAL_TAB_COUNT + revealedBonusCount);
-  const currentSnippet = displaySnippets[activeTab] ?? displaySnippets[0];
-  const hasMore = INITIAL_TAB_COUNT + revealedBonusCount < allAvailable.length;
 
   const activeSkills = currentSnippet ? (SNIPPET_LANGUAGE_MAP[currentSnippet.language] ?? []) : [];
   const logEntry = currentSnippet ? SNIPPET_LOGS[currentSnippet.filename] : null;

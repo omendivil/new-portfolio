@@ -6,9 +6,16 @@ import type { Project, ProjectCategory } from "@/data/types";
 import { filterProjects, getFeaturedProjects, getProjectCategories } from "@/data/project-utils";
 import { trackBrowseDrawer, trackProjectClose, trackProjectOpen } from "@/lib/analytics";
 
+import dynamic from "next/dynamic";
+
 import { FeaturedProjects } from "./featured-projects";
-import { ProjectPeekPanel } from "./project-peek-panel";
-import { ProjectsBrowseDrawer } from "./projects-browse-drawer";
+
+const ProjectPeekPanel = dynamic(() =>
+  import("./project-peek-panel").then((mod) => ({ default: mod.ProjectPeekPanel })),
+);
+const ProjectsBrowseDrawer = dynamic(() =>
+  import("./projects-browse-drawer").then((mod) => ({ default: mod.ProjectsBrowseDrawer })),
+);
 
 type ProjectsSectionClientProps = {
   projects: Project[];
