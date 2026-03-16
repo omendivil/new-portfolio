@@ -11,7 +11,14 @@ import { NESTheme } from "./nes-theme";
 
 const WorkspaceTheme = dynamic(
   () => import("./workspace-theme").then((m) => ({ default: m.WorkspaceTheme })),
-  { ssr: false },
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex min-h-[520px] items-center justify-center rounded-xl" style={{ background: "#0a0a0c" }}>
+        <div className="font-mono text-xs text-muted">Loading 3D workspace...</div>
+      </div>
+    ),
+  },
 );
 
 const THEMES = [

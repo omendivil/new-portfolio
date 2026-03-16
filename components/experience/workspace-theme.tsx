@@ -18,8 +18,8 @@ type WorkspaceThemeProps = {
    ═══════════════════════════════════════════════ */
 
 const TILE_SIZE = 0.45;
-const VIEW_RADIUS = 4;
-const FADE_RADIUS = 5;
+const VIEW_RADIUS = 8;
+const FADE_RADIUS = 10;
 
 function DynamicGround({ isDark = true }: { isDark?: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
@@ -111,6 +111,20 @@ function DynamicGround({ isDark = true }: { isDark?: boolean }) {
 
       tile.mesh.scale.set(s, s, s);
       tile.mesh.position.y = -0.06 + s * 0.06;
+
+      // Cursor highlight — tiles near mouse glow brighter
+      const mouseDist = Math.sqrt(
+        (tile.mesh.position.x - mouseGroundRef.current.x) ** 2 +
+        (tile.mesh.position.z - mouseGroundRef.current.z) ** 2,
+      );
+      const mat = tile.mesh.material as THREE.MeshStandardMaterial;
+      if (mouseDist < 1.5) {
+        const glow = (1 - mouseDist / 1.5) * 0.3;
+        mat.emissive.setRGB(glow * 0.3, glow, glow * 0.3);
+        mat.emissiveIntensity = 1;
+      } else {
+        mat.emissiveIntensity = 0;
+      }
     });
 
     toRemove.forEach((k) => tiles.delete(k));
@@ -330,152 +344,104 @@ function RisingCelestial({ isDark }: { isDark: boolean }) {
   );
 }
 
-/* ─── Clouds — float across the sky ─── */
+/* ─── Clouds — fluffy spheres grouped together (GLB was broken — 500k units off origin) ─── */
 function Clouds({ isDark }: { isDark: boolean }) {
-  const cloudGltf = useGLTF("/models/cloud.glb");
-  const groupRef = useRef<THREE.Group>(null);
-  const cloudsRef = useRef<THREE.Group[]>([]);
-
+  const cloudCount = isDark ? 3 : 5;
   const cloudData = useMemo(() =>
-    Array.from({ length: isDark ? 3 : 6 }, (_, i) => ({
-      x: (i - 3) * 2.5 + (Math.random() - 0.5) * 2,
-      y: 3 + Math.random() * 2,
-      z: -3 + (Math.random() - 0.5) * 4,
-      scale: 0.3 + Math.random() * 0.4,
-      speed: 0.05 + Math.random() * 0.08,
-      phase: Math.random() * Math.PI * 2,
+    Array.from({ length: cloudCount }, (_, i) => ({
+      x: (i - 2) * 3.5 + seedRandom(i, 0, 10) * 2,
+      y: 2.5 + seedRandom(i, 0, 11) * 1,
+      z: -2 + seedRandom(i, 0, 12) * 4,
+      scale: 0.6 + seedRandom(i, 0, 13) * 0.4,
+      speed: 0.02 + seedRandom(i, 0, 14) * 0.03,
+      phase: seedRandom(i, 0, 15) * Math.PI * 2,
     })),
-  [isDark]);
+  [cloudCount]);
 
-  useFrame((state) => {
-    const time = state.clock.elapsedTime;
-    cloudsRef.current.forEach((cloud, i) => {
-      if (!cloud) return;
-      const d = cloudData[i];
-      // Gentle drift
-      cloud.position.x = d.x + Math.sin(time * d.speed + d.phase) * 1.5;
-      cloud.position.y = d.y + Math.sin(time * 0.2 + d.phase) * 0.15;
-    });
-  });
-
-  // Clone scenes once per cloudData change — clone materials too to avoid mutating cached GLTF
-  const cloudScenes = useMemo(() =>
-    cloudData.map(() => {
-      const scene = cloudGltf.scene.clone(true);
-      // Clone materials so we don't mutate the shared GLTF cache
-      scene.traverse((child) => {
-        if ((child as THREE.Mesh).isMesh) {
-          const mesh = child as THREE.Mesh;
-          mesh.material = (mesh.material as THREE.MeshStandardMaterial).clone();
-          if (isDark) {
-            (mesh.material as THREE.MeshStandardMaterial).color.multiplyScalar(0.3);
-          }
-        }
-      });
-      return scene;
-    }),
-  [cloudData, cloudGltf, isDark]);
+  const cloudColor = isDark ? "#3a3a4a" : "#ffffff";
+  const cloudEmissive = isDark ? "#1a1a2a" : "#888888";
 
   return (
-    <group ref={groupRef}>
+    <group>
       {cloudData.map((d, i) => (
-          <group
-            key={`cloud-${i}`}
-            ref={(el) => { if (el) cloudsRef.current[i] = el; }}
-            position={[d.x, d.y, d.z]}
-            scale={d.scale}
-          >
-            <primitive object={cloudScenes[i]} />
-          </group>
+        <CloudPuff key={`cloud-${i}`} data={d} color={cloudColor} emissive={cloudEmissive} />
       ))}
     </group>
   );
 }
 
-/* ─── Sunflowers — appear as you explore away from desk ─── */
-const MAX_SUNFLOWERS = 20;
+function CloudPuff({ data, color, emissive }: { data: { x: number; y: number; z: number; scale: number; speed: number; phase: number }; color: string; emissive: string }) {
+  const groupRef = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (!groupRef.current) return;
+    const time = state.clock.elapsedTime;
+    groupRef.current.position.x = data.x + Math.sin(time * data.speed + data.phase) * 2;
+    groupRef.current.position.y = data.y + Math.sin(time * 0.15 + data.phase) * 0.15;
+  });
+
+  // Each cloud is 3-5 overlapping spheres
+  const puffs = useMemo(() => {
+    const count = 3 + Math.floor(seedRandom(data.x, data.z, 20) * 3);
+    return Array.from({ length: count }, (_, i) => ({
+      x: (seedRandom(data.x, data.z, 30 + i) - 0.5) * 0.8,
+      y: (seedRandom(data.x, data.z, 40 + i) - 0.5) * 0.3,
+      z: (seedRandom(data.x, data.z, 50 + i) - 0.5) * 0.4,
+      r: 0.25 + seedRandom(data.x, data.z, 60 + i) * 0.2,
+    }));
+  }, [data.x, data.z]);
+
+  return (
+    <group ref={groupRef} position={[data.x, data.y, data.z]} scale={data.scale}>
+      {puffs.map((p, i) => (
+        <mesh key={i} position={[p.x, p.y, p.z]}>
+          <sphereGeometry args={[p.r, 12, 12]} />
+          <meshStandardMaterial color={color} emissive={emissive} emissiveIntensity={0.3} roughness={1} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+/* ─── Sunflowers — spawn across the whole ground, not just near camera ─── */
+const MAX_SUNFLOWERS = 50;
 
 function Sunflowers() {
   const flowerGltf = useGLTF("/models/sunflower.glb");
-  const { camera } = useThree();
   const groupRef = useRef<THREE.Group>(null);
-  const placedRef = useRef<Map<string, { group: THREE.Group; targetScale: number; born: number }>>(new Map());
+  const [spawned, setSpawned] = useState(false);
 
-  // Pre-clone a pool of sunflower scenes (avoid cloning inside useFrame)
+  // Pre-clone a pool
   const clonePool = useMemo(() =>
     Array.from({ length: MAX_SUNFLOWERS }, () => flowerGltf.scene.clone(true)),
   [flowerGltf]);
-  const poolIndex = useRef(0);
 
-  useFrame(() => {
-    if (!groupRef.current) return;
-    const camX = camera.position.x;
-    const camZ = camera.position.z;
+  // Spawn sunflowers at truly random positions — not on a grid
+  useEffect(() => {
+    if (!groupRef.current || spawned) return;
 
-    const checkRadius = VIEW_RADIUS;
-    for (let tx = -6; tx <= 6; tx++) {
-      for (let tz = -6; tz <= 6; tz++) {
-        const wx = Math.round(camX) + tx;
-        const wz = Math.round(camZ) + tz;
-        const dist = Math.sqrt((wx - camX) ** 2 + (wz - camZ) ** 2);
+    for (let i = 0; i < MAX_SUNFLOWERS; i++) {
+      // Use deterministic random based on index for stable positions
+      const angle = seedRandom(i, 0, 1) * Math.PI * 2;
+      const radius = 2.5 + seedRandom(i, 0, 2) * 6.5; // 2.5 to 9 units from center
+      const x = Math.cos(angle) * radius;
+      const z = Math.sin(angle) * radius;
 
-        if (dist > checkRadius) continue;
-        const hash = Math.abs(Math.round(wx * 127 + wz * 311)) % 12;
-        if (hash !== 0) continue;
-        if (Math.abs(wx) < 2 && Math.abs(wz) < 1.5) continue;
+      // Skip if too close to desk
+      if (Math.abs(x) < 2 && Math.abs(z) < 1.5) continue;
 
-        const key = `${wx}_${wz}`;
-        if (placedRef.current.has(key)) continue;
-        if (poolIndex.current >= MAX_SUNFLOWERS) continue;
-
-        // Use pre-cloned scene from pool
-        const scene = clonePool[poolIndex.current++];
-        const group = new THREE.Group();
-        group.add(scene);
-        const flowerScale = 0.2 + seedRandom(wx, wz, 99) * 0.1;
-        group.position.set(
-          wx + (seedRandom(wx, wz, 1) - 0.5) * 0.4,
-          0.30,
-          wz + (seedRandom(wx, wz, 2) - 0.5) * 0.4,
-        );
-        group.rotation.y = seedRandom(wx, wz, 3) * Math.PI * 2;
-        group.scale.setScalar(0);
-
-        groupRef.current.add(group);
-        placedRef.current.set(key, { group, targetScale: flowerScale, born: performance.now() });
-      }
+      const scene = clonePool[i];
+      if (!scene) break;
+      const group = new THREE.Group();
+      group.add(scene);
+      const flowerScale = 0.15 + seedRandom(i, 0, 3) * 0.15;
+      group.position.set(x, 0.30, z);
+      group.rotation.y = seedRandom(i, 0, 4) * Math.PI * 2;
+      group.scale.setScalar(flowerScale);
+      groupRef.current.add(group);
     }
-
-    // Animate growth + remove far ones
-    const toRemove: string[] = [];
-    placedRef.current.forEach((entry, key) => {
-      const dist = Math.sqrt(
-        (entry.group.position.x - camX) ** 2 +
-        (entry.group.position.z - camZ) ** 2,
-      );
-      if (dist > checkRadius + 2) {
-        // Dispose cloned geometries/materials before removing
-        entry.group.traverse((child) => {
-          const mesh = child as THREE.Mesh;
-          if (mesh.isMesh) {
-            mesh.geometry?.dispose();
-            const mat = mesh.material;
-            if (Array.isArray(mat)) mat.forEach((m) => m.dispose());
-            else (mat as THREE.Material)?.dispose();
-          }
-        });
-        groupRef.current!.remove(entry.group);
-        toRemove.push(key);
-        return;
-      }
-      // Grow in
-      const age = (performance.now() - entry.born) / 1000;
-      const t = Math.min(age / 0.6, 1);
-      const s = entry.targetScale * (1 - Math.pow(1 - t, 3));
-      entry.group.scale.setScalar(s);
-    });
-    toRemove.forEach((k) => placedRef.current.delete(k));
-  });
+    setSpawned(true);
+  }, [clonePool, spawned]);
 
   return <group ref={groupRef} />;
 }
@@ -484,11 +450,72 @@ function Sunflowers() {
    STICKY CONFIG
    ═══════════════════════════════════════════════ */
 
-const STICKY_CONFIG = [
-  { meshName: "Sticky_Apple", color: "#8ac9bd", expIndex: 0 },
-  { meshName: "Sticky_AerDigital", color: "#61afef", expIndex: 1 },
-  { meshName: "Sticky_IndDev", color: "#c678dd", expIndex: 2 },
-];
+// Shared state refs used by multiple components
+const orbitTargetRef = { current: new THREE.Vector3(0, 0.7, 0) };
+const mouseGroundRef = { current: new THREE.Vector3(0, 0, 0) }; // where mouse hits the ground plane
+
+/* ─── Mouse-to-ground raycast — updates mouseGroundRef every frame ─── */
+function MouseGroundTracker() {
+  const { camera, pointer } = useThree();
+  const _ray = useRef(new THREE.Raycaster());
+  const _plane = useRef(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0));
+  const _intersect = useRef(new THREE.Vector3());
+
+  useFrame(() => {
+    _ray.current.setFromCamera(pointer, camera);
+    if (_ray.current.ray.intersectPlane(_plane.current, _intersect.current)) {
+      mouseGroundRef.current.copy(_intersect.current);
+    }
+  });
+
+  return null;
+}
+
+/* ─── Desk Fader — desk fades out when orbit target moves away from center ─── */
+function DeskFader({ sceneRef }: { sceneRef: React.RefObject<THREE.Group | null> }) {
+  const DESK_FADE_START = 3;
+  const DESK_FADE_END = 5;
+  const cachedMats = useRef<THREE.MeshStandardMaterial[]>([]);
+  const initialized = useRef(false);
+
+  // Cache materials once instead of traversing every frame
+  useFrame(() => {
+    if (!sceneRef.current) return;
+
+    if (!initialized.current) {
+      initialized.current = true;
+      cachedMats.current = [];
+      sceneRef.current.traverse((child) => {
+        if (child.name.startsWith("Sticky")) {
+          child.visible = false;
+          return;
+        }
+        if ((child as THREE.Mesh).isMesh) {
+          const mat = (child as THREE.Mesh).material as THREE.MeshStandardMaterial;
+          if (mat) {
+            mat.transparent = true;
+            cachedMats.current.push(mat);
+          }
+        }
+      });
+    }
+
+    const dist = Math.sqrt(
+      orbitTargetRef.current.x ** 2 + orbitTargetRef.current.z ** 2,
+    );
+
+    let opacity = 1;
+    if (dist > DESK_FADE_START) {
+      opacity = Math.max(0, 1 - (dist - DESK_FADE_START) / (DESK_FADE_END - DESK_FADE_START));
+    }
+
+    for (const mat of cachedMats.current) {
+      mat.opacity = THREE.MathUtils.lerp(mat.opacity, opacity, 0.1);
+    }
+  });
+
+  return <group ref={sceneRef} rotation={[0, Math.PI, 0]} />;
+}
 
 /* ═══════════════════════════════════════════════
    WORKSPACE SCENE
@@ -496,12 +523,10 @@ const STICKY_CONFIG = [
 
 function WorkspaceScene({
   experiences,
-  selectedIndex,
   onReady,
   isDark,
 }: {
   experiences: Experience[];
-  selectedIndex: number | null;
   onReady: () => void;
   isDark: boolean;
 }) {
@@ -514,7 +539,6 @@ function WorkspaceScene({
   // Cached mesh refs — populated once on scene load, used every frame without traverse
   const monitorMat = useRef<THREE.MeshStandardMaterial | null>(null);
   const codeLineMats = useRef<{ mat: THREE.MeshStandardMaterial; idx: number }[]>([]);
-  const stickyMats = useRef<{ mat: THREE.MeshStandardMaterial; expIndex: number }[]>([]);
 
   useEffect(() => {
     if (!gltf.scene || !sceneRef.current) return;
@@ -527,7 +551,6 @@ function WorkspaceScene({
     // Cache mesh material refs once instead of traversing every frame
     monitorMat.current = null;
     codeLineMats.current = [];
-    stickyMats.current = [];
 
     scene.traverse((child) => {
       if (!(child as THREE.Mesh).isMesh) return;
@@ -542,9 +565,9 @@ function WorkspaceScene({
         const idx = parseInt(mesh.name.split("_")[1] || "0");
         codeLineMats.current.push({ mat, idx });
       }
-      const stickyConf = STICKY_CONFIG.find((s) => mesh.name === s.meshName);
-      if (stickyConf) {
-        stickyMats.current.push({ mat, expIndex: stickyConf.expIndex });
+      // Hide sticky notes + their curls
+      if (child.name.startsWith("Sticky")) {
+        child.visible = false;
       }
     });
 
@@ -594,16 +617,11 @@ function WorkspaceScene({
       }
     }
 
-    // Sticky notes
-    for (const sm of stickyMats.current) {
-      const isSelected = selectedIndex === sm.expIndex;
-      sm.mat.emissiveIntensity = THREE.MathUtils.lerp(sm.mat.emissiveIntensity, isSelected ? 0.8 : 0.15, 0.1);
-    }
   });
 
   return (
     <>
-      <group ref={sceneRef} rotation={[0, Math.PI, 0]} />
+      <DeskFader sceneRef={sceneRef} />
 
       {powerOn && (
         <Sparkles count={25} scale={4} size={0.8} speed={0.15} color="#8ac9bd" opacity={0.08} position={[0, 1.2, 0]} />
@@ -619,14 +637,102 @@ function WorkspaceScene({
   );
 }
 
-/* ─── Camera ─── */
-function CameraSetup() {
-  const { camera } = useThree();
+/* ─── Orbit with click-to-focus ───
+   Orbit controls as default (intuitive drag/scroll).
+   Click on any point in the world → orbit target smoothly shifts there.
+   The camera glides to orbit the new focus point.
+*/
+function SmartOrbitControls() {
+  const { camera, gl, raycaster, pointer } = useThree();
+  const controlsRef = useRef<any>(null);
+  const targetPos = useRef(new THREE.Vector3(0, 0.7, 0));
+  const currentTarget = useRef(new THREE.Vector3(0, 0.7, 0));
+  const isAnimating = useRef(false);
+  const clickRay = useRef(new THREE.Raycaster());
+  const clickVec = useRef(new THREE.Vector2());
+
   useEffect(() => {
     camera.position.set(0.8, 1.3, 1.8);
-    camera.lookAt(0, 0.8, 0);
   }, [camera]);
-  return null;
+
+  // Click handler — raycast to find where on the ground the user clicked
+  useEffect(() => {
+    const canvas = gl.domElement;
+    const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    const intersectPoint = new THREE.Vector3();
+
+    const onClick = (e: MouseEvent) => {
+      // Only on short clicks (not drag)
+      if (e.detail > 1) return; // ignore double-clicks
+
+      // Calculate mouse position in normalized device coords
+      const rect = canvas.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      // Cast ray from camera through click point (reuse refs, no per-click allocation)
+      clickRay.current.setFromCamera(clickVec.current.set(x, y), camera);
+
+      // Intersect with ground plane at y=0
+      if (clickRay.current.ray.intersectPlane(groundPlane, intersectPoint)) {
+        // Clamp to reasonable bounds
+        intersectPoint.x = Math.max(-10, Math.min(10, intersectPoint.x));
+        intersectPoint.z = Math.max(-10, Math.min(10, intersectPoint.z));
+        intersectPoint.y = 0.5; // look slightly above ground
+
+        targetPos.current.copy(intersectPoint);
+        isAnimating.current = true;
+      }
+    };
+
+    // Use a timeout to distinguish click from drag
+    let downTime = 0;
+    const onDown = () => { downTime = Date.now(); };
+    const onUp = (e: MouseEvent) => {
+      if (Date.now() - downTime < 200) onClick(e);
+    };
+
+    canvas.addEventListener("pointerdown", onDown);
+    canvas.addEventListener("pointerup", onUp as EventListener);
+
+    return () => {
+      canvas.removeEventListener("pointerdown", onDown);
+      canvas.removeEventListener("pointerup", onUp as EventListener);
+    };
+  }, [camera, gl]);
+
+  // Smoothly animate the orbit target toward the clicked position
+  useFrame(() => {
+    if (!controlsRef.current) return;
+
+    if (isAnimating.current) {
+      currentTarget.current.lerp(targetPos.current, 0.04);
+      controlsRef.current.target.copy(currentTarget.current);
+      orbitTargetRef.current.copy(currentTarget.current);
+
+      // Stop animating when close enough
+      if (currentTarget.current.distanceTo(targetPos.current) < 0.01) {
+        isAnimating.current = false;
+      }
+    }
+  });
+
+  return (
+    <OrbitControls
+      ref={controlsRef}
+      enablePan={true}
+      enableZoom={true}
+      minDistance={1}
+      maxDistance={14}
+      minPolarAngle={Math.PI / 6}
+      maxPolarAngle={Math.PI / 2.2}
+      autoRotate={!isAnimating.current}
+      autoRotateSpeed={0.08}
+      target={[0, 0.7, 0]}
+      panSpeed={0.5}
+      zoomSpeed={0.5}
+    />
+  );
 }
 
 /* ═══════════════════════════════════════════════
@@ -636,7 +742,6 @@ function CameraSetup() {
 export function WorkspaceTheme({ experiences }: WorkspaceThemeProps) {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme !== "light";
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
   const [elapsed, setElapsed] = useState(0);
@@ -647,7 +752,7 @@ export function WorkspaceTheme({ experiences }: WorkspaceThemeProps) {
     const id = setInterval(() => {
       const s = Math.round((Date.now() - startRef.current) / 1000);
       setElapsed(s);
-      if (s >= 20) { setFailed(true); clearInterval(id); }
+      if (s >= 45) { setFailed(true); clearInterval(id); }
     }, 500);
     return () => clearInterval(id);
   }, [loaded, failed]);
@@ -687,8 +792,8 @@ export function WorkspaceTheme({ experiences }: WorkspaceThemeProps) {
         )}
 
         {loaded && (
-          <div className="absolute bottom-2 left-1/2 z-20 -translate-x-1/2 font-mono text-[8px] text-muted/20">
-            drag to explore · scroll to zoom
+          <div className="absolute bottom-2 left-1/2 z-20 -translate-x-1/2 font-mono text-[8px] text-muted/30">
+            drag to orbit · scroll to zoom · right-drag to pan
           </div>
         )}
 
@@ -700,7 +805,8 @@ export function WorkspaceTheme({ experiences }: WorkspaceThemeProps) {
             style={{ background: isDark ? "#0a0a0c" : "#88bbdd", height: 520 }}
             dpr={[1, 2]}
           >
-            <CameraSetup />
+            <SmartOrbitControls />
+            <MouseGroundTracker />
             <ambientLight intensity={isDark ? 0.1 : 0.6} />
             {/* Sky fill for light mode */}
             {!isDark && <hemisphereLight args={["#aaddff", "#88aa66", 0.5]} />}
@@ -712,66 +818,14 @@ export function WorkspaceTheme({ experiences }: WorkspaceThemeProps) {
 
             <WorkspaceScene
               experiences={experiences}
-              selectedIndex={selectedIndex}
               onReady={handleReady}
               isDark={isDark}
             />
 
-            <OrbitControls
-              enablePan={true}
-              enableZoom={true}
-              minDistance={1}
-              maxDistance={8}
-              minPolarAngle={Math.PI / 6}
-              maxPolarAngle={Math.PI / 2.2}
-              autoRotate
-              autoRotateSpeed={0.06}
-              target={[0, 0.7, 0]}
-              panSpeed={0.5}
-              zoomSpeed={0.5}
-            />
           </Canvas>
         </Suspense>
       </div>
 
-      {loaded && (
-        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {experiences.map((exp, i) => {
-            const color = STICKY_CONFIG[i]?.color || "#8ac9bd";
-            const isSelected = selectedIndex === i;
-            return (
-              <button
-                key={exp.id}
-                type="button"
-                onClick={() => setSelectedIndex(isSelected ? null : i)}
-                className="rounded-xl p-4 text-left transition-all duration-200"
-                style={{
-                  background: isSelected ? `${color}12` : "rgba(255,255,255,0.02)",
-                  border: `1px solid ${isSelected ? color + "40" : "rgba(255,255,255,0.05)"}`,
-                  boxShadow: isSelected ? `0 0 20px ${color}15` : "none",
-                }}
-              >
-                <div className="mb-1 font-mono text-[9px] uppercase tracking-[0.2em]" style={{ color }}>
-                  {exp.organization} · {exp.period}
-                </div>
-                <div className="text-sm font-bold text-text">{exp.role}</div>
-                {isSelected && (
-                  <div className="mt-3 space-y-2">
-                    <p className="text-[12px] leading-relaxed text-muted">{exp.summary}</p>
-                    <ul className="space-y-1">
-                      {exp.bullets.map((b) => (
-                        <li key={b} className="text-[11px] leading-relaxed text-text/60">
-                          <span style={{ color }}>▸ </span>{b}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      )}
     </div>
   );
 }
@@ -779,5 +833,5 @@ export function WorkspaceTheme({ experiences }: WorkspaceThemeProps) {
 useGLTF.preload("/models/workspace.glb");
 useGLTF.preload("/models/sun.glb");
 useGLTF.preload("/models/moon.glb");
-useGLTF.preload("/models/cloud.glb");
+// cloud.glb removed — vertices were 500k units off origin. Using procedural clouds instead.
 useGLTF.preload("/models/sunflower.glb");
