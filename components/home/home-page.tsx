@@ -1,5 +1,6 @@
 import { CodeEditorSection } from "@/components/code-editor/code-editor-section";
 import { ExperienceThemeSwitcher } from "@/components/experience/experience-theme-switcher";
+import { SiteFooter } from "@/components/footer/site-footer";
 import { HeroDiff } from "@/components/hero/hero-diff";
 import { StickyNav } from "@/components/navigation/sticky-nav";
 import { ProjectsSection } from "@/components/sections/projects-section";
@@ -28,6 +29,7 @@ export function HomePage() {
         </div>
         <ExperienceThemeSwitcher experiences={experience} />
       </section>
+      <SiteFooter />
     </main>
   );
 }
