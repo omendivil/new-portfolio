@@ -1,5 +1,5 @@
 import { CodeEditorSection } from "@/components/code-editor/code-editor-section";
-import { RetroComputer } from "@/components/experience/retro-computer";
+import { ExperienceThemeSwitcher } from "@/components/experience/experience-theme-switcher";
 import { HeroDiff } from "@/components/hero/hero-diff";
 import { StickyNav } from "@/components/navigation/sticky-nav";
 import { ProjectsSection } from "@/components/sections/projects-section";
@@ -26,7 +26,7 @@ export function HomePage() {
             Experience
           </div>
         </div>
-        <RetroComputer experiences={experience} />
+        <ExperienceThemeSwitcher experiences={experience} />
       </section>
     </main>
   );
