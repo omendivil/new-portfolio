@@ -8,7 +8,7 @@ import { trackBrowseDrawer, trackProjectClose, trackProjectOpen } from "@/lib/an
 
 import dynamic from "next/dynamic";
 
-import { FeaturedProjects } from "./featured-projects";
+import { ProjectsCanvasSection } from "./projects-canvas-section";
 
 const ProjectPeekPanel = dynamic(() =>
   import("./project-peek-panel").then((mod) => ({ default: mod.ProjectPeekPanel })),
@@ -108,7 +108,7 @@ export function ProjectsSectionClient({ projects }: ProjectsSectionClientProps) 
 
   return (
     <>
-      <FeaturedProjects
+      <ProjectsCanvasSection
         drawerTriggerRef={drawerTriggerRef}
         onOpenDrawer={openDrawer}
         projectCount={projectCount}

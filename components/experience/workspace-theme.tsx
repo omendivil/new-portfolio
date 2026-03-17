@@ -447,8 +447,165 @@ function Sunflowers() {
 }
 
 /* ═══════════════════════════════════════════════
-   STICKY CONFIG
+   BLACK FLOOR — covers entire world under the green tiles
    ═══════════════════════════════════════════════ */
+
+function WorldFloor() {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <mesh
+      rotation={[-Math.PI / 2, 0, 0]}
+      position={[0, -0.08, 0]}
+      receiveShadow
+      onPointerEnter={() => { setHovered(true); document.body.style.cursor = "pointer"; }}
+      onPointerLeave={() => { setHovered(false); document.body.style.cursor = "auto"; }}
+    >
+      <planeGeometry args={[30, 30]} />
+      <meshStandardMaterial color="#060608" roughness={0.95} />
+    </mesh>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   WORLD OBJECTS — decorative models placed around the map
+   ═══════════════════════════════════════════════ */
+
+function WorldObjects({ isDark }: { isDark: boolean }) {
+  const rockGltf = useGLTF("/models/flatbigrock.glb");
+  const signGltf = useGLTF("/models/singbothways.glb");
+  const billboardGltf = useGLTF("/models/billboard.glb");
+  const swordGltf = useGLTF("/models/aurthorsword.glb");
+  const towerGltf = useGLTF("/models/belltower.glb");
+  const alienGltf = useGLTF("/models/alienship.glb");
+  const groupRef = useRef<THREE.Group>(null);
+  const [placed, setPlaced] = useState(false);
+
+  useEffect(() => {
+    if (!groupRef.current || placed) return;
+
+    // Helper to place a model
+    const place = (gltf: { scene: THREE.Group }, pos: [number, number, number], scale: number, rotY = 0) => {
+      const scene = gltf.scene.clone(true);
+      const group = new THREE.Group();
+      group.add(scene);
+      group.position.set(...pos);
+      group.scale.setScalar(scale);
+      group.rotation.y = rotY;
+      groupRef.current!.add(group);
+    };
+
+    // ===== ROCKS — small decorative =====
+    place(rockGltf, [-3, 0.05, 3], 0.25, 0.5);
+    place(rockGltf, [4, 0.05, -3], 0.3, 1.2);
+    place(rockGltf, [-5, 0.05, -4], 0.2, 2.1);
+    place(rockGltf, [6, 0.05, 2], 0.18, 0.8);
+    place(rockGltf, [-7, 0.05, 1], 0.22, 3.5);
+    place(rockGltf, [2, 0.05, 6], 0.15, 1.9);
+    place(rockGltf, [-4, 0.05, -7], 0.28, 0.3);
+
+    // ===== EXPERIENCE STATION 1: Apple — sword + billboard =====
+    place(swordGltf, [5, 0.2, -5], 0.8, 0.3);
+    place(billboardGltf, [5.5, 0.0, -4.5], 0.004, 0.5);
+
+    // ===== EXPERIENCE STATION 2: Aer Digital — bell tower =====
+    place(towerGltf, [-6, 0.0, -5], 0.8, -0.3);
+    place(signGltf, [-5.5, 0.0, -4], 0.6, 0.8);
+
+    // ===== EXPERIENCE STATION 3: Independent Dev — alien ship =====
+    place(alienGltf, [0, 0.6, -7], 0.8, 0);
+    place(rockGltf, [0.5, 0.05, -6.5], 0.2, 1);
+    place(signGltf, [1, 0.0, -6], 0.6, -0.5);
+
+    // ===== EXTRA ATMOSPHERE =====
+    place(signGltf, [3, 0.0, 4], 0.5, 1.5);
+    place(signGltf, [-3, 0.0, -2], 0.5, -1);
+
+    setPlaced(true);
+  }, [rockGltf, signGltf, billboardGltf, swordGltf, towerGltf, alienGltf, placed]);
+
+  return <group ref={groupRef} />;
+}
+
+/* ═══════════════════════════════════════════════
+   EXPERIENCE ZONE LABELS — HTML overlays that appear near stations
+   ═══════════════════════════════════════════════ */
+
+const EXPERIENCE_ZONES = [
+  { position: [5, 0, -5] as [number, number, number], label: "Apple", color: "#8ac9bd", expIndex: 0 },
+  { position: [-6, 0, -5] as [number, number, number], label: "Aer Digital", color: "#61afef", expIndex: 1 },
+  { position: [0, 0, -7] as [number, number, number], label: "Indie Dev", color: "#c678dd", expIndex: 2 },
+];
+
+function ExperienceZoneMarkers({ experiences, isDark }: { experiences: Experience[]; isDark: boolean }) {
+  return (
+    <group>
+      {EXPERIENCE_ZONES.map((zone, i) => (
+        <ZoneMarker key={`zone-${i}`} zone={zone} />
+      ))}
+    </group>
+  );
+}
+
+function ZoneMarker({ zone }: { zone: typeof EXPERIENCE_ZONES[number] }) {
+  const ringRef = useRef<THREE.Mesh>(null);
+  const [hovered, setHovered] = useState(false);
+
+  // Pulsing animation on the ring
+  useFrame((state) => {
+    if (!ringRef.current) return;
+    const pulse = Math.sin(state.clock.elapsedTime * 2) * 0.5 + 0.5;
+    const mat = ringRef.current.material as THREE.MeshBasicMaterial;
+    mat.opacity = hovered ? 0.6 : 0.2 + pulse * 0.2;
+    const s = 1 + pulse * 0.1;
+    ringRef.current.scale.set(s, s, 1);
+  });
+
+  return (
+    <group
+      position={zone.position}
+      onPointerEnter={() => { setHovered(true); document.body.style.cursor = "pointer"; }}
+      onPointerLeave={() => { setHovered(false); document.body.style.cursor = "auto"; }}
+    >
+      {/* Glowing ground marker */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <circleGeometry args={[hovered ? 1.0 : 0.8, 24]} />
+        <meshBasicMaterial color={zone.color} transparent opacity={hovered ? 0.25 : 0.12} />
+      </mesh>
+      {/* Pulsing ring */}
+      <mesh ref={ringRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
+        <ringGeometry args={[0.7, 0.85, 24]} />
+        <meshBasicMaterial color={zone.color} transparent opacity={0.3} />
+      </mesh>
+      {/* Floating label */}
+      <FloatingLabel text={zone.label} color={zone.color} />
+    </group>
+  );
+}
+
+function FloatingLabel({ text, color }: { text: string; color: string }) {
+  const ref = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    if (!ref.current) return;
+    ref.current.position.y = 1.5 + Math.sin(state.clock.elapsedTime * 1.5) * 0.1;
+    // Always face camera
+    ref.current.lookAt(state.camera.position);
+  });
+
+  return (
+    <group ref={ref} position={[0, 1.5, 0]}>
+      {/* Background pill */}
+      <mesh>
+        <planeGeometry args={[1.2, 0.35]} />
+        <meshBasicMaterial color="#000000" transparent opacity={0.6} />
+      </mesh>
+      {/* Text - using drei Text would be better but keeping it simple */}
+      <mesh position={[0, 0, 0.01]}>
+        <planeGeometry args={[1, 0.25]} />
+        <meshBasicMaterial color={color} transparent opacity={0.8} />
+      </mesh>
+    </group>
+  );
+}
 
 // Shared state refs used by multiple components
 const orbitTargetRef = { current: new THREE.Vector3(0, 0.7, 0) };
@@ -472,46 +629,18 @@ function MouseGroundTracker() {
 }
 
 /* ─── Desk Fader — desk fades out when orbit target moves away from center ─── */
-function DeskFader({ sceneRef }: { sceneRef: React.RefObject<THREE.Group | null> }) {
-  const DESK_FADE_START = 3;
-  const DESK_FADE_END = 5;
-  const cachedMats = useRef<THREE.MeshStandardMaterial[]>([]);
+/* Desk stays visible always — just hide sticky notes on first frame */
+function DeskSetup({ sceneRef }: { sceneRef: React.RefObject<THREE.Group | null> }) {
   const initialized = useRef(false);
 
-  // Cache materials once instead of traversing every frame
   useFrame(() => {
-    if (!sceneRef.current) return;
-
-    if (!initialized.current) {
-      initialized.current = true;
-      cachedMats.current = [];
-      sceneRef.current.traverse((child) => {
-        if (child.name.startsWith("Sticky")) {
-          child.visible = false;
-          return;
-        }
-        if ((child as THREE.Mesh).isMesh) {
-          const mat = (child as THREE.Mesh).material as THREE.MeshStandardMaterial;
-          if (mat) {
-            mat.transparent = true;
-            cachedMats.current.push(mat);
-          }
-        }
-      });
-    }
-
-    const dist = Math.sqrt(
-      orbitTargetRef.current.x ** 2 + orbitTargetRef.current.z ** 2,
-    );
-
-    let opacity = 1;
-    if (dist > DESK_FADE_START) {
-      opacity = Math.max(0, 1 - (dist - DESK_FADE_START) / (DESK_FADE_END - DESK_FADE_START));
-    }
-
-    for (const mat of cachedMats.current) {
-      mat.opacity = THREE.MathUtils.lerp(mat.opacity, opacity, 0.1);
-    }
+    if (!sceneRef.current || initialized.current) return;
+    initialized.current = true;
+    sceneRef.current.traverse((child) => {
+      if (child.name.startsWith("Sticky")) {
+        child.visible = false;
+      }
+    });
   });
 
   return <group ref={sceneRef} rotation={[0, Math.PI, 0]} />;
@@ -621,15 +750,18 @@ function WorkspaceScene({
 
   return (
     <>
-      <DeskFader sceneRef={sceneRef} />
+      <DeskSetup sceneRef={sceneRef} />
 
       {powerOn && (
         <Sparkles count={25} scale={4} size={0.8} speed={0.15} color="#8ac9bd" opacity={0.08} position={[0, 1.2, 0]} />
       )}
 
+      <WorldFloor />
       <RisingCelestial isDark={isDark} />
       <Clouds isDark={isDark} />
       <Sunflowers />
+      <WorldObjects isDark={isDark} />
+      <ExperienceZoneMarkers experiences={experiences} isDark={isDark} />
       <DynamicGround isDark={isDark} />
       <DynamicGrass isDark={isDark} />
       {powerOn && <CoffeeSmoke />}
@@ -807,7 +939,7 @@ export function WorkspaceTheme({ experiences }: WorkspaceThemeProps) {
           >
             <SmartOrbitControls />
             <MouseGroundTracker />
-            <ambientLight intensity={isDark ? 0.1 : 0.6} />
+            <ambientLight intensity={isDark ? 0.25 : 0.6} color={isDark ? "#8899bb" : "#ffffff"} />
             {/* Sky fill for light mode */}
             {!isDark && <hemisphereLight args={["#aaddff", "#88aa66", 0.5]} />}
 
@@ -834,4 +966,10 @@ useGLTF.preload("/models/workspace.glb");
 useGLTF.preload("/models/sun.glb");
 useGLTF.preload("/models/moon.glb");
 // cloud.glb removed — vertices were 500k units off origin. Using procedural clouds instead.
+useGLTF.preload("/models/flatbigrock.glb");
+useGLTF.preload("/models/singbothways.glb");
+useGLTF.preload("/models/billboard.glb");
+useGLTF.preload("/models/aurthorsword.glb");
+useGLTF.preload("/models/belltower.glb");
+useGLTF.preload("/models/alienship.glb");
 useGLTF.preload("/models/sunflower.glb");

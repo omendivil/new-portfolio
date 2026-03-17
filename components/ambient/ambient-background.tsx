@@ -1,21 +1,22 @@
 "use client";
 
-import { useMotionPreference } from "@/lib/motion";
-
-import { AuroraBlobs } from "./aurora-blobs";
-import { CursorGlow } from "./cursor-glow";
+import { FloatingParticles } from "./floating-particles";
 import { NoiseOverlay } from "./noise-overlay";
-import { ScrollWash } from "./scroll-wash";
 
+/**
+ * Global ambient layer — effects that span the ENTIRE page.
+ * Section-specific effects (Webflow gradient, Vercel grid)
+ * live inside their respective sections, not here.
+ *
+ * Z-index stack:
+ *   0  — FloatingParticles (drifting luminous dots, behind content)
+ *  50  — NoiseOverlay (grain texture, topmost)
+ */
 export function AmbientBackground() {
-  const { reduceMotion } = useMotionPreference();
-
   return (
     <>
+      <FloatingParticles />
       <NoiseOverlay />
-      <AuroraBlobs />
-      {!reduceMotion && <CursorGlow />}
-      {!reduceMotion && <ScrollWash />}
     </>
   );
 }

@@ -10,27 +10,35 @@
   --accent: #2d6f66;
   --accent-soft: #dce9e6;
 
-  /* Ambient: Noise */
-  --noise-opacity: 0.025;
-  --noise-blend: multiply;
+  /* Ambient: Noise — visible grain (the "getting closer" level) */
+  --noise-opacity: 0.22;
+  --noise-blend: overlay;
   --noise-invert: 0;
 
-  /* Ambient: Aurora */
-  --aurora-1: rgba(45, 111, 102, 0.08);
-  --aurora-2: rgba(180, 140, 100, 0.06);
-  --aurora-3: rgba(140, 120, 180, 0.05);
-  --aurora-blur: 140px;
+  /* Ambient: Webflow gradient — near-solid painted wall colors */
+  --wf-solid-1: #4080e8;
+  --wf-solid-2: #7090d8;
+  --wf-solid-3: #b0a8e0;
+  --wf-solid-4: #d0c8f0;
 
-  /* Ambient: Cursor glow */
-  --cursor-glow-color: rgba(45, 111, 102, 0.06);
-  --cursor-glow-size: 600px;
+  /* Ambient: Light grid — Vercel-style rays + grid */
+  --grid-line-color: rgba(23, 20, 17, 0.05);
+  --grid-gap: 72px;
+  --ray-color-1: rgba(0, 180, 160, 0.06);
+  --ray-color-2: rgba(0, 200, 120, 0.05);
+  --ray-color-3: rgba(180, 200, 0, 0.04);
+  --ray-color-4: rgba(220, 160, 0, 0.05);
+  --ray-color-5: rgba(220, 80, 40, 0.06);
+  --ray-color-6: rgba(100, 60, 200, 0.05);
+  --ray-color-7: rgba(60, 120, 220, 0.06);
+  --ray-line-color: rgba(45, 111, 102, 0.04);
+  --ray-center-glow: rgba(45, 111, 102, 0.06);
+  --ray-opacity-min: 0.7;
+  --ray-opacity-max: 1;
 
-  /* Ambient: Scroll wash */
-  --wash-hero: rgba(45, 111, 102, 0.04);
-  --wash-projects: rgba(100, 80, 160, 0.03);
-  --wash-code: rgba(180, 140, 80, 0.03);
-  --wash-experience: rgba(45, 111, 102, 0.03);
-  --wash-contact: rgba(80, 120, 160, 0.03);
+  /* Ambient: Floating particles */
+  --particle-color: rgba(45, 111, 102, 0.6);
+  --particle-glow: rgba(45, 111, 102, 0.12);
 
   /* Ambient: Dot grid */
   --dot-color: rgba(23, 20, 17, 0.10);
@@ -80,27 +88,35 @@
   --accent: #8ac9bd;
   --accent-soft: #213733;
 
-  /* Ambient: Noise */
-  --noise-opacity: 0.04;
-  --noise-blend: soft-light;
+  /* Ambient: Noise — visible grain (the "getting closer" level) */
+  --noise-opacity: 0.22;
+  --noise-blend: overlay;
   --noise-invert: 1;
 
-  /* Ambient: Aurora */
-  --aurora-1: rgba(138, 201, 189, 0.15);
-  --aurora-2: rgba(120, 80, 200, 0.12);
-  --aurora-3: rgba(80, 160, 200, 0.10);
-  --aurora-blur: 100px;
+  /* Ambient: Webflow gradient — near-solid teal painted wall (dark mode) */
+  --wf-solid-1: #1a6b65;
+  --wf-solid-2: #2a8a80;
+  --wf-solid-3: #3a7878;
+  --wf-solid-4: #285a6a;
 
-  /* Ambient: Cursor glow */
-  --cursor-glow-color: rgba(138, 201, 189, 0.08);
-  --cursor-glow-size: 600px;
+  /* Ambient: Light grid — Vercel-style rays + grid (dark — MORE visible) */
+  --grid-line-color: rgba(243, 240, 233, 0.04);
+  --grid-gap: 72px;
+  --ray-color-1: rgba(0, 220, 190, 0.10);
+  --ray-color-2: rgba(0, 240, 140, 0.08);
+  --ray-color-3: rgba(200, 220, 0, 0.07);
+  --ray-color-4: rgba(255, 180, 0, 0.08);
+  --ray-color-5: rgba(255, 80, 50, 0.10);
+  --ray-color-6: rgba(120, 60, 240, 0.08);
+  --ray-color-7: rgba(60, 140, 255, 0.10);
+  --ray-line-color: rgba(138, 201, 189, 0.06);
+  --ray-center-glow: rgba(138, 201, 189, 0.10);
+  --ray-opacity-min: 0.6;
+  --ray-opacity-max: 1;
 
-  /* Ambient: Scroll wash */
-  --wash-hero: rgba(138, 201, 189, 0.06);
-  --wash-projects: rgba(140, 100, 220, 0.05);
-  --wash-code: rgba(200, 170, 100, 0.04);
-  --wash-experience: rgba(138, 201, 189, 0.04);
-  --wash-contact: rgba(100, 160, 220, 0.04);
+  /* Ambient: Floating particles */
+  --particle-color: rgba(138, 201, 189, 0.7);
+  --particle-glow: rgba(138, 201, 189, 0.18);
 
   /* Ambient: Dot grid */
   --dot-color: rgba(243, 240, 233, 0.07);
