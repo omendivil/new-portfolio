@@ -1,10 +1,14 @@
 "use client";
 
 /**
- * Webflow-inspired gradient — the "getting much closer" version.
- * Three high-contrast noise layers with feComponentTransfer
- * for visible, punchy grain. This was the version right after
- * the dev server restart when the user said it was working.
+ * Webflow-inspired gradient with animated grain.
+ *
+ * Technique from CSS-Tricks "Animated Grainy Texture":
+ * 1. Noise layer is 300% x 300% (oversized)
+ * 2. CSS keyframes translate it around in big jumps
+ * 3. steps() makes jumps instant — no sliding
+ * 4. Because it's oversized, you never see edges
+ * 5. Result: grain appears to flicker/shimmer naturally
  */
 export function WebflowGradient({ children }: { children?: React.ReactNode }) {
   return (
@@ -24,46 +28,41 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
         }}
       />
 
-      {/* Noise layer 1 — high contrast, overlay */}
+      {/* Animated grain — oversized layer that jumps around */}
       <div
-        className="pointer-events-none absolute inset-0 z-[1]"
+        className="pointer-events-none absolute z-[1] wf-grain"
         aria-hidden="true"
         style={{
+          top: "-100%",
+          left: "-100%",
+          width: "300%",
+          height: "300%",
           opacity: 0.4,
           mixBlendMode: "overlay",
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='5' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.5' intercept='-0.15'/%3E%3CfeFuncG type='linear' slope='1.5' intercept='-0.15'/%3E%3CfeFuncB type='linear' slope='1.5' intercept='-0.15'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.5' intercept='-0.15'/%3E%3CfeFuncG type='linear' slope='1.5' intercept='-0.15'/%3E%3CfeFuncB type='linear' slope='1.5' intercept='-0.15'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
           backgroundRepeat: "repeat",
           backgroundSize: "256px 256px",
         }}
       />
 
-      {/* Noise layer 2 — coarser, hard-light for punch */}
+      {/* Second grain layer — different seed, slightly offset timing */}
       <div
-        className="pointer-events-none absolute inset-0 z-[1]"
+        className="pointer-events-none absolute z-[1] wf-grain-2"
         aria-hidden="true"
         style={{
+          top: "-100%",
+          left: "-100%",
+          width: "300%",
+          height: "300%",
           opacity: 0.25,
           mixBlendMode: "hard-light",
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.0' numOctaves='4' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2' intercept='-0.3'/%3E%3CfeFuncG type='linear' slope='2' intercept='-0.3'/%3E%3CfeFuncB type='linear' slope='2' intercept='-0.3'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2' intercept='-0.3'/%3E%3CfeFuncG type='linear' slope='2' intercept='-0.3'/%3E%3CfeFuncB type='linear' slope='2' intercept='-0.3'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
           backgroundRepeat: "repeat",
           backgroundSize: "256px 256px",
         }}
       />
 
-      {/* Noise layer 3 — fine grit */}
-      <div
-        className="pointer-events-none absolute inset-0 z-[1]"
-        aria-hidden="true"
-        style={{
-          opacity: 0.15,
-          mixBlendMode: "multiply",
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='3' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2' intercept='-0.3'/%3E%3CfeFuncG type='linear' slope='2' intercept='-0.3'/%3E%3CfeFuncB type='linear' slope='2' intercept='-0.3'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-          backgroundRepeat: "repeat",
-          backgroundSize: "64px 64px",
-        }}
-      />
-
-      {/* Edge glow accents */}
+      {/* Edge glow accents — blue glow on right is sacred */}
       <div
         className="pointer-events-none absolute -left-[15%] -top-[25%] z-0 h-[600px] w-[600px] rounded-full"
         aria-hidden="true"
@@ -81,17 +80,46 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
         }}
       />
 
-      {/* Fade out at bottom */}
+      {/* Smooth fade out at bottom */}
       <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-32"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-72"
         aria-hidden="true"
         style={{
-          background: "linear-gradient(to bottom, transparent, var(--background))",
+          background: "linear-gradient(to bottom, transparent 0%, color-mix(in oklab, var(--background) 30%, transparent) 40%, var(--background) 100%)",
         }}
       />
 
       {/* Content */}
       <div className="relative z-10">{children}</div>
+
+      <style jsx>{`
+        @keyframes grain {
+          0%, 100% { transform: translate(0, 0); }
+          10% { transform: translate(-5%, -10%); }
+          20% { transform: translate(-15%, 5%); }
+          30% { transform: translate(7%, -25%); }
+          40% { transform: translate(-5%, 25%); }
+          50% { transform: translate(-15%, 10%); }
+          60% { transform: translate(15%, 0%); }
+          70% { transform: translate(0%, 15%); }
+          80% { transform: translate(3%, 35%); }
+          90% { transform: translate(-10%, 10%); }
+        }
+        .wf-grain {
+          animation: grain 6s steps(10) infinite;
+          will-change: transform;
+        }
+        .wf-grain-2 {
+          animation: grain 6s steps(10) -3s infinite reverse;
+          will-change: transform;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .wf-grain, .wf-grain-2 {
+            animation: none;
+            transform: none;
+          }
+        }
+      `}</style>
     </div>
   );
 }
