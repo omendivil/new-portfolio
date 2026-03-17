@@ -1,3 +1,5 @@
+import { VercelGrid } from "@/components/ambient/vercel-grid";
+import { WebflowGradient } from "@/components/ambient/webflow-gradient";
 import { CodeEditorSection } from "@/components/code-editor/code-editor-section";
 import { ExperienceThemeSwitcher } from "@/components/experience/experience-theme-switcher";
 import { SiteFooter } from "@/components/footer/site-footer";
@@ -16,8 +18,13 @@ export function HomePage() {
         Skip to content
       </a>
       <StickyNav sections={navSections} />
-      <HeroDiff />
-      <div className="mx-auto max-w-6xl px-2.5 sm:px-4">
+
+      {/* Hero — Webflow blue/lavender gradient wash */}
+      <WebflowGradient>
+        <HeroDiff />
+      </WebflowGradient>
+
+      <div className="mx-auto mt-16 max-w-6xl px-2.5 sm:mt-24 sm:px-4">
         <ProjectsSection />
       </div>
       <CodeEditorSection />
@@ -29,7 +36,11 @@ export function HomePage() {
         </div>
         <ExperienceThemeSwitcher experiences={experience} />
       </section>
-      <SiteFooter />
+
+      {/* Footer — Vercel grid + light rays */}
+      <VercelGrid>
+        <SiteFooter />
+      </VercelGrid>
     </main>
   );
 }

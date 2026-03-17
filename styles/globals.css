@@ -10,27 +10,51 @@
   --accent: #2d6f66;
   --accent-soft: #dce9e6;
 
-  /* Ambient: Noise — visible grain like Webflow/Figma */
-  --noise-opacity: 0.06;
-  --noise-blend: multiply;
+  /* Ambient: Noise — visible grain (the "getting closer" level) */
+  --noise-opacity: 0.22;
+  --noise-blend: overlay;
   --noise-invert: 0;
 
-  /* Ambient: Aurora — warm pastels, visible but not distracting */
-  --aurora-1: rgba(45, 111, 102, 0.15);
-  --aurora-2: rgba(200, 160, 100, 0.12);
-  --aurora-3: rgba(160, 130, 200, 0.10);
-  --aurora-blur: 120px;
+  /* Ambient: Webflow gradient — BOLD noisy blue/lavender wash */
+  --wf-blue: rgba(70, 120, 220, 0.45);
+  --wf-lavender: rgba(160, 110, 220, 0.38);
+  --wf-teal: rgba(40, 170, 150, 0.28);
+  --wf-pink: rgba(220, 110, 170, 0.22);
+  --wf-indigo: rgba(80, 60, 200, 0.20);
+  --wf-edge-1: rgba(60, 150, 255, 0.30);
+  --wf-edge-2: rgba(210, 100, 210, 0.25);
 
-  /* Ambient: Cursor glow — noticeable teal follow */
-  --cursor-glow-color: rgba(45, 111, 102, 0.12);
+  /* Ambient: Light grid — Vercel-style rays + grid */
+  --grid-line-color: rgba(23, 20, 17, 0.05);
+  --grid-gap: 72px;
+  --ray-color-1: rgba(0, 180, 160, 0.06);
+  --ray-color-2: rgba(0, 200, 120, 0.05);
+  --ray-color-3: rgba(180, 200, 0, 0.04);
+  --ray-color-4: rgba(220, 160, 0, 0.05);
+  --ray-color-5: rgba(220, 80, 40, 0.06);
+  --ray-color-6: rgba(100, 60, 200, 0.05);
+  --ray-color-7: rgba(60, 120, 220, 0.06);
+  --ray-line-color: rgba(45, 111, 102, 0.04);
+  --ray-center-glow: rgba(45, 111, 102, 0.06);
+  --ray-opacity-min: 0.7;
+  --ray-opacity-max: 1;
+
+  /* Ambient: Cursor glow — dual layer (outer wash + inner core) */
+  --cursor-glow-color: rgba(45, 111, 102, 0.20);
   --cursor-glow-size: 500px;
+  --cursor-core-color: rgba(45, 111, 102, 0.08);
+  --cursor-core-size: 180px;
 
-  /* Ambient: Scroll wash — visible section color shifts */
-  --wash-hero: rgba(45, 111, 102, 0.08);
-  --wash-projects: rgba(120, 80, 180, 0.07);
-  --wash-code: rgba(200, 160, 80, 0.06);
-  --wash-experience: rgba(45, 111, 102, 0.06);
-  --wash-contact: rgba(80, 130, 180, 0.06);
+  /* Ambient: Scroll wash — dramatic warm shifts */
+  --wash-hero: rgba(45, 111, 102, 0.14);
+  --wash-projects: rgba(140, 80, 200, 0.12);
+  --wash-code: rgba(220, 170, 80, 0.10);
+  --wash-experience: rgba(45, 111, 102, 0.10);
+  --wash-contact: rgba(80, 140, 200, 0.10);
+
+  /* Ambient: Floating particles */
+  --particle-color: rgba(45, 111, 102, 0.6);
+  --particle-glow: rgba(45, 111, 102, 0.12);
 
   /* Ambient: Dot grid */
   --dot-color: rgba(23, 20, 17, 0.10);
@@ -80,27 +104,51 @@
   --accent: #8ac9bd;
   --accent-soft: #213733;
 
-  /* Ambient: Noise — heavier grain for dark mode texture */
-  --noise-opacity: 0.07;
-  --noise-blend: soft-light;
+  /* Ambient: Noise — visible grain (the "getting closer" level) */
+  --noise-opacity: 0.22;
+  --noise-blend: overlay;
   --noise-invert: 1;
 
-  /* Ambient: Aurora — vivid teal + purple + blue */
-  --aurora-1: rgba(138, 201, 189, 0.22);
-  --aurora-2: rgba(140, 80, 220, 0.18);
-  --aurora-3: rgba(80, 170, 220, 0.15);
-  --aurora-blur: 80px;
+  /* Ambient: Webflow gradient — BOLD noisy blue/lavender wash (dark) */
+  --wf-blue: rgba(50, 110, 250, 0.40);
+  --wf-lavender: rgba(150, 60, 250, 0.35);
+  --wf-teal: rgba(50, 210, 190, 0.25);
+  --wf-pink: rgba(250, 80, 180, 0.20);
+  --wf-indigo: rgba(90, 50, 230, 0.22);
+  --wf-edge-1: rgba(50, 130, 255, 0.35);
+  --wf-edge-2: rgba(230, 60, 230, 0.28);
 
-  /* Ambient: Cursor glow — bright teal follow */
-  --cursor-glow-color: rgba(138, 201, 189, 0.14);
+  /* Ambient: Light grid — Vercel-style rays + grid (dark — MORE visible) */
+  --grid-line-color: rgba(243, 240, 233, 0.04);
+  --grid-gap: 72px;
+  --ray-color-1: rgba(0, 220, 190, 0.10);
+  --ray-color-2: rgba(0, 240, 140, 0.08);
+  --ray-color-3: rgba(200, 220, 0, 0.07);
+  --ray-color-4: rgba(255, 180, 0, 0.08);
+  --ray-color-5: rgba(255, 80, 50, 0.10);
+  --ray-color-6: rgba(120, 60, 240, 0.08);
+  --ray-color-7: rgba(60, 140, 255, 0.10);
+  --ray-line-color: rgba(138, 201, 189, 0.06);
+  --ray-center-glow: rgba(138, 201, 189, 0.10);
+  --ray-opacity-min: 0.6;
+  --ray-opacity-max: 1;
+
+  /* Ambient: Cursor glow — dual layer teal spotlight */
+  --cursor-glow-color: rgba(138, 201, 189, 0.28);
   --cursor-glow-size: 500px;
+  --cursor-core-color: rgba(138, 201, 189, 0.12);
+  --cursor-core-size: 180px;
 
-  /* Ambient: Scroll wash — visible color shifts per section */
-  --wash-hero: rgba(138, 201, 189, 0.10);
-  --wash-projects: rgba(160, 100, 240, 0.08);
-  --wash-code: rgba(220, 180, 100, 0.07);
-  --wash-experience: rgba(138, 201, 189, 0.07);
-  --wash-contact: rgba(100, 170, 240, 0.07);
+  /* Ambient: Scroll wash — dramatic section colors */
+  --wash-hero: rgba(138, 201, 189, 0.18);
+  --wash-projects: rgba(180, 100, 255, 0.14);
+  --wash-code: rgba(240, 200, 100, 0.12);
+  --wash-experience: rgba(138, 201, 189, 0.12);
+  --wash-contact: rgba(100, 180, 255, 0.12);
+
+  /* Ambient: Floating particles */
+  --particle-color: rgba(138, 201, 189, 0.7);
+  --particle-glow: rgba(138, 201, 189, 0.18);
 
   /* Ambient: Dot grid */
   --dot-color: rgba(243, 240, 233, 0.07);
