@@ -51,6 +51,23 @@ const FRAGMENT_SHADER = `
     return 130.0 * dot(m, g);
   }
 
+  // Smooth fBM — only 2 octaves for gentle, relaxed movement
+  float fbm(vec2 p) {
+    float val = 0.0;
+    val += snoise(p) * 0.6;
+    val += snoise(p * 2.0) * 0.3;
+    return val;
+  }
+
+  // Gentle domain warping — low warp strength (1.5 not 4.0)
+  float warpedNoise(vec2 p, float t) {
+    vec2 q = vec2(
+      fbm(p + vec2(0.0, 0.0) + t * 0.03),
+      fbm(p + vec2(5.2, 1.3) + t * 0.025)
+    );
+    return fbm(p + 1.5 * q);
+  }
+
   // 3D bar — thick, compact
   float bar3d(float d, float pos, float width) {
     float edge = smoothstep(pos, pos + width * 0.05, d) *
@@ -106,63 +123,63 @@ const FRAGMENT_SHADER = `
 
     // Specular
     float totalBar = b0+b1+b2+b3+b4+b5+b6+b7+b8+b9+b10+b11;
-    float spec = pow(max(0.0, sin(diag * 8.0 - t * 1.2)), 10.0) * 0.12;
+    float spec = pow(max(1e-4, sin(diag * 8.0 - t * 1.2)), 10.0) * 0.12;
     allBars += spec * min(totalBar, 1.0) * bright;
 
-    // MULTIPLE LAVA LAMP HOTSPOTS — 4 organic blobs, faster movement
+    // BLOB POSITIONS — full coverage left to right
+    // One blob biased left, one right, two roaming wide
+    vec2 h1 = vec2(
+      0.3 + warpedNoise(vec2(0.0, 0.0), t * 0.15) * 0.5,
+      0.5 + warpedNoise(vec2(3.0, 7.0), t * 0.15) * 0.5
+    );
+    vec2 h2 = vec2(
+      0.7 + warpedNoise(vec2(10.0, 5.0), t * 0.12) * 0.5,
+      0.5 + warpedNoise(vec2(5.0, 12.0), t * 0.12) * 0.55
+    );
+    vec2 h3 = vec2(
+      0.5 + warpedNoise(vec2(20.0, 15.0), t * 0.1) * 0.7,
+      0.4 + warpedNoise(vec2(15.0, 22.0), t * 0.1) * 0.5
+    );
+    vec2 h4 = vec2(
+      0.5 + warpedNoise(vec2(30.0, 25.0), t * 0.13) * 0.7,
+      0.6 + warpedNoise(vec2(25.0, 32.0), t * 0.13) * 0.5
+    );
 
-    // Noise distortion — makes blobs change shape like lava lamp goo
+    // Shape distortion — simple snoise (NOT warped, keeps blob shapes clean)
     float distort1 = snoise(uv * 2.5 + t * 0.5) * 0.15;
     float distort2 = snoise(uv * 3.0 - t * 0.4) * 0.12;
     float distort3 = snoise(uv * 2.8 + t * 0.45) * 0.14;
     float distort4 = snoise(uv * 2.2 - t * 0.55) * 0.13;
 
-    // Noise-driven positions — unpredictable, never repeating
-    // Different time seeds per blob so they wander independently
-    vec2 h1 = vec2(
-      0.5 + snoise(vec2(t * 0.13, 0.0)) * 0.45,
-      0.5 + snoise(vec2(0.0, t * 0.11)) * 0.4
-    );
-    vec2 h2 = vec2(
-      0.5 + snoise(vec2(t * 0.15 + 10.0, 5.0)) * 0.4,
-      0.5 + snoise(vec2(5.0, t * 0.12 + 10.0)) * 0.45
-    );
-    vec2 h3 = vec2(
-      0.5 + snoise(vec2(t * 0.09 + 20.0, 15.0)) * 0.5,
-      0.5 + snoise(vec2(15.0, t * 0.14 + 20.0)) * 0.4
-    );
-    vec2 h4 = vec2(
-      0.5 + snoise(vec2(t * 0.17 + 30.0, 25.0)) * 0.4,
-      0.5 + snoise(vec2(25.0, t * 0.1 + 30.0)) * 0.45
-    );
-
-    // Tighter reveal with sequenced visibility
     vec2 d1 = uv - h1 + vec2(distort1, distort1 * 0.7);
     vec2 d2 = uv - h2 + vec2(distort2 * 0.8, distort2);
     vec2 d3 = uv - h3 + vec2(distort3, distort3 * 0.6);
     vec2 d4 = uv - h4 + vec2(distort4 * 0.9, distort4);
 
-    // Noise-driven pulses — unpredictable, can linger (get stuck bright)
-    // smoothstep creates sharp on/off with lingering plateaus
-    float n1 = snoise(vec2(t * 0.25, 100.0));
-    float n2 = snoise(vec2(t * 0.45, 200.0));
-    float n3 = snoise(vec2(t * 0.2, 300.0));
-    float n4 = snoise(vec2(t * 0.5, 400.0));
+    // PULSES — layered fbm for richer timing, but slower
+    float n1 = fbm(vec2(t * 0.08, 100.0));
+    float n2 = fbm(vec2(t * 0.1, 200.0));
+    float n3 = fbm(vec2(t * 0.07, 300.0));
+    float n4 = fbm(vec2(t * 0.12, 400.0));
 
-    // Lower thresholds so blobs are on more than off — never all dark
     float pulse1 = smoothstep(-0.3, 0.1, n1);
     float pulse2 = smoothstep(-0.2, 0.15, n2);
     float pulse3 = smoothstep(-0.35, 0.05, n3);
     float pulse4 = smoothstep(-0.25, 0.2, n4);
-    // Guarantee minimum — always at least some light
-    float minReveal = 0.15;
-    pulse1 = max(pulse1, minReveal);
-    pulse3 = max(pulse3, minReveal);
+    // Guarantee minimum
+    pulse1 = max(pulse1, 0.15);
+    pulse3 = max(pulse3, 0.15);
 
-    float r1 = exp(-16.0 * length(d1)) * pulse1;
-    float r2 = exp(-17.0 * length(d2)) * pulse2;
-    float r3 = exp(-16.0 * length(d3)) * pulse3;
-    float r4 = exp(-15.0 * length(d4)) * pulse4;
+    // Size breathing — blobs shrink and expand
+    float size1 = 12.0 + snoise(vec2(t * 0.1, 50.0)) * 5.0;  // 7 to 17
+    float size2 = 13.0 + snoise(vec2(t * 0.12, 55.0)) * 5.0;
+    float size3 = 12.0 + snoise(vec2(t * 0.09, 60.0)) * 5.0;
+    float size4 = 11.0 + snoise(vec2(t * 0.11, 65.0)) * 5.0;
+
+    float r1 = exp(-size1 * length(d1)) * pulse1;
+    float r2 = exp(-size2 * length(d2)) * pulse2;
+    float r3 = exp(-size3 * length(d3)) * pulse3;
+    float r4 = exp(-size4 * length(d4)) * pulse4;
 
     float reveal = min(r1 + r2 + r3 + r4, 1.0);
 
@@ -174,8 +191,8 @@ const FRAGMENT_SHADER = `
     vec3 themeBlue = vec3(0.1, 0.35, 0.65);
 
     // Slow noise picks which theme we're in
-    float themeNoise = snoise(vec2(t * 0.04, 500.0)) * 0.5 + 0.5; // 0-1
-    float satPulse = snoise(vec2(t * 0.2, 600.0)) * 0.3 + 0.7;
+    float themeNoise = snoise(vec2(t * 0.1, 500.0)) * 0.5 + 0.5; // 0-1, faster cycling
+    float satPulse = snoise(vec2(t * 0.3, 600.0)) * 0.3 + 0.7;
 
     // Smooth blend between 3 themes
     vec3 currentColor = themeTeal;
@@ -210,10 +227,10 @@ const FRAGMENT_SHADER = `
     grain += snoise(gl_FragCoord.xy * 0.12 + vec2(50.0)) * r2 * barShape * mix(0.05, maxGrain, gp2);
     grain += snoise(gl_FragCoord.xy * 0.18 + vec2(100.0)) * r3 * barShape * mix(0.05, maxGrain, gp3);
     grain += snoise(gl_FragCoord.xy * 0.13 + vec2(150.0)) * r4 * barShape * mix(0.05, maxGrain, gp4);
-    grain += snoise(gl_FragCoord.xy * 0.4 + t * 2.0) * r1 * barShape * mix(0.02, 0.2, gp1);
-    grain += snoise(gl_FragCoord.xy * 0.35 + t * 2.5 + vec2(50.0)) * r2 * barShape * mix(0.02, 0.22, gp2);
-    grain += snoise(gl_FragCoord.xy * 0.45 + t * 1.8 + vec2(100.0)) * r3 * barShape * mix(0.02, 0.18, gp3);
-    grain += snoise(gl_FragCoord.xy * 0.38 + t * 2.2 + vec2(150.0)) * r4 * barShape * mix(0.02, 0.2, gp4);
+    grain += snoise(gl_FragCoord.xy * 0.4 + vec2(t * 2.0)) * r1 * barShape * mix(0.02, 0.2, gp1);
+    grain += snoise(gl_FragCoord.xy * 0.35 + vec2(t * 2.5) + vec2(50.0)) * r2 * barShape * mix(0.02, 0.22, gp2);
+    grain += snoise(gl_FragCoord.xy * 0.45 + vec2(t * 1.8) + vec2(100.0)) * r3 * barShape * mix(0.02, 0.18, gp3);
+    grain += snoise(gl_FragCoord.xy * 0.38 + vec2(t * 2.2) + vec2(150.0)) * r4 * barShape * mix(0.02, 0.2, gp4);
 
     vec3 color = dark + barShape * coloredBars + grain;
 
@@ -234,12 +251,16 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
   const startTimeRef = useRef(Date.now());
   const rafRef = useRef<number>(0);
   const reduceMotionRef = useRef(false);
+  const renderRef = useRef<(() => void) | null>(null);
   const { reduceMotion } = useMotionPreference();
 
-  // Sync reduceMotion into a ref so the render loop reads latest value
-  // without rebuilding WebGL
+  // Sync reduceMotion — restart render loop if preference turns off
   useEffect(() => {
+    const wasReduced = reduceMotionRef.current;
     reduceMotionRef.current = reduceMotion;
+    if (!reduceMotion && wasReduced && renderRef.current) {
+      renderRef.current();
+    }
   }, [reduceMotion]);
 
   useEffect(() => {
@@ -301,6 +322,12 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
 
     // Fullscreen quad
     const buf = gl.createBuffer();
+    if (!buf) {
+      gl.deleteProgram(program);
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
+      return;
+    }
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
     const pos = gl.getAttribLocation(program, "position");
@@ -313,20 +340,21 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio, 2);
-      const w = canvas.clientWidth * dpr;
-      const h = canvas.clientHeight * dpr;
+      const w = Math.max(1, canvas.clientWidth * dpr);
+      const h = Math.max(1, canvas.clientHeight * dpr);
       if (canvas.width !== w || canvas.height !== h) {
         canvas.width = w;
         canvas.height = h;
         gl.viewport(0, 0, w, h);
-        gl.uniform2f(uResolution, w, h);
       }
+      gl.uniform2f(uResolution, w, h);
     };
 
     resize();
     window.addEventListener("resize", resize);
     startTimeRef.current = Date.now();
 
+    // Store render function in ref so reduceMotion effect can restart it
     const render = () => {
       const elapsed = (Date.now() - startTimeRef.current) / 1000;
       gl.uniform1f(uTime, elapsed);
@@ -335,6 +363,7 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
         rafRef.current = requestAnimationFrame(render);
       }
     };
+    renderRef.current = render;
 
     render();
 
@@ -345,6 +374,7 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
       gl.deleteShader(vs);
       gl.deleteShader(fs);
       gl.deleteBuffer(buf);
+      renderRef.current = null;
     };
   }, []);
 

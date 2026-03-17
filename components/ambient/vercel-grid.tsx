@@ -9,7 +9,7 @@ import { useMotionPreference } from "@/lib/motion";
  * Grid + colored light rays + drifting sun/aura glow.
  * Fades in at top, fades out at bottom — no hard cutoffs.
  */
-export function VercelGrid({ children }: { children?: React.ReactNode }) {
+export function VercelGrid({ children }: { children?: import("react").ReactNode }) {
   const { reduceMotion } = useMotionPreference();
 
   return (
