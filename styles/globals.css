@@ -45,13 +45,6 @@
   --cursor-core-color: rgba(45, 111, 102, 0.08);
   --cursor-core-size: 180px;
 
-  /* Ambient: Scroll wash — dramatic warm shifts */
-  --wash-hero: rgba(45, 111, 102, 0.14);
-  --wash-projects: rgba(140, 80, 200, 0.12);
-  --wash-code: rgba(220, 170, 80, 0.10);
-  --wash-experience: rgba(45, 111, 102, 0.10);
-  --wash-contact: rgba(80, 140, 200, 0.10);
-
   /* Ambient: Floating particles */
   --particle-color: rgba(45, 111, 102, 0.6);
   --particle-glow: rgba(45, 111, 102, 0.12);
@@ -138,13 +131,6 @@
   --cursor-glow-size: 500px;
   --cursor-core-color: rgba(138, 201, 189, 0.12);
   --cursor-core-size: 180px;
-
-  /* Ambient: Scroll wash — dramatic section colors */
-  --wash-hero: rgba(138, 201, 189, 0.18);
-  --wash-projects: rgba(180, 100, 255, 0.14);
-  --wash-code: rgba(240, 200, 100, 0.12);
-  --wash-experience: rgba(138, 201, 189, 0.12);
-  --wash-contact: rgba(100, 180, 255, 0.12);
 
   /* Ambient: Floating particles */
   --particle-color: rgba(138, 201, 189, 0.7);

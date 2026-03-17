@@ -12,7 +12,7 @@ import { NoiseOverlay } from "./noise-overlay";
  * live inside their respective sections, not here.
  *
  * Z-index stack:
- *  10  — FloatingParticles (drifting luminous dots)
+ *   0  — FloatingParticles (drifting luminous dots, behind content)
  *  40  — CursorGlow (mouse-following spotlight)
  *  50  — NoiseOverlay (grain texture, topmost)
  */

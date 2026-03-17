@@ -6,28 +6,32 @@ import { useMotionPreference } from "@/lib/motion";
 
 /**
  * Dual-layer cursor glow — outer soft wash + inner bright core.
- * The outer layer creates atmosphere, the inner gives precision.
- * Only active on devices with a fine pointer (mouse/trackpad).
+ * Mouse updates throttled to requestAnimationFrame to avoid
+ * repainting two full-screen layers on every mousemove event.
  */
 export function CursorGlow() {
   const outerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
   const { reduceMotion } = useMotionPreference();
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    const x = `${e.clientX}px`;
-    const y = `${e.clientY}px`;
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      const x = `${e.clientX}px`;
+      const y = `${e.clientY}px`;
 
-    if (outerRef.current) {
-      outerRef.current.style.setProperty("--glow-x", x);
-      outerRef.current.style.setProperty("--glow-y", y);
-      outerRef.current.style.opacity = "1";
-    }
-    if (innerRef.current) {
-      innerRef.current.style.setProperty("--glow-x", x);
-      innerRef.current.style.setProperty("--glow-y", y);
-      innerRef.current.style.opacity = "1";
-    }
+      if (outerRef.current) {
+        outerRef.current.style.setProperty("--glow-x", x);
+        outerRef.current.style.setProperty("--glow-y", y);
+        outerRef.current.style.opacity = "1";
+      }
+      if (innerRef.current) {
+        innerRef.current.style.setProperty("--glow-x", x);
+        innerRef.current.style.setProperty("--glow-y", y);
+        innerRef.current.style.opacity = "1";
+      }
+    });
   }, []);
 
   const handleMouseLeave = useCallback(() => {
@@ -39,14 +43,28 @@ export function CursorGlow() {
     if (reduceMotion) return;
 
     const mql = window.matchMedia("(pointer: fine)");
-    if (!mql.matches) return;
 
-    document.addEventListener("mousemove", handleMouseMove, { passive: true });
-    document.addEventListener("mouseleave", handleMouseLeave);
-
-    return () => {
+    const attach = () => {
+      document.addEventListener("mousemove", handleMouseMove, {
+        passive: true,
+      });
+      document.addEventListener("mouseleave", handleMouseLeave);
+    };
+    const detach = () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseleave", handleMouseLeave);
+    };
+
+    if (mql.matches) attach();
+
+    const onMqlChange = (e: MediaQueryListEvent) =>
+      e.matches ? attach() : detach();
+    mql.addEventListener("change", onMqlChange);
+
+    return () => {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      detach();
+      mql.removeEventListener("change", onMqlChange);
     };
   }, [reduceMotion, handleMouseMove, handleMouseLeave]);
 

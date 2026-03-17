@@ -73,7 +73,7 @@ export function FloatingParticles() {
             boxShadow: `0 0 ${p.size * 3}px ${p.size}px var(--particle-glow, rgba(138,201,189,0.15))`,
             animation: `particle-float ${p.duration}s linear ${p.delay}s infinite`,
             ["--p-drift" as string]: `${p.drift}vw`,
-            willChange: "transform, opacity",
+            /* will-change omitted — transform+opacity keyframes are compositor-only without it */
           }}
         />
       ))}

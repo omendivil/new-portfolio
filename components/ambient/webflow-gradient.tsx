@@ -95,15 +95,15 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
       <style jsx>{`
         @keyframes grain {
           0%, 100% { transform: translate(0, 0); }
-          10% { transform: translate(-5%, -10%); }
-          20% { transform: translate(-15%, 5%); }
-          30% { transform: translate(7%, -25%); }
-          40% { transform: translate(-5%, 25%); }
-          50% { transform: translate(-15%, 10%); }
-          60% { transform: translate(15%, 0%); }
-          70% { transform: translate(0%, 15%); }
-          80% { transform: translate(3%, 35%); }
-          90% { transform: translate(-10%, 10%); }
+          10% { transform: translate(-5%, -8%); }
+          20% { transform: translate(-12%, 4%); }
+          30% { transform: translate(5%, -15%); }
+          40% { transform: translate(-4%, 18%); }
+          50% { transform: translate(-10%, 8%); }
+          60% { transform: translate(10%, -4%); }
+          70% { transform: translate(-2%, 12%); }
+          80% { transform: translate(3%, -10%); }
+          90% { transform: translate(-8%, 6%); }
         }
         .wf-grain {
           animation: grain 6s steps(10) infinite;
@@ -117,6 +117,7 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
           .wf-grain, .wf-grain-2 {
             animation: none;
             transform: none;
+            will-change: auto;
           }
         }
       `}</style>
