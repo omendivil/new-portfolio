@@ -2,7 +2,6 @@
 
 import { useMotionPreference } from "@/lib/motion";
 
-import { CursorGlow } from "./cursor-glow";
 import { FloatingParticles } from "./floating-particles";
 import { NoiseOverlay } from "./noise-overlay";
 
@@ -13,7 +12,6 @@ import { NoiseOverlay } from "./noise-overlay";
  *
  * Z-index stack:
  *   0  — FloatingParticles (drifting luminous dots, behind content)
- *  40  — CursorGlow (mouse-following spotlight)
  *  50  — NoiseOverlay (grain texture, topmost)
  */
 export function AmbientBackground() {
@@ -22,7 +20,6 @@ export function AmbientBackground() {
   return (
     <>
       {!reduceMotion && <FloatingParticles />}
-      {!reduceMotion && <CursorGlow />}
       <NoiseOverlay />
     </>
   );

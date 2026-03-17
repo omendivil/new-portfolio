@@ -1,34 +1,34 @@
 "use client";
 
 /**
- * Webflow-inspired gradient with animated grain.
+ * Webflow-inspired gradient with DIRECTIONAL grain (vertical striations).
+ * Key insight from screenshot: it's not random noise — there are visible
+ * vertical brushstrokes/curtain folds. The colors are near-solid, not
+ * transparent washes. The texture is directional, not isotropic.
  *
- * Technique from CSS-Tricks "Animated Grainy Texture":
- * 1. Noise layer is 300% x 300% (oversized)
- * 2. CSS keyframes translate it around in big jumps
- * 3. steps() makes jumps instant — no sliding
- * 4. Because it's oversized, you never see edges
- * 5. Result: grain appears to flicker/shimmer naturally
+ * Technique: Use feTurbulence with different x/y baseFrequency values
+ * to create vertical streaks instead of uniform noise.
  */
 export function WebflowGradient({ children }: { children?: React.ReactNode }) {
   return (
     <div className="relative overflow-hidden">
-      {/* Base gradient wash */}
+      {/* Base gradient — NEAR SOLID, bright colors like a painted wall */}
       <div
         className="pointer-events-none absolute inset-0 z-0"
         aria-hidden="true"
         style={{
           background: `
-            radial-gradient(ellipse 130% 80% at 15% 20%, var(--wf-blue), transparent 55%),
-            radial-gradient(ellipse 110% 90% at 85% 10%, var(--wf-lavender), transparent 50%),
-            radial-gradient(ellipse 90% 70% at 55% 85%, var(--wf-teal), transparent 45%),
-            radial-gradient(ellipse 80% 50% at 5% 65%, var(--wf-pink), transparent 50%),
-            radial-gradient(ellipse 70% 45% at 90% 55%, var(--wf-indigo), transparent 45%)
+            linear-gradient(135deg,
+              var(--wf-solid-1) 0%,
+              var(--wf-solid-2) 30%,
+              var(--wf-solid-3) 60%,
+              var(--wf-solid-4) 100%
+            )
           `,
         }}
       />
 
-      {/* Animated grain — oversized layer that jumps around */}
+      {/* Vertical striation grain — directional noise (high x freq, low y freq = vertical streaks) */}
       <div
         className="pointer-events-none absolute z-[1] wf-grain"
         aria-hidden="true"
@@ -37,15 +37,15 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
           left: "-100%",
           width: "300%",
           height: "300%",
-          opacity: 0.4,
+          opacity: 0.5,
           mixBlendMode: "overlay",
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.5' intercept='-0.15'/%3E%3CfeFuncG type='linear' slope='1.5' intercept='-0.15'/%3E%3CfeFuncB type='linear' slope='1.5' intercept='-0.15'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.4 0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.8' intercept='-0.2'/%3E%3CfeFuncG type='linear' slope='1.8' intercept='-0.2'/%3E%3CfeFuncB type='linear' slope='1.8' intercept='-0.2'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
           backgroundRepeat: "repeat",
           backgroundSize: "256px 256px",
         }}
       />
 
-      {/* Second grain layer — different seed, slightly offset timing */}
+      {/* Second grain layer — finer vertical texture */}
       <div
         className="pointer-events-none absolute z-[1] wf-grain-2"
         aria-hidden="true"
@@ -54,29 +54,11 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
           left: "-100%",
           width: "300%",
           height: "300%",
-          opacity: 0.25,
-          mixBlendMode: "hard-light",
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2' intercept='-0.3'/%3E%3CfeFuncG type='linear' slope='2' intercept='-0.3'/%3E%3CfeFuncB type='linear' slope='2' intercept='-0.3'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          opacity: 0.3,
+          mixBlendMode: "soft-light",
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.3 1.4' numOctaves='3' seed='5' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2' intercept='-0.25'/%3E%3CfeFuncG type='linear' slope='2' intercept='-0.25'/%3E%3CfeFuncB type='linear' slope='2' intercept='-0.25'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
           backgroundRepeat: "repeat",
           backgroundSize: "256px 256px",
-        }}
-      />
-
-      {/* Edge glow accents — blue glow on right is sacred */}
-      <div
-        className="pointer-events-none absolute -left-[15%] -top-[25%] z-0 h-[600px] w-[600px] rounded-full"
-        aria-hidden="true"
-        style={{
-          background: "radial-gradient(circle, var(--wf-edge-1), transparent 65%)",
-          filter: "blur(80px)",
-        }}
-      />
-      <div
-        className="pointer-events-none absolute -bottom-[20%] -right-[15%] z-0 h-[500px] w-[500px] rounded-full"
-        aria-hidden="true"
-        style={{
-          background: "radial-gradient(circle, var(--wf-edge-2), transparent 65%)",
-          filter: "blur(80px)",
         }}
       />
 

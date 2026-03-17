@@ -118,14 +118,7 @@ export function VercelGrid({ children }: { children?: React.ReactNode }) {
         }}
       />
 
-      {/* Fade-out at bottom */}
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[3] h-24"
-        aria-hidden="true"
-        style={{
-          background: "linear-gradient(to bottom, transparent, var(--background))",
-        }}
-      />
+      {/* No bottom fade — grid extends all the way down */}
 
       {/* Content */}
       <div className="relative z-[2]">{children}</div>

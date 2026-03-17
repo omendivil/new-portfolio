@@ -10,7 +10,7 @@ import { experience, navSections } from "@/data/site";
 
 export function HomePage() {
   return (
-    <main className="overflow-x-clip pb-14 sm:pb-16">
+    <main className="overflow-x-clip">
       <a
         href="#hero"
         className="sr-only absolute left-3 top-3 z-40 rounded-full border border-border bg-surface px-4 py-2 text-sm text-text focus:not-sr-only sm:left-4 sm:top-4"
@@ -37,9 +37,14 @@ export function HomePage() {
         <ExperienceThemeSwitcher experiences={experience} />
       </section>
 
-      {/* Footer — Vercel grid + light rays */}
+      {/* Spacer between experience and footer */}
+      <div className="h-16 sm:h-24" />
+
+      {/* Footer — Vercel grid + light rays, extends to bottom */}
       <VercelGrid>
         <SiteFooter />
+        {/* Extra bottom space so the grid stretches down */}
+        <div className="h-12 sm:h-16" />
       </VercelGrid>
     </main>
   );

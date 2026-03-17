@@ -15,14 +15,11 @@
   --noise-blend: overlay;
   --noise-invert: 0;
 
-  /* Ambient: Webflow gradient — BRIGHT blue/purple on light base */
-  --wf-blue: rgba(80, 130, 255, 0.70);
-  --wf-lavender: rgba(170, 120, 255, 0.60);
-  --wf-teal: rgba(100, 200, 230, 0.30);
-  --wf-pink: rgba(220, 130, 240, 0.35);
-  --wf-indigo: rgba(120, 80, 255, 0.45);
-  --wf-edge-1: rgba(80, 150, 255, 0.45);
-  --wf-edge-2: rgba(200, 100, 255, 0.35);
+  /* Ambient: Webflow gradient — near-solid painted wall colors */
+  --wf-solid-1: #4080e8;
+  --wf-solid-2: #7090d8;
+  --wf-solid-3: #b0a8e0;
+  --wf-solid-4: #d0c8f0;
 
   /* Ambient: Light grid — Vercel-style rays + grid */
   --grid-line-color: rgba(23, 20, 17, 0.05);
@@ -38,12 +35,6 @@
   --ray-center-glow: rgba(45, 111, 102, 0.06);
   --ray-opacity-min: 0.7;
   --ray-opacity-max: 1;
-
-  /* Ambient: Cursor glow — dual layer (outer wash + inner core) */
-  --cursor-glow-color: rgba(45, 111, 102, 0.20);
-  --cursor-glow-size: 500px;
-  --cursor-core-color: rgba(45, 111, 102, 0.08);
-  --cursor-core-size: 180px;
 
   /* Ambient: Floating particles */
   --particle-color: rgba(45, 111, 102, 0.6);
@@ -102,14 +93,11 @@
   --noise-blend: overlay;
   --noise-invert: 1;
 
-  /* Ambient: Webflow gradient — TEAL set (user's favorite) */
-  --wf-blue: rgba(40, 180, 170, 0.70);
-  --wf-lavender: rgba(80, 200, 180, 0.55);
-  --wf-teal: rgba(60, 220, 200, 0.60);
-  --wf-pink: rgba(200, 160, 100, 0.35);
-  --wf-indigo: rgba(60, 140, 180, 0.45);
-  --wf-edge-1: rgba(40, 200, 180, 0.45);
-  --wf-edge-2: rgba(180, 140, 80, 0.30);
+  /* Ambient: Webflow gradient — near-solid teal painted wall (dark mode) */
+  --wf-solid-1: #1a6b65;
+  --wf-solid-2: #2a8a80;
+  --wf-solid-3: #3a7878;
+  --wf-solid-4: #285a6a;
 
   /* Ambient: Light grid — Vercel-style rays + grid (dark — MORE visible) */
   --grid-line-color: rgba(243, 240, 233, 0.04);
@@ -125,12 +113,6 @@
   --ray-center-glow: rgba(138, 201, 189, 0.10);
   --ray-opacity-min: 0.6;
   --ray-opacity-max: 1;
-
-  /* Ambient: Cursor glow — dual layer teal spotlight */
-  --cursor-glow-color: rgba(138, 201, 189, 0.28);
-  --cursor-glow-size: 500px;
-  --cursor-core-color: rgba(138, 201, 189, 0.12);
-  --cursor-core-size: 180px;
 
   /* Ambient: Floating particles */
   --particle-color: rgba(138, 201, 189, 0.7);
