@@ -60,7 +60,8 @@ const FRAGMENT_SHADER = `
     float edge = smoothstep(pos, pos + width * 0.05, d) *
                  smoothstep(pos + width, pos + width - width * 0.05, d);
     float center = (d - pos) / width;
-    float shading = 1.0 - pow(abs(center * 2.0 - 1.0), 1.5);
+    float cx = abs(center * 2.0 - 1.0);
+    float shading = 1.0 - cx * sqrt(cx);
     return edge * shading;
   }
 
@@ -78,67 +79,161 @@ const FRAGMENT_SHADER = `
     vec3 colA = mix(teal1, bright, shift);
     vec3 colB = mix(teal2, vec3(0.6, 0.3, 0.15), shift * 0.25);
 
-    // Thick compact bars — tight spacing, bigger widths
-    float bars[12];
-    bars[0]  = bar3d(diag, -0.08, 0.10);
-    bars[1]  = bar3d(diag, 0.04,  0.11);
-    bars[2]  = bar3d(diag, 0.17,  0.10);
-    bars[3]  = bar3d(diag, 0.29,  0.11);
-    bars[4]  = bar3d(diag, 0.42,  0.10);
-    bars[5]  = bar3d(diag, 0.54,  0.11);
-    bars[6]  = bar3d(diag, 0.66,  0.10);
-    bars[7]  = bar3d(diag, 0.78,  0.11);
-    bars[8]  = bar3d(diag, 0.90,  0.10);
-    bars[9]  = bar3d(diag, 1.02,  0.11);
-    bars[10] = bar3d(diag, 1.14,  0.10);
-    bars[11] = bar3d(diag, 1.26,  0.11);
+    // Thick bars — touching, no gaps (unrolled for WebGL1 compat)
+    float b0  = bar3d(diag, -0.10, 0.14);
+    float b1  = bar3d(diag, 0.05,  0.14);
+    float b2  = bar3d(diag, 0.20,  0.14);
+    float b3  = bar3d(diag, 0.35,  0.14);
+    float b4  = bar3d(diag, 0.50,  0.14);
+    float b5  = bar3d(diag, 0.65,  0.14);
+    float b6  = bar3d(diag, 0.80,  0.14);
+    float b7  = bar3d(diag, 0.95,  0.14);
+    float b8  = bar3d(diag, 1.10,  0.14);
+    float b9  = bar3d(diag, 1.25,  0.14);
+    float b10 = bar3d(diag, 1.40,  0.14);
+    float b11 = bar3d(diag, 1.55,  0.14);
 
-    // Color each bar
+    // Color each bar — unrolled
     vec3 allBars = vec3(0.0);
-    for (int i = 0; i < 12; i++) {
-      float mix_f = float(i) / 11.0;
-      vec3 c = mix(colA, colB, mix_f + sin(t * 0.3 + mix_f * 3.0) * 0.15);
-      allBars += bars[i] * c;
-    }
+    allBars += b0  * mix(colA, colB, 0.0  + sin(t*0.3)*0.15);
+    allBars += b1  * mix(colA, colB, 0.09 + sin(t*0.3+0.27)*0.15);
+    allBars += b2  * mix(colA, colB, 0.18 + sin(t*0.3+0.55)*0.15);
+    allBars += b3  * mix(colA, colB, 0.27 + sin(t*0.3+0.82)*0.15);
+    allBars += b4  * mix(colA, colB, 0.36 + sin(t*0.3+1.09)*0.15);
+    allBars += b5  * mix(colA, colB, 0.45 + sin(t*0.3+1.36)*0.15);
+    allBars += b6  * mix(colA, colB, 0.55 + sin(t*0.3+1.64)*0.15);
+    allBars += b7  * mix(colA, colB, 0.64 + sin(t*0.3+1.91)*0.15);
+    allBars += b8  * mix(colA, colB, 0.73 + sin(t*0.3+2.18)*0.15);
+    allBars += b9  * mix(colA, colB, 0.82 + sin(t*0.3+2.45)*0.15);
+    allBars += b10 * mix(colA, colB, 0.91 + sin(t*0.3+2.73)*0.15);
+    allBars += b11 * mix(colA, colB, 1.0  + sin(t*0.3+3.0)*0.15);
 
     // Specular
+    float totalBar = b0+b1+b2+b3+b4+b5+b6+b7+b8+b9+b10+b11;
     float spec = pow(max(0.0, sin(diag * 8.0 - t * 1.2)), 10.0) * 0.12;
-    float totalBar = 0.0;
-    for (int i = 0; i < 12; i++) totalBar += bars[i];
     allBars += spec * min(totalBar, 1.0) * bright;
 
-    // REVEAL BLOB — bars only visible where the blob is
-    // Two blobs orbiting in wavy organic paths
-    vec2 blob1Pos = vec2(
-      0.3 + sin(t * 0.35) * 0.3 + cos(t * 0.15) * 0.15,
-      0.3 + cos(t * 0.25) * 0.25 + sin(t * 0.18) * 0.1
+    // MULTIPLE LAVA LAMP HOTSPOTS — 4 organic blobs, faster movement
+
+    // Noise distortion — makes blobs change shape like lava lamp goo
+    float distort1 = snoise(uv * 2.5 + t * 0.5) * 0.15;
+    float distort2 = snoise(uv * 3.0 - t * 0.4) * 0.12;
+    float distort3 = snoise(uv * 2.8 + t * 0.45) * 0.14;
+    float distort4 = snoise(uv * 2.2 - t * 0.55) * 0.13;
+
+    // Noise-driven positions — unpredictable, never repeating
+    // Different time seeds per blob so they wander independently
+    vec2 h1 = vec2(
+      0.5 + snoise(vec2(t * 0.13, 0.0)) * 0.45,
+      0.5 + snoise(vec2(0.0, t * 0.11)) * 0.4
     );
-    vec2 blob2Pos = vec2(
-      0.7 + cos(t * 0.3) * 0.25 + sin(t * 0.2) * 0.1,
-      0.6 + sin(t * 0.28) * 0.2 + cos(t * 0.22) * 0.15
+    vec2 h2 = vec2(
+      0.5 + snoise(vec2(t * 0.15 + 10.0, 5.0)) * 0.4,
+      0.5 + snoise(vec2(5.0, t * 0.12 + 10.0)) * 0.45
+    );
+    vec2 h3 = vec2(
+      0.5 + snoise(vec2(t * 0.09 + 20.0, 15.0)) * 0.5,
+      0.5 + snoise(vec2(15.0, t * 0.14 + 20.0)) * 0.4
+    );
+    vec2 h4 = vec2(
+      0.5 + snoise(vec2(t * 0.17 + 30.0, 25.0)) * 0.4,
+      0.5 + snoise(vec2(25.0, t * 0.1 + 30.0)) * 0.45
     );
 
-    float reveal1 = exp(-2.5 * length((uv - blob1Pos) * vec2(1.0, 1.4)));
-    float reveal2 = exp(-3.0 * length((uv - blob2Pos) * vec2(1.2, 1.0)));
-    float reveal = min(reveal1 + reveal2, 1.0);
+    // Tighter reveal with sequenced visibility
+    vec2 d1 = uv - h1 + vec2(distort1, distort1 * 0.7);
+    vec2 d2 = uv - h2 + vec2(distort2 * 0.8, distort2);
+    vec2 d3 = uv - h3 + vec2(distort3, distort3 * 0.6);
+    vec2 d4 = uv - h4 + vec2(distort4 * 0.9, distort4);
 
-    // Grain
-    float grain = snoise(gl_FragCoord.xy * 0.6) * 0.04;
-    grain += snoise(gl_FragCoord.xy * 1.3 + t * 6.0) * 0.02;
+    // Noise-driven pulses — unpredictable, can linger (get stuck bright)
+    // smoothstep creates sharp on/off with lingering plateaus
+    float n1 = snoise(vec2(t * 0.25, 100.0));
+    float n2 = snoise(vec2(t * 0.45, 200.0));
+    float n3 = snoise(vec2(t * 0.2, 300.0));
+    float n4 = snoise(vec2(t * 0.5, 400.0));
 
-    // Compose: dark base, bars revealed by blob only
+    // Lower thresholds so blobs are on more than off — never all dark
+    float pulse1 = smoothstep(-0.3, 0.1, n1);
+    float pulse2 = smoothstep(-0.2, 0.15, n2);
+    float pulse3 = smoothstep(-0.35, 0.05, n3);
+    float pulse4 = smoothstep(-0.25, 0.2, n4);
+    // Guarantee minimum — always at least some light
+    float minReveal = 0.15;
+    pulse1 = max(pulse1, minReveal);
+    pulse3 = max(pulse3, minReveal);
+
+    float r1 = exp(-16.0 * length(d1)) * pulse1;
+    float r2 = exp(-17.0 * length(d2)) * pulse2;
+    float r3 = exp(-16.0 * length(d3)) * pulse3;
+    float r4 = exp(-15.0 * length(d4)) * pulse4;
+
+    float reveal = min(r1 + r2 + r3 + r4, 1.0);
+
+    // Grain — each blob independently ebbs between soft and crazy
+    // Noise-driven grain intensity per blob — sometimes soft, sometimes wild
+    // Color themes — teal, purple, blue (no orange)
+    vec3 themeTeal = vec3(0.15, 0.6, 0.55);
+    vec3 themePurple = vec3(0.45, 0.15, 0.6);
+    vec3 themeBlue = vec3(0.1, 0.35, 0.65);
+
+    // Slow noise picks which theme we're in
+    float themeNoise = snoise(vec2(t * 0.04, 500.0)) * 0.5 + 0.5; // 0-1
+    float satPulse = snoise(vec2(t * 0.2, 600.0)) * 0.3 + 0.7;
+
+    // Smooth blend between 3 themes
+    vec3 currentColor = themeTeal;
+    float toPurple = smoothstep(0.25, 0.4, themeNoise);
+    float toBlue = smoothstep(0.6, 0.75, themeNoise);
+    float backTeal = 1.0 - smoothstep(0.85, 1.0, themeNoise);
+    currentColor = mix(themeTeal, themePurple, toPurple);
+    currentColor = mix(currentColor, themeBlue, toBlue);
+    currentColor = mix(currentColor, themeTeal, 1.0 - backTeal);
+    currentColor *= (0.7 + satPulse * 0.5);
+
+    // All blobs share current color
+    vec3 blobCol1 = currentColor;
+    vec3 blobCol2 = currentColor;
+    vec3 blobCol3 = currentColor;
+    vec3 blobCol4 = currentColor;
+
+    // Compose — blob color IS the bar color, not a tint on top
     vec3 dark = vec3(0.067, 0.063, 0.051);
-    vec3 color = dark + allBars * reveal * 0.85 + grain;
+    float barShape = (b0+b1+b2+b3+b4+b5+b6+b7+b8+b9+b10+b11);
+    barShape = min(barShape, 1.0);
 
-    // Subtle ambient glow from blobs even where no bars
-    color += reveal1 * teal1 * 0.08;
-    color += reveal2 * teal2 * 0.06;
+    // Each blob paints the bars in its own color directly
+    vec3 coloredBars = vec3(0.0);
+    coloredBars += r1 * blobCol1 * 1.8;
+    coloredBars += r2 * blobCol2 * 2.0;
+    coloredBars += r3 * blobCol3 * 1.8;
+    coloredBars += r4 * blobCol4 * 2.0;
 
-    // Center still slightly protected
-    float centerMask = smoothstep(0.0, 0.2, length(uv - vec2(0.5, 0.42)));
-    color = mix(dark + grain, color, centerMask * 0.85 + 0.15);
+    // Grain — ONLY on bars, ebbs between soft and crazy per blob
+    float maxGrain = 0.4;
+    float gp1 = smoothstep(0.2, 0.7, snoise(vec2(t * 0.08, 700.0)));
+    float gp2 = smoothstep(0.25, 0.75, snoise(vec2(t * 0.1, 800.0)));
+    float gp3 = smoothstep(0.15, 0.65, snoise(vec2(t * 0.09, 900.0)));
+    float gp4 = smoothstep(0.3, 0.8, snoise(vec2(t * 0.12, 1000.0)));
+    float grain = 0.0;
+    grain += snoise(gl_FragCoord.xy * 0.15) * r1 * barShape * mix(0.05, maxGrain, gp1);
+    grain += snoise(gl_FragCoord.xy * 0.12 + 50.0) * r2 * barShape * mix(0.05, maxGrain, gp2);
+    grain += snoise(gl_FragCoord.xy * 0.18 + 100.0) * r3 * barShape * mix(0.05, maxGrain, gp3);
+    grain += snoise(gl_FragCoord.xy * 0.13 + 150.0) * r4 * barShape * mix(0.05, maxGrain, gp4);
+    grain += snoise(gl_FragCoord.xy * 0.4 + t * 2.0) * r1 * barShape * mix(0.02, 0.2, gp1);
+    grain += snoise(gl_FragCoord.xy * 0.35 + t * 2.5 + 50.0) * r2 * barShape * mix(0.02, 0.22, gp2);
+    grain += snoise(gl_FragCoord.xy * 0.45 + t * 1.8 + 100.0) * r3 * barShape * mix(0.02, 0.18, gp3);
+    grain += snoise(gl_FragCoord.xy * 0.38 + t * 2.2 + 150.0) * r4 * barShape * mix(0.02, 0.2, gp4);
 
-    gl_FragColor = vec4(color, 1.0);
+    vec3 color = dark + barShape * coloredBars + grain;
+
+    // Glow halo
+    color += r1 * blobCol1 * 0.08;
+    color += r2 * blobCol2 * 0.10;
+    color += r3 * blobCol3 * 0.06;
+    color += r4 * blobCol4 * 0.10;
+
+gl_FragColor = vec4(color, 1.0);
   }
 `;
 
@@ -165,19 +260,31 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
     if (!gl) return;
     glRef.current = gl;
 
-    // Compile shaders
+    // Compile shaders with error checking
     const vs = gl.createShader(gl.VERTEX_SHADER)!;
     gl.shaderSource(vs, VERTEX_SHADER);
     gl.compileShader(vs);
+    if (!gl.getShaderParameter(vs, gl.COMPILE_STATUS)) {
+      console.error("Vertex shader error:", gl.getShaderInfoLog(vs));
+      return;
+    }
 
     const fs = gl.createShader(gl.FRAGMENT_SHADER)!;
     gl.shaderSource(fs, FRAGMENT_SHADER);
     gl.compileShader(fs);
+    if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
+      console.error("Fragment shader error:", gl.getShaderInfoLog(fs));
+      return;
+    }
 
     const program = gl.createProgram()!;
     gl.attachShader(program, vs);
     gl.attachShader(program, fs);
     gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.error("Program link error:", gl.getProgramInfoLog(program));
+      return;
+    }
     gl.useProgram(program);
     programRef.current = program;
 
@@ -216,9 +323,12 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
     window.addEventListener("resize", resize);
     startTimeRef.current = Date.now();
 
+    // Cache uniform location for per-frame updates
+    const uTime = gl.getUniformLocation(program, "u_time");
+
     const render = () => {
       const elapsed = (Date.now() - startTimeRef.current) / 1000;
-      gl.uniform1f(gl.getUniformLocation(program, "u_time"), elapsed);
+      gl.uniform1f(uTime, elapsed);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       if (!reduceMotion) {
         rafRef.current = requestAnimationFrame(render);
@@ -230,6 +340,10 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
     return () => {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener("resize", resize);
+      gl.deleteProgram(program);
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
+      gl.deleteBuffer(buf);
     };
   }, [reduceMotion]);
 
