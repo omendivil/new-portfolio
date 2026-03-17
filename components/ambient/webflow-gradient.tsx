@@ -22,10 +22,6 @@ const FRAGMENT_SHADER = `
   precision mediump float;
   uniform float u_time;
   uniform vec2 u_resolution;
-  uniform vec3 u_color1;
-  uniform vec3 u_color2;
-  uniform vec3 u_color3;
-  uniform vec3 u_color4;
 
   // Simplex-style noise
   vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -191,12 +187,6 @@ const FRAGMENT_SHADER = `
     currentColor = mix(currentColor, themeTeal, 1.0 - backTeal);
     currentColor *= (0.7 + satPulse * 0.5);
 
-    // All blobs share current color
-    vec3 blobCol1 = currentColor;
-    vec3 blobCol2 = currentColor;
-    vec3 blobCol3 = currentColor;
-    vec3 blobCol4 = currentColor;
-
     // Compose — blob color IS the bar color, not a tint on top
     vec3 dark = vec3(0.067, 0.063, 0.051);
     float barShape = (b0+b1+b2+b3+b4+b5+b6+b7+b8+b9+b10+b11);
@@ -204,10 +194,10 @@ const FRAGMENT_SHADER = `
 
     // Each blob paints the bars in its own color directly
     vec3 coloredBars = vec3(0.0);
-    coloredBars += r1 * blobCol1 * 1.8;
-    coloredBars += r2 * blobCol2 * 2.0;
-    coloredBars += r3 * blobCol3 * 1.8;
-    coloredBars += r4 * blobCol4 * 2.0;
+    coloredBars += r1 * currentColor * 1.8;
+    coloredBars += r2 * currentColor * 2.0;
+    coloredBars += r3 * currentColor * 1.8;
+    coloredBars += r4 * currentColor * 2.0;
 
     // Grain — ONLY on bars, ebbs between soft and crazy per blob
     float maxGrain = 0.4;
@@ -217,32 +207,25 @@ const FRAGMENT_SHADER = `
     float gp4 = smoothstep(0.3, 0.8, snoise(vec2(t * 0.12, 1000.0)));
     float grain = 0.0;
     grain += snoise(gl_FragCoord.xy * 0.15) * r1 * barShape * mix(0.05, maxGrain, gp1);
-    grain += snoise(gl_FragCoord.xy * 0.12 + 50.0) * r2 * barShape * mix(0.05, maxGrain, gp2);
-    grain += snoise(gl_FragCoord.xy * 0.18 + 100.0) * r3 * barShape * mix(0.05, maxGrain, gp3);
-    grain += snoise(gl_FragCoord.xy * 0.13 + 150.0) * r4 * barShape * mix(0.05, maxGrain, gp4);
+    grain += snoise(gl_FragCoord.xy * 0.12 + vec2(50.0)) * r2 * barShape * mix(0.05, maxGrain, gp2);
+    grain += snoise(gl_FragCoord.xy * 0.18 + vec2(100.0)) * r3 * barShape * mix(0.05, maxGrain, gp3);
+    grain += snoise(gl_FragCoord.xy * 0.13 + vec2(150.0)) * r4 * barShape * mix(0.05, maxGrain, gp4);
     grain += snoise(gl_FragCoord.xy * 0.4 + t * 2.0) * r1 * barShape * mix(0.02, 0.2, gp1);
-    grain += snoise(gl_FragCoord.xy * 0.35 + t * 2.5 + 50.0) * r2 * barShape * mix(0.02, 0.22, gp2);
-    grain += snoise(gl_FragCoord.xy * 0.45 + t * 1.8 + 100.0) * r3 * barShape * mix(0.02, 0.18, gp3);
-    grain += snoise(gl_FragCoord.xy * 0.38 + t * 2.2 + 150.0) * r4 * barShape * mix(0.02, 0.2, gp4);
+    grain += snoise(gl_FragCoord.xy * 0.35 + t * 2.5 + vec2(50.0)) * r2 * barShape * mix(0.02, 0.22, gp2);
+    grain += snoise(gl_FragCoord.xy * 0.45 + t * 1.8 + vec2(100.0)) * r3 * barShape * mix(0.02, 0.18, gp3);
+    grain += snoise(gl_FragCoord.xy * 0.38 + t * 2.2 + vec2(150.0)) * r4 * barShape * mix(0.02, 0.2, gp4);
 
     vec3 color = dark + barShape * coloredBars + grain;
 
     // Glow halo
-    color += r1 * blobCol1 * 0.08;
-    color += r2 * blobCol2 * 0.10;
-    color += r3 * blobCol3 * 0.06;
-    color += r4 * blobCol4 * 0.10;
+    color += r1 * currentColor * 0.08;
+    color += r2 * currentColor * 0.10;
+    color += r3 * currentColor * 0.06;
+    color += r4 * currentColor * 0.10;
 
 gl_FragColor = vec4(color, 1.0);
   }
 `;
-
-function hexToGL(hex: string): [number, number, number] {
-  const r = parseInt(hex.slice(1, 3), 16) / 255;
-  const g = parseInt(hex.slice(3, 5), 16) / 255;
-  const b = parseInt(hex.slice(5, 7), 16) / 255;
-  return [r, g, b];
-}
 
 export function WebflowGradient({ children }: { children?: React.ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -250,7 +233,14 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
   const programRef = useRef<WebGLProgram | null>(null);
   const startTimeRef = useRef(Date.now());
   const rafRef = useRef<number>(0);
+  const reduceMotionRef = useRef(false);
   const { reduceMotion } = useMotionPreference();
+
+  // Sync reduceMotion into a ref so the render loop reads latest value
+  // without rebuilding WebGL
+  useEffect(() => {
+    reduceMotionRef.current = reduceMotion;
+  }, [reduceMotion]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -261,28 +251,49 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
     glRef.current = gl;
 
     // Compile shaders with error checking
-    const vs = gl.createShader(gl.VERTEX_SHADER)!;
+    const vs = gl.createShader(gl.VERTEX_SHADER);
+    if (!vs) {
+      console.error("Failed to create vertex shader");
+      return;
+    }
     gl.shaderSource(vs, VERTEX_SHADER);
     gl.compileShader(vs);
     if (!gl.getShaderParameter(vs, gl.COMPILE_STATUS)) {
       console.error("Vertex shader error:", gl.getShaderInfoLog(vs));
+      gl.deleteShader(vs);
       return;
     }
 
-    const fs = gl.createShader(gl.FRAGMENT_SHADER)!;
+    const fs = gl.createShader(gl.FRAGMENT_SHADER);
+    if (!fs) {
+      console.error("Failed to create fragment shader");
+      gl.deleteShader(vs);
+      return;
+    }
     gl.shaderSource(fs, FRAGMENT_SHADER);
     gl.compileShader(fs);
     if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
       console.error("Fragment shader error:", gl.getShaderInfoLog(fs));
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
       return;
     }
 
-    const program = gl.createProgram()!;
+    const program = gl.createProgram();
+    if (!program) {
+      console.error("Failed to create program");
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
+      return;
+    }
     gl.attachShader(program, vs);
     gl.attachShader(program, fs);
     gl.linkProgram(program);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       console.error("Program link error:", gl.getProgramInfoLog(program));
+      gl.deleteProgram(program);
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
       return;
     }
     gl.useProgram(program);
@@ -296,16 +307,9 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
     gl.enableVertexAttribArray(pos);
     gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
 
-    // Colors — teal set + warm sunset set
-    const c1 = hexToGL("#2a8a80"); // teal
-    const c2 = hexToGL("#1a6b65"); // dark teal
-    const c3 = hexToGL("#a05828"); // warm orange
-    const c4 = hexToGL("#8a2848"); // deep rose
-
-    gl.uniform3f(gl.getUniformLocation(program, "u_color1"), ...c1);
-    gl.uniform3f(gl.getUniformLocation(program, "u_color2"), ...c2);
-    gl.uniform3f(gl.getUniformLocation(program, "u_color3"), ...c3);
-    gl.uniform3f(gl.getUniformLocation(program, "u_color4"), ...c4);
+    // Cache uniform locations
+    const uTime = gl.getUniformLocation(program, "u_time");
+    const uResolution = gl.getUniformLocation(program, "u_resolution");
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio, 2);
@@ -315,7 +319,7 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
         canvas.width = w;
         canvas.height = h;
         gl.viewport(0, 0, w, h);
-        gl.uniform2f(gl.getUniformLocation(program, "u_resolution"), w, h);
+        gl.uniform2f(uResolution, w, h);
       }
     };
 
@@ -323,14 +327,11 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
     window.addEventListener("resize", resize);
     startTimeRef.current = Date.now();
 
-    // Cache uniform location for per-frame updates
-    const uTime = gl.getUniformLocation(program, "u_time");
-
     const render = () => {
       const elapsed = (Date.now() - startTimeRef.current) / 1000;
       gl.uniform1f(uTime, elapsed);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      if (!reduceMotion) {
+      if (!reduceMotionRef.current) {
         rafRef.current = requestAnimationFrame(render);
       }
     };
@@ -345,7 +346,7 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
       gl.deleteShader(fs);
       gl.deleteBuffer(buf);
     };
-  }, [reduceMotion]);
+  }, []);
 
   return (
     <div className="relative overflow-hidden">
