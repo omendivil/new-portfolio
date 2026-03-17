@@ -81,7 +81,7 @@ export function BuildTerminal({ onComplete }: BuildTerminalProps) {
         transition: { duration: 0.5, ease: motionEase },
       }}
     >
-      <div className="mx-4 w-full max-w-md overflow-hidden rounded-xl border border-[#30363d] bg-[#0d1117] shadow-2xl sm:mx-0 sm:max-w-lg">
+      <div className="mx-10 w-full max-w-[240px] overflow-hidden rounded-lg border border-[#30363d] bg-[#0d1117] shadow-2xl sm:mx-4 sm:max-w-md sm:rounded-xl lg:mx-0 lg:max-w-lg">
         {/* Title bar */}
         <div className="flex items-center gap-2 border-b border-[#30363d] px-3 py-2">
           <div className="flex gap-1.5">
@@ -93,7 +93,7 @@ export function BuildTerminal({ onComplete }: BuildTerminalProps) {
         </div>
 
         {/* Terminal body */}
-        <div className="p-4 font-mono text-[12px] leading-[1.8] sm:text-[13px]">
+        <div className="p-2 font-mono text-[8px] leading-[1.6] sm:p-4 sm:text-[12px] sm:leading-[1.8] lg:text-[13px]">
           {/* Initial command */}
           <div className="text-[#8b949e]">
             <span className="text-[#3fb950]">❯</span> npm run build

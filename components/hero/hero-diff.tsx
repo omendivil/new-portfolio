@@ -20,7 +20,7 @@ export function HeroDiff() {
   return (
     <section
       id="hero"
-      className="section-anchor relative flex min-h-[70vh] items-center justify-center px-4 py-16 sm:min-h-[80vh] sm:py-24"
+      className="section-anchor relative flex min-h-[55vh] items-center justify-center px-4 py-10 sm:min-h-[70vh] sm:py-16 lg:min-h-[80vh] lg:py-24"
     >
       <DiffView startAnimation={!terminalVisible} />
 

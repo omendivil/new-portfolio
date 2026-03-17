@@ -64,7 +64,7 @@ function DiffLineRow({ line }: { line: DiffLine }) {
 
   return (
     <div
-      className="flex font-mono text-[11px] leading-[22px] sm:text-[13px] sm:leading-[26px] lg:text-[14px] lg:leading-[28px]"
+      className="flex font-mono text-[7px] leading-[14px] sm:text-[12px] sm:leading-[24px] lg:text-[14px] lg:leading-[28px]"
       style={{
         backgroundColor: isDeletion
           ? "var(--diff-del-bg)"
@@ -121,7 +121,7 @@ export function DiffView({ startAnimation }: DiffViewProps) {
 
   return (
     <div
-      className="mx-auto w-full max-w-2xl overflow-hidden rounded-xl border sm:max-w-3xl lg:max-w-4xl"
+      className="mx-auto w-full max-w-[260px] overflow-hidden rounded-lg border text-[7px] sm:max-w-2xl sm:rounded-xl sm:text-xs lg:max-w-3xl lg:text-sm xl:max-w-4xl"
       style={{
         borderColor: "var(--diff-border)",
         background: "var(--diff-bg)",
@@ -131,17 +131,17 @@ export function DiffView({ startAnimation }: DiffViewProps) {
     >
       {/* File header */}
       <div
-        className="flex items-center justify-between border-b px-3 py-2.5 sm:px-5"
+        className="flex items-center justify-between border-b px-2 py-1.5 sm:px-3 sm:py-2.5 lg:px-5"
         style={{
           borderColor: "var(--diff-border)",
           background: "var(--diff-header-bg)",
         }}
         aria-hidden="true"
       >
-        <span className="font-mono text-xs sm:text-sm" style={{ color: "var(--syn-plain)" }}>
+        <span className="font-mono text-[7px] sm:text-xs lg:text-sm" style={{ color: "var(--syn-plain)" }}>
           📄 {DIFF_FILENAME}
         </span>
-        <span className="text-xs sm:text-sm">
+        <span className="text-[7px] sm:text-xs lg:text-sm">
           <span style={{ color: "var(--diff-del-text)" }}>−{DIFF_DELETIONS}</span>
           {" "}
           <span style={{ color: "var(--diff-add-text)" }}>+{DIFF_ADDITIONS}</span>

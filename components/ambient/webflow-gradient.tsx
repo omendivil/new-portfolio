@@ -62,8 +62,8 @@ const FRAGMENT_SHADER = `
   // Gentle domain warping — low warp strength (1.5 not 4.0)
   float warpedNoise(vec2 p, float t) {
     vec2 q = vec2(
-      fbm(p + vec2(0.0, 0.0) + t * 0.03),
-      fbm(p + vec2(5.2, 1.3) + t * 0.025)
+      fbm(p + vec2(0.0, 0.0) + vec2(t * 0.03)),
+      fbm(p + vec2(5.2, 1.3) + vec2(t * 0.025))
     );
     return fbm(p + 1.5 * q);
   }
@@ -81,7 +81,12 @@ const FRAGMENT_SHADER = `
   void main() {
     vec2 uv = gl_FragCoord.xy / u_resolution;
     float t = u_time * 0.1;
-    float angle = 0.85;
+    // Responsive layout — mobile vs desktop
+    float aspect = u_resolution.x / u_resolution.y;
+    float isMobile = 1.0 - smoothstep(0.8, 1.2, aspect);
+
+    // Mobile: almost diagonal (~55deg), Desktop: standard diagonal (~49deg)
+    float angle = mix(0.85, 1.0, isMobile);
     float diag = uv.x * cos(angle) + uv.y * sin(angle);
 
     // Bright teal palette with color shift
@@ -92,19 +97,24 @@ const FRAGMENT_SHADER = `
     vec3 colA = mix(teal1, bright, shift);
     vec3 colB = mix(teal2, vec3(0.6, 0.3, 0.15), shift * 0.25);
 
-    // Thick bars — touching, no gaps (unrolled for WebGL1 compat)
-    float b0  = bar3d(diag, -0.10, 0.14);
-    float b1  = bar3d(diag, 0.05,  0.14);
-    float b2  = bar3d(diag, 0.20,  0.14);
-    float b3  = bar3d(diag, 0.35,  0.14);
-    float b4  = bar3d(diag, 0.50,  0.14);
-    float b5  = bar3d(diag, 0.65,  0.14);
-    float b6  = bar3d(diag, 0.80,  0.14);
-    float b7  = bar3d(diag, 0.95,  0.14);
-    float b8  = bar3d(diag, 1.10,  0.14);
-    float b9  = bar3d(diag, 1.25,  0.14);
-    float b10 = bar3d(diag, 1.40,  0.14);
-    float b11 = bar3d(diag, 1.55,  0.14);
+    // Bar width — mobile: thick (0.22), desktop: standard (0.14)
+    float bw = mix(0.14, 0.22, isMobile);
+    // Bar gap — mobile: wider spacing, desktop: tight
+    float bg = mix(0.15, 0.24, isMobile);
+
+    // Desktop: 12 bars. Mobile: 7 fat bars (extras just go offscreen)
+    float b0  = bar3d(diag, -0.10, bw);
+    float b1  = bar3d(diag, -0.10 + bg, bw);
+    float b2  = bar3d(diag, -0.10 + bg * 2.0, bw);
+    float b3  = bar3d(diag, -0.10 + bg * 3.0, bw);
+    float b4  = bar3d(diag, -0.10 + bg * 4.0, bw);
+    float b5  = bar3d(diag, -0.10 + bg * 5.0, bw);
+    float b6  = bar3d(diag, -0.10 + bg * 6.0, bw);
+    float b7  = bar3d(diag, -0.10 + bg * 7.0, bw);
+    float b8  = bar3d(diag, -0.10 + bg * 8.0, bw);
+    float b9  = bar3d(diag, -0.10 + bg * 9.0, bw);
+    float b10 = bar3d(diag, -0.10 + bg * 10.0, bw);
+    float b11 = bar3d(diag, -0.10 + bg * 11.0, bw);
 
     // Color each bar — unrolled
     vec3 allBars = vec3(0.0);
@@ -170,11 +180,11 @@ const FRAGMENT_SHADER = `
     pulse1 = max(pulse1, 0.15);
     pulse3 = max(pulse3, 0.15);
 
-    // Size breathing — blobs shrink and expand
-    float size1 = 12.0 + snoise(vec2(t * 0.1, 50.0)) * 5.0;  // 7 to 17
-    float size2 = 13.0 + snoise(vec2(t * 0.12, 55.0)) * 5.0;
-    float size3 = 12.0 + snoise(vec2(t * 0.09, 60.0)) * 5.0;
-    float size4 = 11.0 + snoise(vec2(t * 0.11, 65.0)) * 5.0;
+    // Size breathing — tighter overall, less visible more often
+    float size1 = 18.0 + snoise(vec2(t * 0.1, 50.0)) * 4.0;  // 14 to 22
+    float size2 = 19.0 + snoise(vec2(t * 0.12, 55.0)) * 4.0;
+    float size3 = 18.0 + snoise(vec2(t * 0.09, 60.0)) * 4.0;
+    float size4 = 17.0 + snoise(vec2(t * 0.11, 65.0)) * 4.0;
 
     float r1 = exp(-size1 * length(d1)) * pulse1;
     float r2 = exp(-size2 * length(d2)) * pulse2;
@@ -246,8 +256,6 @@ gl_FragColor = vec4(color, 1.0);
 
 export function WebflowGradient({ children }: { children?: React.ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const glRef = useRef<WebGLRenderingContext | null>(null);
-  const programRef = useRef<WebGLProgram | null>(null);
   const startTimeRef = useRef(Date.now());
   const rafRef = useRef<number>(0);
   const reduceMotionRef = useRef(false);
@@ -259,6 +267,7 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
     const wasReduced = reduceMotionRef.current;
     reduceMotionRef.current = reduceMotion;
     if (!reduceMotion && wasReduced && renderRef.current) {
+      cancelAnimationFrame(rafRef.current);
       renderRef.current();
     }
   }, [reduceMotion]);
@@ -269,7 +278,6 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
 
     const gl = canvas.getContext("webgl", { alpha: false, antialias: false });
     if (!gl) return;
-    glRef.current = gl;
 
     // Compile shaders with error checking
     const vs = gl.createShader(gl.VERTEX_SHADER);
@@ -318,7 +326,12 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
       return;
     }
     gl.useProgram(program);
-    programRef.current = program;
+
+    // Detach and free shaders after successful link — saves GPU memory
+    gl.detachShader(program, vs);
+    gl.detachShader(program, fs);
+    gl.deleteShader(vs);
+    gl.deleteShader(fs);
 
     // Fullscreen quad
     const buf = gl.createBuffer();
@@ -346,11 +359,13 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
         canvas.width = w;
         canvas.height = h;
         gl.viewport(0, 0, w, h);
+        gl.uniform2f(uResolution, w, h);
       }
-      gl.uniform2f(uResolution, w, h);
     };
 
+    // Set resolution unconditionally on first call
     resize();
+    gl.uniform2f(uResolution, Math.max(1, canvas.width), Math.max(1, canvas.height));
     window.addEventListener("resize", resize);
     startTimeRef.current = Date.now();
 
@@ -371,8 +386,6 @@ export function WebflowGradient({ children }: { children?: React.ReactNode }) {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener("resize", resize);
       gl.deleteProgram(program);
-      gl.deleteShader(vs);
-      gl.deleteShader(fs);
       gl.deleteBuffer(buf);
       renderRef.current = null;
     };
