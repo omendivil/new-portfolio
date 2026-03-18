@@ -8,7 +8,7 @@ import { useMotionPreference } from "@/lib/motion";
 // Dynamic import — no SSR since it uses backdrop-filter + SVG
 const LiquidGlass = dynamic(
   () => import("@liquidglass/react").then((mod) => mod.LiquidGlass),
-  { ssr: false }
+  { ssr: false, loading: () => null }
 );
 
 /**
@@ -61,7 +61,7 @@ export function LightModeGlass({ children }: { children?: React.ReactNode }) {
             top: "50%",
             width: "160px",
             height: "160%",
-            transform: "translateY(-50%) rotate(-35deg)",
+            transform: "translateY(-50%) rotate(-35deg) scaleY(7)",
             transformOrigin: "center center",
           }}
         >
@@ -79,7 +79,7 @@ export function LightModeGlass({ children }: { children?: React.ReactNode }) {
             <div
               style={{
                 width: "160px",
-                height: "1400px",
+                height: "200px",
                 background: "rgba(255, 255, 255, 0.1)",
                 borderLeft: "1.5px solid rgba(255, 255, 255, 0.6)",
                 borderTop: "1px solid rgba(255, 255, 255, 0.4)",

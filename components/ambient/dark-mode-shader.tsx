@@ -337,8 +337,6 @@ export function DarkModeShader({ children }: { children?: React.ReactNode }) {
     const buf = gl.createBuffer();
     if (!buf) {
       gl.deleteProgram(program);
-      gl.deleteShader(vs);
-      gl.deleteShader(fs);
       return;
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
