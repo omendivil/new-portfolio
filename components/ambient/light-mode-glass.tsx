@@ -17,9 +17,9 @@ const LiquidGlass = dynamic(
  * no CORS issues, no black flash.
  */
 
-const BARS = Array.from({ length: 7 }, (_, i) => ({
+const BARS = Array.from({ length: 5 }, (_, i) => ({
   id: i,
-  offset: -5 + i * 18,
+  offset: -5 + i * 25,
 }));
 
 export function LightModeGlass({ children }: { children?: React.ReactNode }) {
@@ -39,11 +39,12 @@ export function LightModeGlass({ children }: { children?: React.ReactNode }) {
         style={{
           background: `
             linear-gradient(125deg,
-              rgba(60, 120, 255, 0.45) 0%,
-              rgba(160, 100, 240, 0.35) 25%,
-              rgba(80, 200, 210, 0.30) 50%,
-              rgba(180, 120, 230, 0.25) 75%,
-              rgba(60, 150, 250, 0.35) 100%
+              #3060ff 0%,
+              #8040e0 20%,
+              #20c0c0 40%,
+              #a060e0 60%,
+              #4080ff 80%,
+              #6030d0 100%
             )
           `,
         }}
@@ -58,23 +59,36 @@ export function LightModeGlass({ children }: { children?: React.ReactNode }) {
           style={{
             left: `${bar.offset}%`,
             top: "50%",
-            width: "110px",
-            height: "140%",
+            width: "160px",
+            height: "160%",
             transform: "translateY(-50%) rotate(-35deg)",
             transformOrigin: "center center",
           }}
         >
           <LiquidGlass
-            displacementScale={40}
-            blur={6}
+            displacementScale={200}
+            blur={3}
             contrast={1.1}
             brightness={1.05}
-            saturation={1.3}
-            shadowIntensity={0.15}
-            elasticity={0.12}
-            borderRadius={8}
+            saturation={1.5}
+            shadowIntensity={0.3}
+            elasticity={0.2}
+            borderRadius={12}
           >
-            <div style={{ width: "110px", height: "1200px" }} />
+            {/* Glassmorphism surface — the 4 core properties */}
+            <div
+              style={{
+                width: "160px",
+                height: "1400px",
+                background: "rgba(255, 255, 255, 0.1)",
+                borderLeft: "1.5px solid rgba(255, 255, 255, 0.6)",
+                borderTop: "1px solid rgba(255, 255, 255, 0.4)",
+                borderRight: "1px solid rgba(255, 255, 255, 0.15)",
+                borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+                borderRadius: "12px",
+                boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 8px 32px rgba(0, 0, 0, 0.15)",
+              }}
+            />
           </LiquidGlass>
         </div>
       ))}
