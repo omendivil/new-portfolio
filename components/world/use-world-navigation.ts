@@ -1,29 +1,32 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-
 import type { NavSectionId } from "@/data/types";
 
 type WorldNavigationState = {
-  activeSection: NavSectionId;
-  previousSection: NavSectionId | null;
+  activeIndex: number;
+  previousIndex: number | null;
   isTransitioning: boolean;
-  transitionTarget: NavSectionId | null;
+  direction: "left" | "right" | null;
 };
 
 type UseWorldNavigationReturn = WorldNavigationState & {
-  scrollToSection: (id: NavSectionId) => void;
+  activeSection: NavSectionId;
+  transitionTarget: NavSectionId | null;
   sectionOrder: NavSectionId[];
+  goToSection: (id: NavSectionId) => void;
+  goNext: () => void;
+  goPrev: () => void;
 };
 
 export function useWorldNavigation(
   sectionIds: NavSectionId[],
 ): UseWorldNavigationReturn {
   const [state, setState] = useState<WorldNavigationState>({
-    activeSection: sectionIds[0],
-    previousSection: null,
+    activeIndex: 0,
+    previousIndex: null,
     isTransitioning: false,
-    transitionTarget: null,
+    direction: null,
   });
   const transitionTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
 
@@ -33,39 +36,7 @@ export function useWorldNavigation(
     };
   }, []);
 
-  useEffect(() => {
-    const sections = sectionIds
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => Boolean(el));
-
-    if (!sections.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-        if (visible?.target.id) {
-          const newSection = visible.target.id as NavSectionId;
-          setState((prev) => {
-            if (prev.activeSection === newSection) return prev;
-            return {
-              activeSection: newSection,
-              previousSection: prev.activeSection,
-              isTransitioning: true,
-              transitionTarget: newSection,
-            };
-          });
-        }
-      },
-      { threshold: [0.4, 0.6, 0.8] },
-    );
-
-    sections.forEach((s) => observer.observe(s));
-    return () => observer.disconnect();
-  }, [sectionIds]);
-
+  // Clear transition state after animation completes
   useEffect(() => {
     if (!state.isTransitioning) return;
 
@@ -73,35 +44,67 @@ export function useWorldNavigation(
       setState((prev) => ({
         ...prev,
         isTransitioning: false,
-        transitionTarget: null,
+        direction: null,
       }));
-    }, 1500);
+    }, 1600); // matches terminal transition + slide animation
 
     return () => {
       if (transitionTimerRef.current) clearTimeout(transitionTimerRef.current);
     };
-  }, [state.isTransitioning, state.transitionTarget]);
+  }, [state.isTransitioning, state.activeIndex]);
 
-  const scrollToSection = useCallback(
+  const goToSection = useCallback(
     (id: NavSectionId) => {
-      const target = document.getElementById(id);
-      if (!target) return;
+      const targetIndex = sectionIds.indexOf(id);
+      if (targetIndex === -1) return;
 
-      setState((prev) => ({
-        ...prev,
-        isTransitioning: true,
-        transitionTarget: id,
-        previousSection: prev.activeSection,
-      }));
-
-      target.scrollIntoView({ behavior: "smooth" });
+      setState((prev) => {
+        if (prev.activeIndex === targetIndex) return prev;
+        if (prev.isTransitioning) return prev; // prevent double-nav during transition
+        return {
+          activeIndex: targetIndex,
+          previousIndex: prev.activeIndex,
+          isTransitioning: true,
+          direction: targetIndex > prev.activeIndex ? "left" : "right",
+        };
+      });
     },
-    [],
+    [sectionIds],
   );
+
+  const goNext = useCallback(() => {
+    setState((prev) => {
+      if (prev.isTransitioning) return prev;
+      if (prev.activeIndex >= sectionIds.length - 1) return prev;
+      return {
+        activeIndex: prev.activeIndex + 1,
+        previousIndex: prev.activeIndex,
+        isTransitioning: true,
+        direction: "left",
+      };
+    });
+  }, [sectionIds.length]);
+
+  const goPrev = useCallback(() => {
+    setState((prev) => {
+      if (prev.isTransitioning) return prev;
+      if (prev.activeIndex <= 0) return prev;
+      return {
+        activeIndex: prev.activeIndex - 1,
+        previousIndex: prev.activeIndex,
+        isTransitioning: true,
+        direction: "right",
+      };
+    });
+  }, []);
 
   return {
     ...state,
-    scrollToSection,
+    activeSection: sectionIds[state.activeIndex],
+    transitionTarget: state.isTransitioning ? sectionIds[state.activeIndex] : null,
     sectionOrder: sectionIds,
+    goToSection,
+    goNext,
+    goPrev,
   };
 }

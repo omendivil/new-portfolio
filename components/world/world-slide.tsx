@@ -1,67 +1,89 @@
 "use client";
 
-import { type ReactNode, useRef } from "react";
-import { useInView } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { type ReactNode } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronRight } from "lucide-react";
 
-import { useMotionPreference } from "@/lib/motion";
+import { motionEase, useMotionPreference } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 type WorldSlideProps = {
   id: string;
   children: ReactNode;
+  isActive: boolean;
+  direction: "left" | "right" | null;
   exitLabel?: string;
-  nextSectionId?: string;
+  onExit?: () => void;
   className?: string;
-  allowOverflow?: boolean;
+};
+
+const slideVariants = {
+  enterFromRight: { x: "100%", opacity: 0 },
+  enterFromLeft: { x: "-100%", opacity: 0 },
+  center: { x: 0, opacity: 1 },
+  exitToLeft: { x: "-100%", opacity: 0 },
+  exitToRight: { x: "100%", opacity: 0 },
 };
 
 export function WorldSlide({
   id,
   children,
+  isActive,
+  direction,
   exitLabel,
-  nextSectionId,
+  onExit,
   className,
-  allowOverflow = false,
 }: WorldSlideProps) {
-  const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { amount: 0.3 });
   const { reduceMotion } = useMotionPreference();
 
-  function handleExit() {
-    if (!nextSectionId) return;
-    const target = document.getElementById(nextSectionId);
-    target?.scrollIntoView({ behavior: reduceMotion ? "instant" : "smooth" });
-  }
+  const initial = reduceMotion
+    ? false
+    : direction === "left"
+      ? "enterFromRight"
+      : "enterFromLeft";
+
+  const exit = reduceMotion
+    ? undefined
+    : direction === "left"
+      ? "exitToLeft"
+      : "exitToRight";
 
   return (
-    <section
-      id={id}
-      ref={ref}
-      className={cn(
-        "section-anchor relative snap-start",
-        allowOverflow ? "min-h-screen" : "flex min-h-screen flex-col",
-        className,
-      )}
-    >
-      <div className={cn("flex-1", allowOverflow ? "" : "flex flex-col")}>
-        {children}
-      </div>
+    <AnimatePresence mode="wait" initial={false}>
+      {isActive && (
+        <motion.section
+          key={id}
+          id={id}
+          className={cn(
+            "absolute inset-0 overflow-y-auto overflow-x-hidden",
+            className,
+          )}
+          variants={reduceMotion ? undefined : slideVariants}
+          initial={initial}
+          animate="center"
+          exit={exit}
+          transition={
+            reduceMotion
+              ? { duration: 0 }
+              : { duration: 0.6, ease: motionEase }
+          }
+        >
+          {children}
 
-      {exitLabel && nextSectionId && (
-        <div className="absolute inset-x-0 bottom-6 z-10 flex justify-center sm:bottom-10">
-          <button
-            type="button"
-            onClick={handleExit}
-            className="group flex flex-col items-center gap-1.5 text-muted/50 transition-colors hover:text-muted"
-          >
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] sm:text-xs">
-              {exitLabel}
-            </span>
-            <ChevronDown className="h-4 w-4 animate-bounce" />
-          </button>
-        </div>
+          {exitLabel && onExit && (
+            <div className="sticky bottom-0 z-10 flex justify-center pb-6 pt-2 sm:pb-10">
+              <button
+                type="button"
+                onClick={onExit}
+                className="group flex items-center gap-2 rounded-full border border-border/30 bg-background/80 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted/60 backdrop-blur-sm transition-all hover:border-border/60 hover:text-muted sm:text-xs"
+              >
+                {exitLabel}
+                <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+              </button>
+            </div>
+          )}
+        </motion.section>
       )}
-    </section>
+    </AnimatePresence>
   );
 }
