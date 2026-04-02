@@ -133,7 +133,7 @@ function BlueprintRecord({ experience }: { experience: Experience }) {
 
   // Calculate stagger delays: title types first, then each field, then scope, then reqs
   const titleDuration = titleText.length * 12;
-  let fieldStart = titleDuration + 100;
+  const fieldStart = titleDuration + 100;
 
   return (
     <div
