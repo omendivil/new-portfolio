@@ -412,3 +412,15 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ─── World slide system ───────────────────────────────────────────────── */
+
+.world-scroll-container {
+  scroll-snap-type: y mandatory;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+.snap-start {
+  scroll-snap-align: start;
+}
