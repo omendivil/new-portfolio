@@ -33,7 +33,7 @@ export function HomePage() {
       >
         Skip to content
       </a>
-      <StickyNav sections={navSectionsFiltered} />
+      <StickyNav sections={navSectionsFiltered} onNavigate={world.scrollToSection} />
       <TerminalTransition
         isTransitioning={world.isTransitioning}
         target={world.transitionTarget}
