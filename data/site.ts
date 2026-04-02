@@ -10,7 +10,6 @@ import {
   type ProjectLink,
   type ProjectStoryBeat,
   type ProjectVideo,
-  type SiteContent,
   type SiteMediaCatalog,
   type Skill,
   type WritingEntry,
@@ -704,12 +703,3 @@ export const contact: ContactConfig = {
   showPhone: false,
 };
 
-export const siteContent: SiteContent = {
-  contact,
-  experience,
-  hero,
-  media: siteMedia,
-  projects,
-  skills,
-  writing,
-};

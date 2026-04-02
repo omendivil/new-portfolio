@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { motionEase } from "@/lib/motion";
+import { motionEase, useMotionPreference } from "@/lib/motion";
 
 import { DIFF_ADDITIONS, DIFF_DELETIONS, DIFF_FILENAME, DIFF_LINES, type DiffLine, type Token } from "./diff-data";
 
@@ -101,19 +101,29 @@ type DiffViewProps = {
 };
 
 export function DiffView({ startAnimation }: DiffViewProps) {
+  const { reduceMotion } = useMotionPreference();
   const [reviewed, setReviewed] = useState(false);
   const [merging, setMerging] = useState(false);
   const [merged, setMerged] = useState(false);
+  const mergeTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  useEffect(() => {
+    return () => {
+      if (mergeTimerRef.current) clearTimeout(mergeTimerRef.current);
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    };
+  }, []);
 
   const handleMerge = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     if (merging || merged) return;
 
     setMerging(true);
-    setTimeout(() => {
+    mergeTimerRef.current = setTimeout(() => {
       setMerged(true);
       setReviewed(true);
-      setTimeout(() => {
+      scrollTimerRef.current = setTimeout(() => {
         document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
       }, 600);
     }, 1200);
@@ -151,12 +161,18 @@ export function DiffView({ startAnimation }: DiffViewProps) {
       {/* Diff lines */}
       <motion.div
         className="py-1 sm:py-2"
-        variants={containerVariants}
-        initial="hidden"
+        variants={reduceMotion ? undefined : containerVariants}
+        initial={reduceMotion ? false : "hidden"}
         animate={startAnimation ? "visible" : "hidden"}
       >
         {DIFF_LINES.map((line, i) => (
-          <motion.div key={i} variants={lineVariants}>
+          <motion.div
+            key={i}
+            variants={reduceMotion ? undefined : lineVariants}
+            initial={reduceMotion ? false : undefined}
+            animate={reduceMotion && startAnimation ? { opacity: 1, x: 0 } : undefined}
+            transition={reduceMotion ? { duration: 0 } : undefined}
+          >
             <DiffLineRow line={line} />
           </motion.div>
         ))}

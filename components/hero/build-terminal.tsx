@@ -32,13 +32,20 @@ export function BuildTerminal({ onComplete }: BuildTerminalProps) {
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [isDone, setIsDone] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const completeTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    return () => {
+      if (completeTimeoutRef.current) clearTimeout(completeTimeoutRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (isDone) return;
     if (currentStep >= BUILD_STEPS.length) {
       const t = setTimeout(() => {
         setIsDone(true);
-        setTimeout(onComplete, 400);
+        completeTimeoutRef.current = setTimeout(onComplete, 400);
       }, 250);
       return () => clearTimeout(t);
     }

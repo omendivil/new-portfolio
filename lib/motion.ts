@@ -22,90 +22,11 @@ type MotionPreference = {
   viewport: ViewportOptions;
 };
 
-type RevealOptions = {
-  delay?: number;
-  distance?: number;
-  duration?: number;
-  scale?: number;
-};
-
-type StaggerOptions = {
-  delayChildren?: number;
-  staggerChildren?: number;
-};
-
 type HoverMotionOptions = {
   hoverScale?: number;
   hoverY?: number;
   tapScale?: number;
 };
-
-export function createRevealVariants(
-  reduceMotion = false,
-  {
-    delay = 0,
-    distance = 18,
-    duration = 0.44,
-    scale = 0.985,
-  }: RevealOptions = {},
-): Variants {
-  if (reduceMotion) {
-    return {
-      hidden: { opacity: 1 },
-      visible: {
-        opacity: 1,
-        transition: { duration: 0 },
-      },
-      exit: {
-        opacity: 1,
-        transition: { duration: 0 },
-      },
-    };
-  }
-
-  return {
-    hidden: { opacity: 0, y: distance, scale },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration,
-        delay,
-        ease: motionEase,
-      },
-    },
-    exit: {
-      opacity: 0,
-      y: Math.max(10, Math.round(distance * 0.7)),
-      scale: 0.992,
-      transition: {
-        duration: 0.22,
-        ease: gentleMotionEase,
-      },
-    },
-  };
-}
-
-export function createStaggerVariants(
-  reduceMotion = false,
-  {
-    delayChildren = 0.04,
-    staggerChildren = 0.08,
-  }: StaggerOptions = {},
-): Variants {
-  return {
-    hidden: {},
-    visible: {
-      transition: reduceMotion
-        ? { duration: 0 }
-        : {
-            delayChildren,
-            staggerChildren,
-          },
-    },
-  };
-}
 
 export function useMotionPreference(
   { amount = 0.18, margin, once = true }: MotionPreferenceOptions = {},

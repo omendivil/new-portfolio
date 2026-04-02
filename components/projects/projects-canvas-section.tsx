@@ -1,11 +1,12 @@
 "use client";
 
-import { type RefObject, useState } from "react";
+import { type RefObject, useEffect } from "react";
 import { motion } from "framer-motion";
 import { PanelsTopLeft } from "lucide-react";
 
 import type { Project } from "@/data/types";
 import { pillTransition, useMotionPreference } from "@/lib/motion";
+import { useProjectStore } from "@/lib/use-project-store";
 import { cn } from "@/lib/utils";
 
 import { CanvasViewport } from "./canvas-viewport";
@@ -25,9 +26,15 @@ export function ProjectsCanvasSection({
   projects,
 }: ProjectsCanvasSectionProps) {
   const { reduceMotion } = useMotionPreference();
-  const [activeProjectId, setActiveProjectId] = useState<string | null>(
-    projects[0]?.id ?? null,
-  );
+  const activeProjectId = useProjectStore((s) => s.activeProjectId);
+  const setActiveProjectId = useProjectStore((s) => s.setActiveProjectId);
+
+  // Initialize to first project if not set
+  useEffect(() => {
+    if (activeProjectId === null && projects.length > 0) {
+      setActiveProjectId(projects[0].id);
+    }
+  }, [activeProjectId, projects, setActiveProjectId]);
 
   return (
     <div className="space-y-5">

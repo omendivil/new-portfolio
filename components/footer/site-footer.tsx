@@ -1,24 +1,18 @@
 "use client";
 
 import { Copy, Github, Linkedin, ExternalLink } from "lucide-react";
-import { useState } from "react";
 
 import { trackContactCopy, trackOutboundLink } from "@/lib/analytics";
+import { useCopyClipboard } from "@/lib/use-copy-clipboard";
 
 export function SiteFooter() {
   const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() ?? "";
-  const [copied, setCopied] = useState(false);
+  const { copied, copy } = useCopyClipboard();
 
   async function handleCopyEmail() {
     if (!email) return;
-    try {
-      await navigator.clipboard.writeText(email);
-      setCopied(true);
-      trackContactCopy("email");
-      setTimeout(() => setCopied(false), 1800);
-    } catch {
-      setCopied(false);
-    }
+    const success = await copy(email);
+    if (success) trackContactCopy("email");
   }
 
   return (

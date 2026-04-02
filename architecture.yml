@@ -1,0 +1,75 @@
+# Architecture rules — enforced by arch-drift
+#
+# Run: npx arch-drift check
+# This project uses root-level directories (no src/ prefix).
+# Path alias: @/* → ./*
+
+version: 1
+project:
+  name: new-portfolio
+  src: .
+
+shared_layers: []
+
+exclude:
+  - "**/*.test.*"
+  - "**/*.spec.*"
+  - "**/__tests__/**"
+  - "node_modules/**"
+  - ".next/**"
+  - "public/**"
+  - "docs/**"
+  - "styles/**"
+
+# ─── Layer Definitions ───────────────────────────────────────────────────────
+#
+# Foundation → data (types, content)
+# Utilities  → lib (helpers, hooks, motion presets)
+# UI         → components (React components, co-located hooks)
+# Pages      → app (Next.js App Router pages/layouts)
+
+layers:
+  - name: data
+    paths:
+      - data/**
+    can_import: []
+    why: "Types and content — foundation layer, imports nothing from the app"
+
+  - name: lib
+    paths:
+      - lib/**
+    can_import:
+      - data
+    why: "Utilities, motion presets, analytics, hooks — can reference types/content"
+
+  - name: components
+    paths:
+      - components/**
+    can_import:
+      - lib
+      - data
+    why: "UI components with co-located hooks — can use lib and data, not app"
+
+  - name: app
+    paths:
+      - app/**
+    can_import:
+      - components
+      - lib
+      - data
+    why: "Next.js pages and layouts — top of the dependency tree"
+
+# ─── Thresholds ──────────────────────────────────────────────────────────────
+
+thresholds:
+  max_file_lines: 1000
+
+# ─── Banned Imports ──────────────────────────────────────────────────────────
+
+banned:
+  - pattern: "styled-components"
+    why: "Project uses Tailwind — no CSS-in-JS"
+  - pattern: "lodash"
+    why: "Use native JS — lodash adds unnecessary bundle weight"
+
+rules: {}

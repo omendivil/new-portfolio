@@ -46,7 +46,11 @@ export function trackEvent(
     return;
   }
 
-  trackVercel(name, properties);
+  try {
+    trackVercel(name, properties);
+  } catch {
+    // Analytics should never crash the app
+  }
 
   if (window.gtag && getGaMeasurementId()) {
     window.gtag("event", name, properties);

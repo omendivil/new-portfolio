@@ -186,15 +186,6 @@ export type SiteMediaCatalog = {
   };
 };
 
-export type SiteContent = {
-  contact: ContactConfig;
-  experience: Experience[];
-  hero: HeroContent;
-  media: SiteMediaCatalog;
-  projects: Project[];
-  skills: Skill[];
-  writing: WritingEntry[];
-};
 
 export type ProjectFilterOptions = {
   category?: ProjectCategory | "All";

@@ -83,7 +83,7 @@ function ExpandableSection({
         onClick={() => setOpen(!open)}
         className="flex w-full items-center gap-2 text-left"
         style={{
-          fontFamily: "'Fira Code', monospace",
+          fontFamily: "var(--font-plex-mono), monospace",
           fontSize: 10,
           textTransform: "uppercase",
           letterSpacing: "0.15em",
@@ -138,7 +138,7 @@ function BlueprintRecord({ experience }: { experience: Experience }) {
   return (
     <div
       className="space-y-3"
-      style={{ fontFamily: "'Fira Code', monospace", color: "#e8f0ff" }}
+      style={{ fontFamily: "var(--font-plex-mono), monospace", color: "#e8f0ff" }}
     >
       {/* Title — types first */}
       <div style={{ fontSize: 16, fontWeight: 500, letterSpacing: "0.05em", minHeight: "1.5em" }}>
@@ -228,11 +228,6 @@ export function BlueprintTheme({ experiences }: BlueprintThemeProps) {
 
   return (
     <div className="mx-auto w-full max-w-3xl lg:max-w-4xl">
-      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-      <link
-        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap"
-        rel="stylesheet"
-      />
 
       {/* Outer container — border draws in */}
       <motion.div
@@ -243,7 +238,7 @@ export function BlueprintTheme({ experiences }: BlueprintThemeProps) {
         style={{
           background: "#0a1628",
           padding: 24,
-          fontFamily: "'Fira Code', monospace",
+          fontFamily: "var(--font-plex-mono), monospace",
           color: "#e8f0ff",
           boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
         }}
@@ -375,7 +370,7 @@ export function BlueprintTheme({ experiences }: BlueprintThemeProps) {
               color: "#5ba3d9",
               textAlign: "right",
               lineHeight: 1.5,
-              fontFamily: "'Fira Code', monospace",
+              fontFamily: "var(--font-plex-mono), monospace",
             }}
           >
             DRAWN BY: O. MENDIVIL

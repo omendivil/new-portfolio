@@ -5,9 +5,21 @@ import { AnimatePresence, motion, LayoutGroup } from "framer-motion";
 import { useState } from "react";
 
 import type { Experience } from "@/data/types";
-import { RetroComputer } from "./retro-computer";
-import { BlueprintTheme } from "./blueprint-theme";
-import { NESTheme } from "./nes-theme";
+
+const RetroComputer = dynamic(
+  () => import("./retro-computer").then((m) => ({ default: m.RetroComputer })),
+  { ssr: false },
+);
+
+const BlueprintTheme = dynamic(
+  () => import("./blueprint-theme").then((m) => ({ default: m.BlueprintTheme })),
+  { ssr: false },
+);
+
+const NESTheme = dynamic(
+  () => import("./nes-theme").then((m) => ({ default: m.NESTheme })),
+  { ssr: false },
+);
 
 const WorkspaceTheme = dynamic(
   () => import("./workspace-theme").then((m) => ({ default: m.WorkspaceTheme })),

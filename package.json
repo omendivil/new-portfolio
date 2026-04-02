@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:conventions": "vitest run --config vitest.conventions.config.ts",
+    "test:all": "vitest run --config vitest.conventions.config.ts",
+    "knip": "knip"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
@@ -20,7 +23,8 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "tailwind-merge": "^3.5.0",
-    "three": "^0.183.2"
+    "three": "^0.183.2",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -30,7 +34,11 @@
     "@types/three": "^0.183.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "glob": "^13.0.6",
+    "knip": "^5.88.1",
+    "postcss": "^8.5.8",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.4"
   }
 }

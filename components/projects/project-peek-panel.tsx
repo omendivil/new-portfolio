@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, Sparkles, X } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { ProjectChapters } from "@/components/projects/project-chapters";
 import { ProjectLinkList } from "@/components/projects/project-link-list";
@@ -13,6 +13,7 @@ import type { Project, ProjectChapter } from "@/data/types";
 import { trackChapterClick } from "@/lib/analytics";
 import { motionEase, overlayMotion, panelMotion, useMotionPreference } from "@/lib/motion";
 import { useModalBehavior } from "@/lib/use-modal-behavior";
+import { useProjectStore } from "@/lib/use-project-store";
 import { cn } from "@/lib/utils";
 
 function findFirstChapter(project: Project | null, videoId?: string | null) {
@@ -43,13 +44,29 @@ export function ProjectPeekPanel({
   const { reduceMotion } = useMotionPreference();
   const panelRef = useRef<HTMLElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  const selectedVideoId = useProjectStore((s) => s.selectedVideoId);
+  const selectedChapterId = useProjectStore((s) => s.selectedChapterId);
+  const playbackStartAt = useProjectStore((s) => s.playbackStartAt);
+  const selectVideoAction = useProjectStore((s) => s.selectVideo);
+  const selectChapterAction = useProjectStore((s) => s.selectChapter);
+  const initMedia = useProjectStore((s) => s.initMedia);
+
+  // Initialize media state when project opens
   const initialVideo = project?.videos[0] ?? null;
   const initialChapter = findFirstChapter(project, initialVideo?.id);
-  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(() => initialVideo?.id ?? null);
-  const [selectedChapterId, setSelectedChapterId] = useState<string | undefined>(
-    () => initialChapter?.id,
-  );
-  const [playbackStartAt, setPlaybackStartAt] = useState(() => initialChapter?.atSeconds ?? 0);
+
+  useEffect(() => {
+    if (isOpen && project) {
+      initMedia(
+        initialVideo?.id ?? null,
+        initialChapter?.id,
+        initialChapter?.atSeconds ?? 0,
+      );
+    }
+    // Only run when panel opens with a new project
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, project?.id]);
 
   useEffect(() => {
     if (isOpen) {
@@ -92,25 +109,14 @@ export function ProjectPeekPanel({
   const presentation = project ? project.presentation : "canvas";
 
   function handleSelectVideo(videoId: string) {
-    if (!project) {
-      return;
-    }
-
+    if (!project) return;
     const matchingChapter = findFirstChapter(project, videoId);
-
-    setSelectedVideoId(videoId);
-    setSelectedChapterId(matchingChapter?.id);
-    setPlaybackStartAt(matchingChapter?.atSeconds ?? 0);
+    selectVideoAction(videoId, matchingChapter?.id, matchingChapter?.atSeconds ?? 0);
   }
 
   function handleSelectChapter(chapter: ProjectChapter) {
-    if (!project) {
-      return;
-    }
-
-    setSelectedChapterId(chapter.id);
-    setSelectedVideoId(chapter.videoId);
-    setPlaybackStartAt(chapter.atSeconds);
+    if (!project) return;
+    selectChapterAction(chapter.id, chapter.videoId, chapter.atSeconds);
     trackChapterClick(project.id, chapter.id);
   }
 
