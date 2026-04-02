@@ -16,7 +16,7 @@ export function SiteFooter() {
   }
 
   return (
-    <footer id="contact" className="section-anchor px-4 pb-12 pt-20 sm:pb-16 sm:pt-28">
+    <footer className="px-4 pb-12 pt-20 sm:pb-16 sm:pt-28">
       <div className="mx-auto max-w-xl text-center">
         {/* Availability badge */}
         <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border/50 bg-surface/50 px-4 py-2 backdrop-blur-sm">

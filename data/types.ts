@@ -1,6 +1,7 @@
 export type NavSectionId =
   | "hero"
   | "projects"
+  | "code"
   | "skills"
   | "experience"
   | "writing"
