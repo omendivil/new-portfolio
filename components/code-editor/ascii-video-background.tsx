@@ -5,10 +5,10 @@ import { useCallback, useEffect, useRef } from "react";
 // ── Constants ──
 const ASCII =
   " .`'^\",:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
-const CELL_SIZE = 6;
+const CELL_SIZE = 8;
 const VIDEO_ZOOM = 1.6;
 const VIDEO_SHIFT_Y = 0.06;
-const FPS = 24;
+const FPS = 18;
 const FRAME_MS = 1000 / FPS;
 
 const VIDEO_SRC =
