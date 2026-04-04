@@ -5,12 +5,12 @@ import { useCallback, useRef } from "react";
 import { WorldEntrance } from "@/components/world/world-entrance";
 import { useWorldActive } from "@/components/world/world-slide";
 
-import { AsciiVideoBackground } from "./ascii-video-background";
+import { AsciiVideoBackground, type AsciiVideoBackgroundRef } from "./ascii-video-background";
 import { CodeEditorAnimation } from "./code-editor-animation";
 
 export function CodeEditorSection() {
   const isActive = useWorldActive();
-  const bgRef = useRef<{ triggerRipple: (e: React.MouseEvent) => void }>(null);
+  const bgRef = useRef<AsciiVideoBackgroundRef>(null);
 
   const handleBackgroundClick = useCallback((e: React.MouseEvent) => {
     bgRef.current?.triggerRipple(e);

@@ -128,8 +128,8 @@ export const AsciiVideoBackground = forwardRef<AsciiVideoBackgroundRef, { active
     s.h = canvas.height = window.innerHeight * dpr;
     canvas.style.width = `${window.innerWidth}px`;
     canvas.style.height = `${window.innerHeight}px`;
-    videoCanvas.width = s.w;
-    videoCanvas.height = s.h;
+    videoCanvasRef.current!.width = s.w;
+    videoCanvasRef.current!.height = s.h;
     s.cellPx = CELL_SIZE * dpr;
     s.cols = Math.floor(s.w / s.cellPx);
     s.rows = Math.floor(s.h / s.cellPx);
@@ -180,12 +180,15 @@ export const AsciiVideoBackground = forwardRef<AsciiVideoBackgroundRef, { active
     handleResize();
     window.addEventListener("resize", handleResize);
 
-    const video = videoRef.current!;
-    const canvas = canvasRef.current!;
-    const videoCanvas = videoCanvasRef.current!;
-    const ctx = canvas.getContext("2d")!;
-    const videoCtx = videoCanvas.getContext("2d")!;
-    const sampleCtx = sampleCanvasRef.current!.getContext("2d", {
+    // All refs are guaranteed non-null after this guard
+    if (!videoRef.current || !canvasRef.current || !videoCanvasRef.current || !sampleCanvasRef.current) return;
+    const videoEl = videoRef.current;
+    const canvasEl = canvasRef.current;
+    const videoCanvasEl = videoCanvasRef.current;
+    const sampleEl = sampleCanvasRef.current;
+    const ctx = canvasEl.getContext("2d")!;
+    const videoCtx = videoCanvasEl.getContext("2d")!;
+    const sampleCtx = sampleEl.getContext("2d", {
       willReadFrequently: true,
     })!;
 
@@ -200,7 +203,7 @@ export const AsciiVideoBackground = forwardRef<AsciiVideoBackgroundRef, { active
 
       // Determine source: video or fallback image
       const source =
-        s.videoReady && video.readyState >= 2 ? video : fallbackRef.current;
+        s.videoReady && videoEl.readyState >= 2 ? videoEl : fallbackRef.current;
       if (!source) return;
 
       const n = s.cols * s.rows;
@@ -217,18 +220,24 @@ export const AsciiVideoBackground = forwardRef<AsciiVideoBackgroundRef, { active
 
       // HD video layer
       if (s.fidelity > 0.01) {
-        videoCanvas.style.opacity = String(s.fidelity);
+        videoCanvasEl.style.opacity = String(s.fidelity);
         videoCtx.clearRect(0, 0, s.w, s.h);
         drawCover(source, videoCtx, s.w, s.h);
       } else {
-        videoCanvas.style.opacity = "0";
+        videoCanvasEl.style.opacity = "0";
       }
 
-      canvas.style.opacity = String(1 - s.fidelity * 0.85);
-      const imageData = sampleCtx.getImageData(0, 0, s.cols, s.rows).data;
+      canvasEl.style.opacity = String(1 - s.fidelity * 0.85);
+
+      let imageData: Uint8ClampedArray;
+      try {
+        imageData = sampleCtx.getImageData(0, 0, s.cols, s.rows).data;
+      } catch {
+        // Canvas tainted by CORS — skip this frame
+        return;
+      }
 
       ctx.clearRect(0, 0, s.w, s.h);
-      const dpr = Math.min(window.devicePixelRatio, 2);
       ctx.font = `bold ${s.cellPx * 0.88}px 'SF Mono','Fira Code','Courier New',monospace`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -325,7 +334,7 @@ export const AsciiVideoBackground = forwardRef<AsciiVideoBackgroundRef, { active
 
     // Start video
     try {
-      video.play().catch(() => {
+      videoEl.play().catch(() => {
         stateRef.current.videoFailed = true;
       });
     } catch {
@@ -337,9 +346,9 @@ export const AsciiVideoBackground = forwardRef<AsciiVideoBackgroundRef, { active
     return () => {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener("resize", handleResize);
-      video.pause();
-      video.removeAttribute("src");
-      video.load();
+      videoEl.pause();
+      videoEl.removeAttribute("src");
+      videoEl.load();
     };
   }, [active, handleResize]);
 
