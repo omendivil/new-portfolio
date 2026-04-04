@@ -151,6 +151,7 @@ const videoFrameworksPrimary = createVideo(
 export const navSections: NavSection[] = [
   { id: "hero", label: "Home" },
   { id: "projects", label: "Projects" },
+  { id: "code", label: "Languages" },
   { id: "experience", label: "Experience" },
   { id: "contact", label: "Contact" },
 ];

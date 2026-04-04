@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Languages World — Video ASCII</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #08080a; color: #e4e4e7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; overflow: hidden; }
+
+  .nav-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; gap: 12px; padding: 12px 24px;
+    background: rgba(8,8,10,0.85); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13px; font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+  .nav-bar span { cursor: pointer; opacity: 0.35; transition: opacity 0.2s; }
+  .nav-bar span:hover { opacity: 0.6; }
+  .nav-bar span.active { opacity: 1; font-weight: 600; }
+  .nav-bar .sep { opacity: 0.12; font-size: 11px; }
+  .nav-bar .home { color: #60a5fa; opacity: 0.8; }
+
+  #ascii-canvas {
+    position: fixed; top: 41px; left: 0; right: 0; bottom: 0;
+    width: 100%; height: calc(100% - 41px);
+  }
+
+  #source-video {
+    position: fixed; top: 0; left: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none;
+  }
+
+  .editor-container {
+    position: fixed; left: 50%; top: calc(50% + 20px); transform: translate(-50%, -50%);
+    width: min(840px, 88vw); z-index: 10;
+  }
+  .lang-label { font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(161,161,170,0.4); margin-bottom: 14px; }
+  .lang-pills { display: flex; gap: 6px; margin-bottom: 14px; }
+  .pill { padding: 7px 14px; border-radius: 8px; font-size: 12px; border: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.02); color: #71717a; font-family: 'SF Mono','Fira Code',monospace; }
+  .pill.active { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); color: #e4e4e7; }
+  .log-line { font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; padding: 6px 0; color: rgba(161,161,170,0.5); margin-bottom: 10px; }
+  .log-line .tag { color: #60a5fa; } .log-line .level { color: #4ade80; }
+  .code-window { border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); background: rgba(12,12,16,0.92); backdrop-filter: blur(24px); box-shadow: 0 25px 80px -20px rgba(0,0,0,0.6); }
+  .code-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 0 12px; }
+  .code-tab { padding: 9px 14px; font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; color: rgba(161,161,170,0.35); border-bottom: 2px solid transparent; }
+  .code-tab.active { color: #d4d4d8; border-bottom-color: #60a5fa; }
+  .code-body { padding: 18px 20px; font-family: 'SF Mono','Fira Code',monospace; font-size: 13px; line-height: 1.7; min-height: 280px; }
+  .code-body .ln { color: rgba(161,161,170,0.2); margin-right: 20px; display: inline-block; width: 20px; text-align: right; }
+  .code-body .kw { color: #c084fc; } .code-body .str { color: #4ade80; } .code-body .fn { color: #60a5fa; } .code-body .tp { color: #fbbf24; } .code-body .dim { opacity: 0.25; }
+  .code-footer { display: flex; justify-content: space-between; padding: 7px 14px; border-top: 1px solid rgba(255,255,255,0.04); font-family: 'SF Mono','Fira Code',monospace; font-size: 10px; color: rgba(161,161,170,0.3); }
+</style>
+</head>
+<body>
+
+<div class="nav-bar">
+  <span class="home">~/omar</span><span class="sep">›</span><span>home</span><span class="sep">/</span><span>projects</span><span class="sep">/</span><span class="active">languages</span><span class="sep">/</span><span>experience</span><span class="sep">/</span><span>contact</span>
+</div>
+
+<!-- Hidden video source — loops silently -->
+<video id="source-video" autoplay loop muted playsinline
+  src="/mockups/omendivil_person_typing_on_a_keyboard_facing_the_camera_only__350208a5-efe4-4afa-8f3d-5049a9c8d966_2.mp4">
+</video>
+
+<!-- ASCII output canvas -->
+<canvas id="ascii-canvas"></canvas>
+
+<!-- Code editor floating on top -->
+<div class="editor-container">
+  <div class="lang-label">Languages</div>
+  <div class="lang-pills"><div class="pill">TypeScript</div><div class="pill active">Swift</div><div class="pill">JavaScript</div><div class="pill">Python</div><div class="pill">+5</div></div>
+  <div class="log-line"><span class="level">INFO</span> [<span class="tag">atlas-chat</span>] A chat bubble that flips sides depending on who sent the message</div>
+  <div class="code-window">
+    <div class="code-tabs"><div class="code-tab">AnimatedText.tsx</div><div class="code-tab active">MessageRow.swift</div><div class="code-tab">List.js</div></div>
+    <div class="code-body">
+      <div><span class="ln">1</span><span class="kw">struct</span> <span class="tp">MessageRow</span>: <span class="tp">View</span> {</div>
+      <div><span class="ln">2</span>  <span class="kw">let</span> message: <span class="tp">Message</span></div>
+      <div><span class="ln">3</span></div>
+      <div><span class="ln">4</span>  <span class="kw">var</span> body: <span class="kw">some</span> <span class="tp">View</span> {</div>
+      <div><span class="ln">5</span>    <span class="fn">HStack</span> {</div>
+      <div class="dim"><span class="ln">6</span>      <span class="kw">if</span> isUser { <span class="fn">Spacer</span>() }</div>
+      <div class="dim"><span class="ln">7</span>      <span class="fn">Text</span>(message.content)</div>
+      <div class="dim"><span class="ln">8</span>        .<span class="fn">foregroundColor</span>(tint)</div>
+      <div class="dim"><span class="ln">9</span>        .<span class="fn">chatTheme</span>(isCompact)</div>
+      <div class="dim"><span class="ln">10</span>      <span class="fn">ChatTheme</span>.accent()</div>
+      <div class="dim"><span class="ln">11</span>        .<span class="fn">padding</span>(12)</div>
+      <div class="dim"><span class="ln">12</span>        .<span class="fn">background</span>(color)</div>
+      <div class="dim"><span class="ln">13</span>        .<span class="fn">cornerRadius</span>(16)</div>
+      <div class="dim"><span class="ln">14</span>    }</div>
+      <div class="dim"><span class="ln">15</span>  }</div>
+      <div class="dim"><span class="ln">16</span>}</div>
+    </div>
+    <div class="code-footer"><span>Atlas Chat App</span><span>⏸ pause</span></div>
+  </div>
+</div>
+
+<script>
+const DPR = Math.min(window.devicePixelRatio, 2);
+const canvas = document.getElementById('ascii-canvas');
+const ctx = canvas.getContext('2d');
+const video = document.getElementById('source-video');
+
+// Offscreen canvas to sample video frames
+const sampleCanvas = document.createElement('canvas');
+const sampleCtx = sampleCanvas.getContext('2d', { willReadFrequently: true });
+
+// Richer character ramp — more density levels = smoother gradients
+const ASCII = ' .`\'^",:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$';
+
+let w, h, cellPx, cols, rows;
+const CELL_SIZE = 7; // Smaller cells = more detail
+
+function resize() {
+  w = canvas.width = window.innerWidth * DPR;
+  h = canvas.height = (window.innerHeight - 41) * DPR;
+  canvas.style.width = window.innerWidth + 'px';
+  canvas.style.height = (window.innerHeight - 41) + 'px';
+  cellPx = CELL_SIZE * DPR;
+  cols = Math.floor(w / cellPx);
+  rows = Math.floor(h / cellPx);
+  sampleCanvas.width = cols;
+  sampleCanvas.height = rows;
+}
+window.addEventListener('resize', resize);
+resize();
+
+function setFont() {
+  ctx.font = `bold ${cellPx * 0.85}px 'SF Mono','Fira Code','Courier New',monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+}
+
+// ── Object-fit: cover for video sampling ──
+// Crops and scales the video so it fills the sample canvas with no letterboxing
+function drawVideoCover(video, ctx, targetW, targetH) {
+  const vw = video.videoWidth;
+  const vh = video.videoHeight;
+  if (!vw || !vh) return;
+
+  const videoAspect = vw / vh;
+  const targetAspect = targetW / targetH;
+
+  let sx, sy, sw, sh;
+  if (videoAspect > targetAspect) {
+    // Video is wider — crop sides
+    sh = vh;
+    sw = vh * targetAspect;
+    sx = (vw - sw) / 2;
+    sy = 0;
+  } else {
+    // Video is taller — crop top/bottom
+    sw = vw;
+    sh = vw / targetAspect;
+    sx = 0;
+    sy = (vh - sh) / 2;
+  }
+
+  ctx.drawImage(video, sx, sy, sw, sh, 0, 0, targetW, targetH);
+}
+
+// ── Color boost: increase saturation and brightness ──
+function boostColor(r, g, b) {
+  // Convert to HSL-ish boost: push colors away from grey
+  const avg = (r + g + b) / 3;
+  const satBoost = 1.6; // Saturation multiplier
+  const brightBoost = 1.3; // Brightness multiplier
+
+  let rr = avg + (r - avg) * satBoost;
+  let gg = avg + (g - avg) * satBoost;
+  let bb = avg + (b - avg) * satBoost;
+
+  // Brightness lift
+  rr = Math.min(255, rr * brightBoost);
+  gg = Math.min(255, gg * brightBoost);
+  bb = Math.min(255, bb * brightBoost);
+
+  return [Math.max(0, rr) | 0, Math.max(0, gg) | 0, Math.max(0, bb) | 0];
+}
+
+let lastFrame = 0;
+const FPS = 24;
+const FRAME_MS = 1000 / FPS;
+
+function draw(now) {
+  requestAnimationFrame(draw);
+
+  if (now - lastFrame < FRAME_MS) return;
+  lastFrame = now;
+
+  if (video.readyState < 2) return;
+
+  // Sample video with cover-fit cropping
+  drawVideoCover(video, sampleCtx, cols, rows);
+  const imageData = sampleCtx.getImageData(0, 0, cols, rows).data;
+
+  ctx.clearRect(0, 0, w, h);
+  setFont();
+
+  const charLen = ASCII.length;
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const i = (row * cols + col) * 4;
+      const r = imageData[i];
+      const g = imageData[i + 1];
+      const b = imageData[i + 2];
+
+      // Luminance with gamma boost — pulls more detail out of dark areas
+      let brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
+      // Gamma curve: lifts shadows, compresses highlights
+      brightness = Math.pow(brightness, 0.65);
+
+      // Very low threshold — let more of the image through
+      if (brightness < 0.02) continue;
+
+      // Map to character
+      const charIdx = Math.min(charLen - 1, Math.floor(brightness * (charLen - 1)));
+      const char = ASCII[charIdx];
+      if (char === ' ') continue;
+
+      // Boost the original color for vibrancy
+      const [br, bg, bb] = boostColor(r, g, b);
+
+      // Alpha: more aggressive — characters stay visible even in mid-tones
+      const alpha = Math.min(1, brightness * 1.6 + 0.15);
+      ctx.fillStyle = `rgba(${br},${bg},${bb},${alpha})`;
+
+      ctx.fillText(char, col * cellPx + cellPx / 2, row * cellPx + cellPx / 2);
+    }
+  }
+}
+
+video.addEventListener('canplay', () => {
+  requestAnimationFrame(draw);
+});
+
+setTimeout(() => requestAnimationFrame(draw), 1000);
+</script>
+</body>
+</html>

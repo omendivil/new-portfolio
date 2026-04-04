@@ -33,6 +33,10 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# mockup media (videos/images hosted on R2)
+public/mockups/*.mp4
+public/mockups/*.png
+
 # vercel
 .vercel
 

@@ -2,6 +2,7 @@
 
 import { Copy, Github, Linkedin, ExternalLink } from "lucide-react";
 
+import { WorldEntrance } from "@/components/world/world-entrance";
 import { trackContactCopy, trackOutboundLink } from "@/lib/analytics";
 import { useCopyClipboard } from "@/lib/use-copy-clipboard";
 
@@ -16,30 +17,35 @@ export function SiteFooter() {
   }
 
   return (
-    <footer id="contact" className="section-anchor px-4 pb-12 pt-20 sm:pb-16 sm:pt-28">
+    <footer className="px-4 pb-12 pt-20 sm:pb-16 sm:pt-28">
       <div className="mx-auto max-w-xl text-center">
         {/* Availability badge */}
-        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border/50 bg-surface/50 px-4 py-2 backdrop-blur-sm">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
-          </span>
-          <span className="text-xs font-medium text-muted">
-            Open to frontend &amp; iOS roles
-          </span>
-        </div>
+        <WorldEntrance delay={0.1}>
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border/50 bg-surface/50 px-4 py-2 backdrop-blur-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+            </span>
+            <span className="text-xs font-medium text-muted">
+              Open to frontend &amp; iOS roles
+            </span>
+          </div>
+        </WorldEntrance>
 
         {/* Heading */}
-        <h2 className="text-3xl font-bold tracking-[-0.03em] text-text sm:text-4xl">
-          Let&apos;s talk.
-        </h2>
+        <WorldEntrance delay={0.25}>
+          <h2 className="text-3xl font-bold tracking-[-0.03em] text-text sm:text-4xl">
+            Let&apos;s talk.
+          </h2>
 
-        {/* Location */}
-        <p className="mt-2 text-sm text-muted">
-          Arizona · Remote-friendly
-        </p>
+          {/* Location */}
+          <p className="mt-2 text-sm text-muted">
+            Arizona · Remote-friendly
+          </p>
+        </WorldEntrance>
 
         {/* Link row */}
+        <WorldEntrance delay={0.45}>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           {/* Copy email */}
           <button
@@ -92,6 +98,7 @@ export function SiteFooter() {
             Groundwork Studios
           </a>
         </div>
+        </WorldEntrance>
 
         {/* Built with credit */}
         <p className="mt-12 text-[11px] tracking-[0.05em] text-muted/40">

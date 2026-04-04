@@ -412,3 +412,6 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ─── World slide system ───────────────────────────────────────────────── */
+/* Horizontal click-to-navigate worlds — no scroll between sections */

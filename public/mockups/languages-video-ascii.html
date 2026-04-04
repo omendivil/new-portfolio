@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Languages World — Video ASCII V2</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #05050a; color: #e4e4e7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; overflow: hidden; }
+
+  .nav-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; gap: 12px; padding: 12px 24px;
+    background: rgba(5,5,10,0.85); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13px; font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+  .nav-bar span { cursor: pointer; opacity: 0.35; transition: opacity 0.2s; }
+  .nav-bar span:hover { opacity: 0.6; }
+  .nav-bar span.active { opacity: 1; font-weight: 600; }
+  .nav-bar .sep { opacity: 0.12; font-size: 11px; }
+  .nav-bar .home { color: #60a5fa; opacity: 0.8; }
+
+  #ascii-canvas {
+    position: fixed; top: 41px; left: 0; right: 0; bottom: 0;
+    width: 100%; height: calc(100% - 41px);
+  }
+
+  #source-video {
+    position: fixed; top: 0; left: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none;
+  }
+
+  .editor-container {
+    position: fixed; left: 50%; top: calc(50% + 20px); transform: translate(-50%, -50%);
+    width: min(960px, 92vw); z-index: 10;
+    background: rgba(8,8,14,0.6);
+    backdrop-filter: blur(30px);
+    border-radius: 18px;
+    padding: 24px 28px;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 40px 120px -20px rgba(0,0,0,0.7);
+  }
+  .lang-label { font-family: 'SF Mono','Fira Code',monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(200,200,210,0.7); margin-bottom: 16px; }
+  .lang-pills { display: flex; gap: 8px; margin-bottom: 16px; }
+  .pill { padding: 8px 16px; border-radius: 8px; font-size: 13px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #a1a1aa; font-family: 'SF Mono','Fira Code',monospace; }
+  .pill.active { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.09); color: #f4f4f5; }
+  .log-line { font-family: 'SF Mono','Fira Code',monospace; font-size: 12px; padding: 8px 0; color: rgba(200,200,210,0.65); margin-bottom: 12px; }
+  .log-line .tag { color: #60a5fa; } .log-line .level { color: #4ade80; }
+  .code-window {
+    border-radius: 14px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(30,30,40,0.90);
+    backdrop-filter: blur(40px);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.03),
+      0 30px 100px -20px rgba(0,0,0,0.8),
+      0 0 80px -10px rgba(96,165,250,0.06);
+  }
+  .code-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 0 14px; }
+  .code-tab { padding: 11px 16px; font-family: 'SF Mono','Fira Code',monospace; font-size: 12px; color: rgba(161,161,170,0.35); border-bottom: 2px solid transparent; }
+  .code-tab.active { color: #d4d4d8; border-bottom-color: #60a5fa; }
+  .code-body { padding: 22px 24px; font-family: 'SF Mono','Fira Code',monospace; font-size: 14px; line-height: 1.75; min-height: 340px; }
+  .code-body .ln { color: rgba(161,161,170,0.2); margin-right: 22px; display: inline-block; width: 24px; text-align: right; }
+  .code-body .kw { color: #c084fc; } .code-body .str { color: #4ade80; } .code-body .fn { color: #60a5fa; } .code-body .tp { color: #fbbf24; } .code-body .dim { opacity: 0.25; }
+  .code-footer { display: flex; justify-content: space-between; padding: 9px 16px; border-top: 1px solid rgba(255,255,255,0.05); font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; color: rgba(161,161,170,0.35); }
+
+  /* ── Fidelity slider ── */
+  .fidelity-control {
+    position: fixed; bottom: 24px; right: 28px; z-index: 200;
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'SF Mono','Fira Code',monospace; font-size: 10px;
+    color: rgba(200,200,210,0.5);
+    background: rgba(8,8,14,0.6);
+    backdrop-filter: blur(16px);
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .fidelity-control input[type="range"] {
+    -webkit-appearance: none; appearance: none;
+    width: 100px; height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px; outline: none;
+    cursor: pointer;
+  }
+  .fidelity-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: rgba(200,200,215,0.7);
+    border: 1px solid rgba(255,255,255,0.15);
+    cursor: pointer;
+  }
+  .fidelity-label { text-transform: uppercase; letter-spacing: 0.1em; }
+</style>
+</head>
+<body>
+
+<div class="nav-bar">
+  <span class="home">~/omar</span><span class="sep">›</span><span>home</span><span class="sep">/</span><span>projects</span><span class="sep">/</span><span class="active">languages</span><span class="sep">/</span><span>experience</span><span class="sep">/</span><span>contact</span>
+</div>
+
+<video id="source-video" autoplay loop muted playsinline
+  src="/mockups/omendivil_person_typing_on_a_keyboard_facing_the_camera_only__350208a5-efe4-4afa-8f3d-5049a9c8d966_2.mp4">
+</video>
+
+<canvas id="ascii-canvas"></canvas>
+<canvas id="video-canvas" style="position:fixed;top:41px;left:0;right:0;bottom:0;width:100%;height:calc(100% - 41px);opacity:0;pointer-events:none;"></canvas>
+
+<div class="fidelity-control">
+  <span class="fidelity-label">ASCII</span>
+  <input type="range" id="fidelity" min="0" max="100" value="0">
+  <span class="fidelity-label">HD</span>
+</div>
+
+<div class="editor-container">
+  <div class="lang-label">Languages</div>
+  <div class="lang-pills"><div class="pill">TypeScript</div><div class="pill active">Swift</div><div class="pill">JavaScript</div><div class="pill">Python</div><div class="pill">+5</div></div>
+  <div class="log-line"><span class="level">INFO</span> [<span class="tag">atlas-chat</span>] A chat bubble that flips sides depending on who sent the message</div>
+  <div class="code-window">
+    <div class="code-tabs"><div class="code-tab">AnimatedText.tsx</div><div class="code-tab active">MessageRow.swift</div><div class="code-tab">List.js</div></div>
+    <div class="code-body">
+      <div><span class="ln">1</span><span class="kw">struct</span> <span class="tp">MessageRow</span>: <span class="tp">View</span> {</div>
+      <div><span class="ln">2</span>  <span class="kw">let</span> message: <span class="tp">Message</span></div>
+      <div><span class="ln">3</span></div>
+      <div><span class="ln">4</span>  <span class="kw">var</span> body: <span class="kw">some</span> <span class="tp">View</span> {</div>
+      <div><span class="ln">5</span>    <span class="fn">HStack</span> {</div>
+      <div class="dim"><span class="ln">6</span>      <span class="kw">if</span> isUser { <span class="fn">Spacer</span>() }</div>
+      <div class="dim"><span class="ln">7</span>      <span class="fn">Text</span>(message.content)</div>
+      <div class="dim"><span class="ln">8</span>        .<span class="fn">foregroundColor</span>(tint)</div>
+      <div class="dim"><span class="ln">9</span>        .<span class="fn">chatTheme</span>(isCompact)</div>
+      <div class="dim"><span class="ln">10</span>      <span class="fn">ChatTheme</span>.accent()</div>
+      <div class="dim"><span class="ln">11</span>        .<span class="fn">padding</span>(12)</div>
+      <div class="dim"><span class="ln">12</span>        .<span class="fn">background</span>(color)</div>
+      <div class="dim"><span class="ln">13</span>        .<span class="fn">cornerRadius</span>(16)</div>
+      <div class="dim"><span class="ln">14</span>    }</div>
+      <div class="dim"><span class="ln">15</span>  }</div>
+      <div class="dim"><span class="ln">16</span>}</div>
+    </div>
+    <div class="code-footer"><span>Atlas Chat App</span><span>⏸ pause</span></div>
+  </div>
+</div>
+
+<script>
+const DPR = Math.min(window.devicePixelRatio, 2);
+const canvas = document.getElementById('ascii-canvas');
+const ctx = canvas.getContext('2d');
+const video = document.getElementById('source-video');
+
+const sampleCanvas = document.createElement('canvas');
+const sampleCtx = sampleCanvas.getContext('2d', { willReadFrequently: true });
+
+// HD video overlay
+const videoCanvas = document.getElementById('video-canvas');
+const videoCtx = videoCanvas.getContext('2d');
+const fidelitySlider = document.getElementById('fidelity');
+let fidelity = 0; // 0 = full ASCII, 1 = full video
+
+// V1's full density ramp — max detail
+const ASCII = ' .`\'^",:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$';
+
+let w, h, cellPx, cols, rows;
+const CELL_SIZE = 6; // Smaller = more detail
+const VIDEO_ZOOM = 1.6;
+const VIDEO_SHIFT_Y = 0.06; // Shift crop down slightly for hands
+
+function resize() {
+  w = canvas.width = window.innerWidth * DPR;
+  h = canvas.height = (window.innerHeight - 41) * DPR;
+  canvas.style.width = window.innerWidth + 'px';
+  canvas.style.height = (window.innerHeight - 41) + 'px';
+  videoCanvas.width = w;
+  videoCanvas.height = h;
+  cellPx = CELL_SIZE * DPR;
+  cols = Math.floor(w / cellPx);
+  rows = Math.floor(h / cellPx);
+  sampleCanvas.width = cols;
+  sampleCanvas.height = rows;
+}
+window.addEventListener('resize', resize);
+resize();
+
+function setFont() {
+  ctx.font = `bold ${cellPx * 0.88}px 'SF Mono','Fira Code','Courier New',monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+}
+
+// ── Cover-fit with zoom + downward shift ──
+function drawVideoCover(video, ctx, tw, th) {
+  const vw = video.videoWidth, vh = video.videoHeight;
+  if (!vw || !vh) return;
+  const va = vw / vh, ta = tw / th;
+  let sx, sy, sw, sh;
+  if (va > ta) { sh = vh; sw = vh * ta; sx = (vw - sw) / 2; sy = 0; }
+  else { sw = vw; sh = vw / ta; sx = 0; sy = (vh - sh) / 2; }
+  const zx = sw * (1 - 1/VIDEO_ZOOM) / 2, zy = sh * (1 - 1/VIDEO_ZOOM) / 2;
+  sx += zx; sy += zy; sw /= VIDEO_ZOOM; sh /= VIDEO_ZOOM;
+  sy += sh * VIDEO_SHIFT_Y;
+  ctx.drawImage(video, sx, sy, sw, sh, 0, 0, tw, th);
+}
+
+// ── Color palette — each color works with dark bg ──
+const COLORS = [
+  [100, 200, 255],  // cyan-blue
+  [190, 195, 210],  // colorless
+  [168, 130, 255],  // purple
+  [195, 200, 215],  // colorless
+  [80, 220, 200],   // teal
+  [200, 205, 215],  // colorless
+  [230, 130, 180],  // soft pink
+  [190, 195, 210],  // colorless
+];
+
+function lerpColor(a, b, t) {
+  return [
+    (a[0] + (b[0] - a[0]) * t) | 0,
+    (a[1] + (b[1] - a[1]) * t) | 0,
+    (a[2] + (b[2] - a[2]) * t) | 0,
+  ];
+}
+
+// ── Color state ──
+let globalColorIdx = 0;
+let globalColor = COLORS[0];
+let globalTargetColor = COLORS[0];
+let globalColorT = 1; // 0 = transitioning, 1 = settled
+// No auto changes — clicks only
+
+// ── Ripple system: click spawns expanding circle that carries new color ──
+const ripples = []; // { x, y, startTime, color, prevColor }
+
+function nextColor() {
+  globalColorIdx = (globalColorIdx + 1) % COLORS.length;
+  return COLORS[globalColorIdx];
+}
+
+canvas.addEventListener('click', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width;
+  const y = (e.clientY - rect.top) / rect.height;
+  const newColor = nextColor();
+  // Don't update globalColor — only the ripple carries the new color
+  ripples.push({ x, y, startTime: performance.now() / 1000, color: newColor });
+  if (ripples.length > 3) ripples.shift();
+});
+
+let lastFrame = 0;
+const FPS = 24;
+const FRAME_MS = 1000 / FPS;
+const charLen = ASCII.length;
+let frameCount = 0;
+let timeSeconds = 0;
+
+// Per-cell settling state
+let cellSettleTimers = null;
+let cellCurrentChars = null;
+let cellColors = null; // per-cell current color
+let prevN = 0;
+
+function initCells(n) {
+  cellSettleTimers = new Int8Array(n);
+  cellCurrentChars = new Array(n).fill(' ');
+  cellColors = new Array(n);
+  for (let i = 0; i < n; i++) cellColors[i] = [...globalColor];
+  prevN = n;
+}
+
+function draw(now) {
+  requestAnimationFrame(draw);
+  if (now - lastFrame < FRAME_MS) return;
+  lastFrame = now;
+  frameCount++;
+  timeSeconds = now / 1000;
+  if (video.readyState < 2) return;
+
+  const n = cols * rows;
+  if (prevN !== n) initCells(n);
+
+  // Color only changes on click — user is in full control
+  fidelity = fidelitySlider.value / 100;
+
+  drawVideoCover(video, sampleCtx, cols, rows);
+
+  // ── HD video layer: render the actual video with cover-fit + color tint ──
+  if (fidelity > 0.01) {
+    videoCanvas.style.opacity = fidelity;
+    videoCtx.clearRect(0, 0, w, h);
+    // Draw video at full resolution with cover fit
+    const vw = video.videoWidth, vh = video.videoHeight;
+    if (vw && vh) {
+      const va = vw / vh, ta = w / h;
+      let sx, sy, sw, sh;
+      if (va > ta) { sh = vh; sw = vh * ta; sx = (vw - sw) / 2; sy = 0; }
+      else { sw = vw; sh = vw / ta; sx = 0; sy = (vh - sh) / 2; }
+      const zx = sw * (1 - 1/VIDEO_ZOOM) / 2, zy = sh * (1 - 1/VIDEO_ZOOM) / 2;
+      sx += zx; sy += zy; sw /= VIDEO_ZOOM; sh /= VIDEO_ZOOM;
+      sy += sh * VIDEO_SHIFT_Y;
+      videoCtx.drawImage(video, sx, sy, sw, sh, 0, 0, w, h);
+    }
+  } else {
+    videoCanvas.style.opacity = 0;
+  }
+
+  // ASCII fades out as fidelity increases
+  canvas.style.opacity = 1 - fidelity * 0.85;
+  const imageData = sampleCtx.getImageData(0, 0, cols, rows).data;
+
+  ctx.clearRect(0, 0, w, h);
+  setFont();
+
+  // Clean up expired ripples
+  for (let ri = ripples.length - 1; ri >= 0; ri--) {
+    if (timeSeconds - ripples[ri].startTime > 10) ripples.splice(ri, 1);
+  }
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const idx = row * cols + col;
+      const i = idx * 4;
+      const r = imageData[i];
+      const g = imageData[i + 1];
+      const b = imageData[i + 2];
+
+      let brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
+      brightness = Math.pow(brightness, 0.55);
+
+      if (brightness < 0.04) continue;
+
+      const charIdx = Math.min(charLen - 1, Math.floor(brightness * (charLen - 1)));
+      const targetChar = ASCII[charIdx];
+      if (targetChar === ' ') continue;
+
+      const cellNX = col / cols;
+      const cellNY = row / rows;
+
+      // ── Determine cell color based on ripples ──
+      // Cell keeps its current color unless a ripple has passed through it
+      let cellTargetColor = cellColors[idx] || globalColor;
+      let onRippleFront = false;
+
+      for (const rp of ripples) {
+        const age = timeSeconds - rp.startTime;
+        const radius = age * 0.18;
+        const dx = cellNX - rp.x;
+        const dy = cellNY - rp.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < radius) {
+          // Ripple has passed — this cell gets the ripple's color
+          cellTargetColor = rp.color;
+        }
+
+        // On the ripple front — trigger character reshuffle
+        const frontDist = Math.abs(dist - radius);
+        if (frontDist < 0.03) {
+          onRippleFront = true;
+        }
+      }
+
+      // Smoothly transition cell color toward target
+      const cc = cellColors[idx] || globalColor;
+      cellColors[idx] = lerpColor(cc, cellTargetColor, 0.08);
+
+      // ── Character settling ──
+      if (cellCurrentChars[idx] === ' ' && targetChar !== ' ') {
+        cellSettleTimers[idx] = 3 + Math.floor(Math.random() * 6);
+      }
+
+      // Reshuffle on ripple front or random chance during auto transitions
+      if (onRippleFront && cellSettleTimers[idx] <= 0) {
+        cellSettleTimers[idx] = 2 + Math.floor(Math.random() * 5);
+      } else if (cellSettleTimers[idx] <= 0 && Math.random() < 0.003) {
+        cellSettleTimers[idx] = 2 + Math.floor(Math.random() * 4);
+      }
+
+      if (cellSettleTimers[idx] > 0) {
+        cellSettleTimers[idx]--;
+        cellCurrentChars[idx] = ASCII[Math.floor(Math.random() * charLen)];
+      } else {
+        cellCurrentChars[idx] = targetChar;
+      }
+
+      // ── Render with cell's current color × brightness ──
+      const uc = cellColors[idx];
+      const alpha = Math.min(1, brightness * 1.6 + 0.1);
+      const fr = Math.min(255, (uc[0] * brightness * 1.8)) | 0;
+      const fg = Math.min(255, (uc[1] * brightness * 1.8)) | 0;
+      const fb = Math.min(255, (uc[2] * brightness * 1.8)) | 0;
+
+      ctx.fillStyle = `rgba(${fr},${fg},${fb},${alpha})`;
+      ctx.fillText(cellCurrentChars[idx], col * cellPx + cellPx / 2, row * cellPx + cellPx / 2);
+    }
+  }
+}
+
+video.addEventListener('canplay', () => requestAnimationFrame(draw));
+setTimeout(() => requestAnimationFrame(draw), 1000);
+</script>
+</body>
+</html>

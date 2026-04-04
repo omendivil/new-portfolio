@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Languages World — ASCII Art v6</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #08080a; color: #e4e4e7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; overflow: hidden; }
+
+  .nav-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; gap: 12px; padding: 12px 24px;
+    background: rgba(8,8,10,0.85); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13px; font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+  .nav-bar span { cursor: pointer; opacity: 0.35; transition: opacity 0.2s; }
+  .nav-bar span:hover { opacity: 0.6; }
+  .nav-bar span.active { opacity: 1; font-weight: 600; }
+  .nav-bar .sep { opacity: 0.12; font-size: 11px; }
+  .nav-bar .home { color: #60a5fa; opacity: 0.8; }
+
+  .mockup-selector {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 100;
+    display: flex; gap: 3px; padding: 5px; border-radius: 14px;
+    background: rgba(20,20,25,0.95); backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .mockup-btn {
+    padding: 8px 14px; border-radius: 8px; border: none;
+    background: transparent; color: #71717a; font-size: 11px; cursor: pointer;
+    transition: all 0.25s; font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+  .mockup-btn:hover { background: rgba(255,255,255,0.04); color: #a1a1aa; }
+  .mockup-btn.active { background: rgba(255,255,255,0.08); color: #e4e4e7; }
+
+  canvas.bg { position: fixed; top: 41px; left: 0; right: 0; bottom: 0; width: 100%; height: calc(100% - 41px); }
+  .world { position: fixed; inset: 0; top: 41px; transition: opacity 0.6s ease; }
+  .world.hidden { opacity: 0; pointer-events: none; }
+
+  .editor-container {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: min(840px, 88vw); z-index: 10;
+  }
+  .lang-label { font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(161,161,170,0.4); margin-bottom: 14px; }
+  .lang-pills { display: flex; gap: 6px; margin-bottom: 14px; }
+  .pill { padding: 7px 14px; border-radius: 8px; font-size: 12px; border: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.02); color: #71717a; cursor: pointer; font-family: 'SF Mono','Fira Code',monospace; }
+  .pill.active { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); color: #e4e4e7; }
+  .log-line { font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; padding: 6px 0; color: rgba(161,161,170,0.5); margin-bottom: 10px; }
+  .log-line .tag { color: #60a5fa; } .log-line .level { color: #4ade80; }
+  .code-window { border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); background: rgba(12,12,16,0.92); backdrop-filter: blur(24px); box-shadow: 0 25px 80px -20px rgba(0,0,0,0.6); }
+  .code-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 0 12px; }
+  .code-tab { padding: 9px 14px; font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; color: rgba(161,161,170,0.35); border-bottom: 2px solid transparent; }
+  .code-tab.active { color: #d4d4d8; border-bottom-color: #60a5fa; }
+  .code-body { padding: 18px 20px; font-family: 'SF Mono','Fira Code',monospace; font-size: 13px; line-height: 1.7; min-height: 280px; }
+  .code-body .ln { color: rgba(161,161,170,0.2); margin-right: 20px; display: inline-block; width: 20px; text-align: right; }
+  .code-body .kw { color: #c084fc; } .code-body .str { color: #4ade80; } .code-body .fn { color: #60a5fa; } .code-body .tp { color: #fbbf24; } .code-body .dim { opacity: 0.25; }
+  .code-footer { display: flex; justify-content: space-between; padding: 7px 14px; border-top: 1px solid rgba(255,255,255,0.04); font-family: 'SF Mono','Fira Code',monospace; font-size: 10px; color: rgba(161,161,170,0.3); }
+</style>
+</head>
+<body>
+
+<div class="nav-bar">
+  <span class="home">~/omar</span><span class="sep">›</span><span>home</span><span class="sep">/</span><span>projects</span><span class="sep">/</span><span class="active">languages</span><span class="sep">/</span><span>experience</span><span class="sep">/</span><span>contact</span>
+</div>
+
+<div class="mockup-selector">
+  <button class="mockup-btn active" onclick="showWorld('a')">A·Flora</button>
+  <button class="mockup-btn" onclick="showWorld('b')">B·Aurora</button>
+  <button class="mockup-btn" onclick="showWorld('c')">C·Ember</button>
+  <button class="mockup-btn" onclick="showWorld('d')">D·Garden</button>
+  <button class="mockup-btn" onclick="showWorld('e')">E·Veil</button>
+  <button class="mockup-btn" onclick="showWorld('f')">F·Lantern</button>
+</div>
+
+<template id="editor-tpl">
+  <div class="editor-container">
+    <div class="lang-label">Languages</div>
+    <div class="lang-pills"><div class="pill">TypeScript</div><div class="pill active">Swift</div><div class="pill">JavaScript</div><div class="pill">Python</div><div class="pill">+5</div></div>
+    <div class="log-line"><span class="level">INFO</span> [<span class="tag">atlas-chat</span>] A chat bubble that flips sides depending on who sent the message</div>
+    <div class="code-window">
+      <div class="code-tabs"><div class="code-tab">AnimatedText.tsx</div><div class="code-tab active">MessageRow.swift</div><div class="code-tab">List.js</div></div>
+      <div class="code-body">
+        <div><span class="ln">1</span><span class="kw">struct</span> <span class="tp">MessageRow</span>: <span class="tp">View</span> {</div>
+        <div><span class="ln">2</span>  <span class="kw">let</span> message: <span class="tp">Message</span></div>
+        <div><span class="ln">3</span></div>
+        <div><span class="ln">4</span>  <span class="kw">var</span> body: <span class="kw">some</span> <span class="tp">View</span> {</div>
+        <div><span class="ln">5</span>    <span class="fn">HStack</span> {</div>
+        <div class="dim"><span class="ln">6</span>      <span class="kw">if</span> isUser { <span class="fn">Spacer</span>() }</div>
+        <div class="dim"><span class="ln">7</span>      <span class="fn">Text</span>(message.content)</div>
+        <div class="dim"><span class="ln">8</span>        .<span class="fn">foregroundColor</span>(tint)</div>
+        <div class="dim"><span class="ln">9</span>        .<span class="fn">chatTheme</span>(isCompact)</div>
+        <div class="dim"><span class="ln">10</span>      <span class="fn">ChatTheme</span>.accent()</div>
+        <div class="dim"><span class="ln">11</span>        .<span class="fn">padding</span>(12)</div>
+        <div class="dim"><span class="ln">12</span>        .<span class="fn">background</span>(color)</div>
+        <div class="dim"><span class="ln">13</span>        .<span class="fn">cornerRadius</span>(16)</div>
+        <div class="dim"><span class="ln">14</span>    }</div>
+        <div class="dim"><span class="ln">15</span>  }</div>
+        <div class="dim"><span class="ln">16</span>}</div>
+      </div>
+      <div class="code-footer"><span>Atlas Chat App</span><span>⏸ pause</span></div>
+    </div>
+  </div>
+</template>
+
+<div id="world-a" class="world"><canvas class="bg" id="canvas-a"></canvas></div>
+<div id="world-b" class="world hidden"><canvas class="bg" id="canvas-b"></canvas></div>
+<div id="world-c" class="world hidden"><canvas class="bg" id="canvas-c"></canvas></div>
+<div id="world-d" class="world hidden"><canvas class="bg" id="canvas-d"></canvas></div>
+<div id="world-e" class="world hidden"><canvas class="bg" id="canvas-e"></canvas></div>
+<div id="world-f" class="world hidden"><canvas class="bg" id="canvas-f"></canvas></div>
+
+<script>
+const DPR = Math.min(window.devicePixelRatio, 2);
+let mouse = { x: 0.5, y: 0.5 };
+document.addEventListener('mousemove', e => { mouse.x = e.clientX / window.innerWidth; mouse.y = e.clientY / window.innerHeight; });
+function showWorld(id) {
+  document.querySelectorAll('.world').forEach(w => w.classList.add('hidden'));
+  document.getElementById('world-' + id).classList.remove('hidden');
+  document.querySelectorAll('.mockup-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+document.querySelectorAll('.world').forEach(w => w.appendChild(document.getElementById('editor-tpl').content.cloneNode(true)));
+
+const ASCII = ' .·:;+*?%S#@';
+
+function renderASCII(display, src, cell) {
+  const ctx = display.getContext('2d');
+  const w = display.width, h = display.height;
+  ctx.clearRect(0, 0, w, h);
+  const c = cell * DPR;
+  const cols = Math.floor(w / c), rows = Math.floor(h / c);
+  const sd = src.getContext('2d').getImageData(0, 0, src.width, src.height).data;
+  const sw = src.width, sh = src.height;
+  ctx.font = `bold ${c * 0.95}px 'SF Mono','Fira Code',monospace`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const sx = Math.floor((col/cols)*sw), sy = Math.floor((row/rows)*sh);
+      const i = (sy*sw+sx)*4;
+      const r=sd[i],g=sd[i+1],b=sd[i+2];
+      const br = (r*0.299+g*0.587+b*0.114)/255;
+      if (br < 0.04) continue;
+      const ci = Math.min(ASCII.length-1, Math.floor(br*(ASCII.length-1)));
+      const ch = ASCII[ci]; if (ch===' ') continue;
+      ctx.fillStyle = `rgba(${r},${g},${b},${Math.min(1,br*1.3+0.05)})`;
+      ctx.fillText(ch, col*c+c/2, row*c+c/2);
+    }
+  }
+}
+
+function setupCanvas(id) {
+  const c = document.getElementById('canvas-'+id);
+  const ctx = c.getContext('2d');
+  function resize() {
+    c.width = window.innerWidth * DPR;
+    c.height = (window.innerHeight - 41) * DPR;
+    c.style.width = window.innerWidth + 'px';
+    c.style.height = (window.innerHeight - 41) + 'px';
+  }
+  window.addEventListener('resize', resize); resize();
+  return c;
+}
+
+function makeSrc(size) {
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  return c;
+}
+
+// ── Shared: draw organic branch with high contrast ──
+function branch(ctx, x, y, angle, len, w, r, g, b, alpha, depth, t) {
+  if (depth <= 0 || len < 2) return;
+  const ex = x+Math.cos(angle)*len, ey = y+Math.sin(angle)*len;
+  const cp1x = x+Math.cos(angle+0.4)*len*0.45+Math.sin(t+depth)*4;
+  const cp1y = y+Math.sin(angle+0.4)*len*0.45+Math.cos(t*0.7+depth)*4;
+  const cp2x = x+Math.cos(angle-0.2)*len*0.75+Math.sin(t*0.8+depth*2)*3;
+  const cp2y = y+Math.sin(angle-0.2)*len*0.75;
+  // Main stroke
+  ctx.beginPath(); ctx.moveTo(x,y); ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,ex,ey);
+  ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`; ctx.lineWidth = w; ctx.lineCap='round'; ctx.stroke();
+  // Glow
+  ctx.strokeStyle = `rgba(${r},${g},${b},${alpha*0.2})`; ctx.lineWidth = w*4; ctx.stroke();
+  // Tips get bright dots
+  if (depth <= 2) {
+    ctx.beginPath(); ctx.arc(ex, ey, w*1.5, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${Math.min(255,r+60)},${Math.min(255,g+40)},${Math.min(255,b+60)},${alpha*0.8})`;
+    ctx.fill();
+  }
+  const n = depth > 2 ? 3 : 2;
+  for (let i = 0; i < n; i++) {
+    const spread = 0.5 + Math.sin(t*0.5+i+depth)*0.15;
+    branch(ctx, ex, ey, angle+(i-(n-1)/2)*spread, len*(0.55+Math.random()*0.12), w*0.6,
+      r+Math.floor(Math.sin(i+depth)*15), g+Math.floor(Math.cos(i)*10), b+Math.floor(Math.sin(i*2)*10),
+      alpha*0.85, depth-1, t+i);
+  }
+}
+
+
+// ═══ A: Flora (original) ═══
+(function(){
+  const display = setupCanvas('a');
+  const src = makeSrc(512); const sctx = src.getContext('2d');
+  let time=0, last=0;
+  function paint(t) {
+    sctx.fillStyle='#000'; sctx.fillRect(0,0,512,512);
+    sctx.globalCompositeOperation='screen';
+    const cx=512*0.65, cy=512*0.55;
+    for (let i=0;i<8;i++) {
+      const a=(i/8)*Math.PI*2+Math.sin(t*0.3+i*0.7)*0.1-Math.PI*0.5;
+      branch(sctx, cx, cy, a, 50+Math.sin(t*0.6+i)*12, 3.5, 180+i*10, 80+i*8, 220-i*5, 0.85, 4, t+i);
+    }
+    const cg=sctx.createRadialGradient(cx,cy,0,cx,cy,25);
+    cg.addColorStop(0,`rgba(255,${120+Math.floor(Math.sin(t)*40)},${200+Math.floor(Math.sin(t*1.3)*55)},1)`);
+    cg.addColorStop(0.4,'rgba(220,80,180,0.5)'); cg.addColorStop(1,'rgba(80,30,120,0)');
+    sctx.beginPath(); sctx.arc(cx,cy,25,0,Math.PI*2); sctx.fillStyle=cg; sctx.fill();
+    for(let i=0;i<40;i++){const a=Math.sin(i*7.7+t*0.2)*Math.PI*2,d=20+Math.abs(Math.sin(i*3.3+t*0.15))*80;
+      const px=cx+Math.cos(a)*d,py=cy+Math.sin(a)*d,al=0.3+Math.sin(t*2+i*4)*0.3;if(al<0.1)continue;
+      sctx.beginPath();sctx.arc(px,py,1.5,0,Math.PI*2);sctx.fillStyle=`rgba(220,180,255,${al})`;sctx.fill();}
+    sctx.globalCompositeOperation='source-over';
+  }
+  function draw(now){requestAnimationFrame(draw);if(now-last<50)return;last=now;time+=0.025;paint(time);renderASCII(display,src,12);}
+  requestAnimationFrame(draw);
+})();
+
+// ═══ B: Aurora (original) ═══
+(function(){
+  const display = setupCanvas('b');
+  const src = makeSrc(512); const sctx = src.getContext('2d');
+  let time=0, last=0;
+  function paint(t) {
+    sctx.fillStyle='#000'; sctx.fillRect(0,0,512,512);
+    sctx.globalCompositeOperation='screen';
+    for(let c=0;c<12;c++){
+      const bx=512*(0.3+c*0.05)+Math.sin(t*0.4+c*0.8)*30;
+      sctx.beginPath();
+      for(let i=0;i<=30;i++){const p=i/30;const x=bx+Math.sin(p*4+t*0.6+c*0.5)*(25+c*3)+Math.sin(p*7+t*0.9+c)*10;
+        if(i===0)sctx.moveTo(x,p*512);else sctx.lineTo(x,p*512);}
+      const r=100+c*12,g=60+c*8,b=180+c*6;
+      sctx.strokeStyle=`rgba(${r},${g},${b},${0.35+Math.sin(t+c)*0.15})`;sctx.lineWidth=6+Math.sin(t*0.5+c*2)*3;sctx.lineCap='round';sctx.stroke();
+      sctx.strokeStyle=`rgba(${r},${g},${b},0.08)`;sctx.lineWidth=25;sctx.stroke();
+    }
+    for(let i=0;i<15;i++){const nx=512*(0.4+Math.sin(i*4.3+t*0.15)*0.25),ny=512*(0.1+Math.abs(Math.sin(i*2.7+t*0.1))*0.8);
+      const br=0.5+Math.sin(t*1.5+i*3)*0.5;if(br<0.2)continue;const ng=sctx.createRadialGradient(nx,ny,0,nx,ny,12);
+      ng.addColorStop(0,`rgba(200,180,255,${br*0.6})`);ng.addColorStop(1,'rgba(100,80,200,0)');
+      sctx.beginPath();sctx.arc(nx,ny,12,0,Math.PI*2);sctx.fillStyle=ng;sctx.fill();}
+    sctx.globalCompositeOperation='source-over';
+  }
+  function draw(now){requestAnimationFrame(draw);if(now-last<50)return;last=now;time+=0.02;paint(time);renderASCII(display,src,12);}
+  requestAnimationFrame(draw);
+})();
+
+// ═══ C: Ember (original) ═══
+(function(){
+  const display = setupCanvas('c');
+  const src = makeSrc(512); const sctx = src.getContext('2d');
+  let time=0, last=0;
+  const parts=[];for(let i=0;i<120;i++)parts.push({x:256+((Math.random()-0.5)*300),y:256+Math.random()*200,
+    vx:(Math.random()-0.5)*0.3,vy:-0.2-Math.random()*0.8,size:2+Math.random()*6,life:Math.random(),
+    maxLife:0.5+Math.random()*0.5,hue:Math.random()<0.6?300+Math.random()*40:30+Math.random()*20});
+  function paint(t){
+    sctx.fillStyle='rgba(0,0,0,0.15)';sctx.fillRect(0,0,512,512);sctx.globalCompositeOperation='screen';
+    for(const p of parts){p.x+=p.vx+Math.sin(t*0.5+p.life*10)*0.3;p.y+=p.vy;p.life+=0.005;
+      if(p.life>p.maxLife||p.y<-10){p.x=256+((Math.random()-0.5)*250);p.y=400+Math.random()*100;p.life=0;p.maxLife=0.5+Math.random()*0.5;p.vy=-0.2-Math.random()*0.8;p.size=2+Math.random()*6;}
+      const lf=p.life<0.1?p.life/0.1:p.life>p.maxLife-0.15?(p.maxLife-p.life)/0.15:1;
+      const r=180+Math.floor(75*Math.sin(p.hue*Math.PI/180)),g=80+Math.floor(60*Math.sin((p.hue-120)*Math.PI/180)),b=120+Math.floor(100*Math.sin((p.hue-240)*Math.PI/180));
+      const gr=sctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size);
+      gr.addColorStop(0,`rgba(${r},${g},${b},${lf*0.9})`);gr.addColorStop(0.4,`rgba(${r},${g},${b},${lf*0.4})`);gr.addColorStop(1,'rgba(0,0,0,0)');
+      sctx.beginPath();sctx.arc(p.x,p.y,p.size,0,Math.PI*2);sctx.fillStyle=gr;sctx.fill();}
+    const bg=sctx.createRadialGradient(256,430,0,256,430,80);bg.addColorStop(0,`rgba(200,80,160,0.2)`);bg.addColorStop(1,'rgba(0,0,0,0)');
+    sctx.beginPath();sctx.arc(256,430,80,0,Math.PI*2);sctx.fillStyle=bg;sctx.fill();
+    sctx.globalCompositeOperation='source-over';
+  }
+  function draw(now){requestAnimationFrame(draw);if(now-last<50)return;last=now;time+=0.03;paint(time);renderASCII(display,src,12);}
+  requestAnimationFrame(draw);
+})();
+
+
+// ═══ D: Garden — Multiple flora clusters in corners, fluctuating ═══
+// Flora moved to top-left and bottom-right corners, multiple blooms, breathing scale
+(function(){
+  const display = setupCanvas('d');
+  const src = makeSrc(512); const sctx = src.getContext('2d');
+  let time=0, last=0;
+
+  const blooms = [
+    { cx: 0.12, cy: 0.15, scale: 1.0, phase: 0, branches: 6, colors: [200,100,240] },
+    { cx: 0.08, cy: 0.30, scale: 0.6, phase: 2, branches: 5, colors: [160,80,220] },
+    { cx: 0.25, cy: 0.08, scale: 0.5, phase: 4, branches: 4, colors: [220,120,200] },
+    { cx: 0.88, cy: 0.80, scale: 0.9, phase: 1, branches: 7, colors: [180,90,230] },
+    { cx: 0.92, cy: 0.65, scale: 0.5, phase: 3, branches: 4, colors: [140,70,210] },
+    { cx: 0.78, cy: 0.92, scale: 0.55, phase: 5, branches: 5, colors: [210,110,190] },
+  ];
+
+  function paint(t) {
+    sctx.fillStyle='#000'; sctx.fillRect(0,0,512,512);
+    sctx.globalCompositeOperation='screen';
+
+    for (const bl of blooms) {
+      const cx = bl.cx * 512;
+      const cy = bl.cy * 512;
+      const breathe = 1 + Math.sin(t * 0.5 + bl.phase) * 0.15;
+      const s = bl.scale * breathe;
+      const [br, bg, bb] = bl.colors;
+
+      for (let i = 0; i < bl.branches; i++) {
+        const a = (i / bl.branches) * Math.PI * 2 + Math.sin(t * 0.3 + bl.phase + i * 0.5) * 0.15;
+        const len = (35 + Math.sin(t * 0.6 + i + bl.phase) * 10) * s;
+        const w = (2.5 + Math.sin(t * 0.4 + i) * 0.5) * s;
+        branch(sctx, cx, cy, a, len, w, br + i * 8, bg + i * 6, bb - i * 5, 0.85, 3, t + bl.phase + i);
+      }
+
+      // Center glow
+      const cg = sctx.createRadialGradient(cx, cy, 0, cx, cy, 18 * s);
+      cg.addColorStop(0, `rgba(255,${120 + Math.floor(Math.sin(t + bl.phase) * 40)},220,0.9)`);
+      cg.addColorStop(0.5, `rgba(${br},${bg},${bb},0.3)`);
+      cg.addColorStop(1, 'rgba(0,0,0,0)');
+      sctx.beginPath(); sctx.arc(cx, cy, 18 * s, 0, Math.PI * 2); sctx.fillStyle = cg; sctx.fill();
+    }
+
+    // Floating pollen between clusters
+    for (let i = 0; i < 60; i++) {
+      const px = 256 + Math.sin(i * 5.3 + t * 0.2) * 220;
+      const py = 256 + Math.cos(i * 3.7 + t * 0.15) * 220;
+      const al = 0.15 + Math.sin(t * 1.5 + i * 3) * 0.15;
+      if (al < 0.05) continue;
+      sctx.beginPath(); sctx.arc(px, py, 1, 0, Math.PI * 2);
+      sctx.fillStyle = `rgba(200,170,240,${al})`; sctx.fill();
+    }
+
+    sctx.globalCompositeOperation='source-over';
+  }
+  function draw(now){requestAnimationFrame(draw);if(now-last<50)return;last=now;time+=0.025;paint(time);renderASCII(display,src,12);}
+  requestAnimationFrame(draw);
+})();
+
+
+// ═══ E: Veil — Stronger aurora with more curtains, brighter nodes, wider spread ═══
+(function(){
+  const display = setupCanvas('e');
+  const src = makeSrc(512); const sctx = src.getContext('2d');
+  let time=0, last=0;
+
+  function paint(t) {
+    sctx.fillStyle='#000'; sctx.fillRect(0,0,512,512);
+    sctx.globalCompositeOperation='screen';
+
+    // More curtains, wider spread, brighter
+    for (let c = 0; c < 18; c++) {
+      const bx = 512 * (0.1 + c * 0.045) + Math.sin(t * 0.35 + c * 0.6) * 40;
+      sctx.beginPath();
+      for (let i = 0; i <= 40; i++) {
+        const p = i / 40;
+        const x = bx
+          + Math.sin(p * 5 + t * 0.5 + c * 0.4) * (20 + c * 4)
+          + Math.sin(p * 9 + t * 0.8 + c * 1.3) * 12
+          + Math.cos(p * 3 + t * 0.3) * 8;
+        if (i === 0) sctx.moveTo(x, p * 512); else sctx.lineTo(x, p * 512);
+      }
+
+      // Richer color palette
+      const phase = c / 18;
+      const r = Math.floor(120 + 100 * Math.sin(phase * Math.PI * 2 + 0.5));
+      const g = Math.floor(60 + 80 * Math.sin(phase * Math.PI * 2 + 2.5));
+      const b = Math.floor(180 + 75 * Math.sin(phase * Math.PI * 2 + 4.5));
+
+      sctx.strokeStyle = `rgba(${r},${g},${b},${0.4 + Math.sin(t * 0.7 + c) * 0.2})`;
+      sctx.lineWidth = 5 + Math.sin(t * 0.5 + c * 1.5) * 3;
+      sctx.lineCap = 'round'; sctx.stroke();
+      // Glow
+      sctx.strokeStyle = `rgba(${r},${g},${b},0.12)`;
+      sctx.lineWidth = 30 + Math.sin(t * 0.4 + c) * 10; sctx.stroke();
+    }
+
+    // Bright intersection nodes — more of them, bigger
+    for (let i = 0; i < 30; i++) {
+      const nx = 512 * (0.15 + Math.sin(i * 3.3 + t * 0.12) * 0.35);
+      const ny = 512 * (0.05 + Math.abs(Math.sin(i * 2.1 + t * 0.08)) * 0.9);
+      const br = 0.4 + Math.sin(t * 1.2 + i * 2.5) * 0.5;
+      if (br < 0.15) continue;
+      const ng = sctx.createRadialGradient(nx, ny, 0, nx, ny, 18);
+      ng.addColorStop(0, `rgba(220,200,255,${br * 0.7})`);
+      ng.addColorStop(0.5, `rgba(160,120,240,${br * 0.2})`);
+      ng.addColorStop(1, 'rgba(0,0,0,0)');
+      sctx.beginPath(); sctx.arc(nx, ny, 18, 0, Math.PI * 2); sctx.fillStyle = ng; sctx.fill();
+    }
+
+    // Horizontal light bands
+    for (let i = 0; i < 5; i++) {
+      const y = 512 * (0.2 + i * 0.15) + Math.sin(t * 0.3 + i * 2) * 20;
+      const lg = sctx.createLinearGradient(0, y, 512, y);
+      lg.addColorStop(0, 'rgba(0,0,0,0)');
+      lg.addColorStop(0.3, `rgba(140,100,220,${0.06 + Math.sin(t * 0.5 + i) * 0.03})`);
+      lg.addColorStop(0.7, `rgba(180,120,240,${0.08 + Math.sin(t * 0.4 + i * 1.5) * 0.04})`);
+      lg.addColorStop(1, 'rgba(0,0,0,0)');
+      sctx.fillStyle = lg;
+      sctx.fillRect(0, y - 15, 512, 30);
+    }
+
+    sctx.globalCompositeOperation='source-over';
+  }
+  function draw(now){requestAnimationFrame(draw);if(now-last<50)return;last=now;time+=0.02;paint(time);renderASCII(display,src,12);}
+  requestAnimationFrame(draw);
+})();
+
+
+// ═══ F: Lantern — Dense rising embers with multiple source points, richer ═══
+(function(){
+  const display = setupCanvas('f');
+  const src = makeSrc(512); const sctx = src.getContext('2d');
+  let time=0, last=0;
+
+  const sources = [
+    { x: 0.2, y: 0.85 },
+    { x: 0.5, y: 0.9 },
+    { x: 0.8, y: 0.82 },
+  ];
+
+  const parts = [];
+  for (let i = 0; i < 250; i++) {
+    const src_pt = sources[Math.floor(Math.random() * sources.length)];
+    parts.push({
+      x: src_pt.x * 512 + (Math.random() - 0.5) * 80,
+      y: src_pt.y * 512 + (Math.random() - 0.5) * 40,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: -0.3 - Math.random() * 1.2,
+      size: 1.5 + Math.random() * 5,
+      life: Math.random(),
+      maxLife: 0.4 + Math.random() * 0.6,
+      hue: Math.random() < 0.4 ? 310 + Math.random() * 30 :
+           Math.random() < 0.7 ? 260 + Math.random() * 30 :
+           20 + Math.random() * 25,
+      srcIdx: Math.floor(Math.random() * sources.length),
+    });
+  }
+
+  function paint(t) {
+    sctx.fillStyle = 'rgba(0,0,0,0.1)';
+    sctx.fillRect(0, 0, 512, 512);
+    sctx.globalCompositeOperation = 'screen';
+
+    for (const p of parts) {
+      p.x += p.vx + Math.sin(t * 0.6 + p.life * 12) * 0.4;
+      p.y += p.vy;
+      p.life += 0.004;
+
+      if (p.life > p.maxLife || p.y < -20 || p.x < -20 || p.x > 532) {
+        const s = sources[p.srcIdx];
+        p.x = s.x * 512 + (Math.random() - 0.5) * 60;
+        p.y = s.y * 512 + (Math.random() - 0.5) * 30;
+        p.life = 0;
+        p.maxLife = 0.4 + Math.random() * 0.6;
+        p.vy = -0.3 - Math.random() * 1.2;
+        p.vx = (Math.random() - 0.5) * 0.4;
+        p.size = 1.5 + Math.random() * 5;
+      }
+
+      const lf = p.life < 0.08 ? p.life / 0.08 :
+                 p.life > p.maxLife - 0.12 ? (p.maxLife - p.life) / 0.12 : 1;
+      if (lf < 0.05) continue;
+
+      const r = Math.floor(180 + 75 * Math.sin(p.hue * Math.PI / 180));
+      const g = Math.floor(60 + 80 * Math.sin((p.hue - 120) * Math.PI / 180));
+      const b = Math.floor(140 + 100 * Math.sin((p.hue - 240) * Math.PI / 180));
+
+      const gr = sctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+      gr.addColorStop(0, `rgba(${r},${g},${b},${lf * 0.95})`);
+      gr.addColorStop(0.3, `rgba(${r},${g},${b},${lf * 0.5})`);
+      gr.addColorStop(1, 'rgba(0,0,0,0)');
+      sctx.beginPath(); sctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      sctx.fillStyle = gr; sctx.fill();
+    }
+
+    // Source glows
+    for (const s of sources) {
+      const bg = sctx.createRadialGradient(s.x*512, s.y*512, 0, s.x*512, s.y*512, 50);
+      bg.addColorStop(0, `rgba(200,100,180,${0.25 + Math.sin(t + s.x * 10) * 0.08})`);
+      bg.addColorStop(0.4, `rgba(160,60,200,0.08)`);
+      bg.addColorStop(1, 'rgba(0,0,0,0)');
+      sctx.beginPath(); sctx.arc(s.x*512, s.y*512, 50, 0, Math.PI*2);
+      sctx.fillStyle = bg; sctx.fill();
+    }
+
+    // Connecting light threads between sources
+    for (let i = 0; i < sources.length; i++) {
+      const s1 = sources[i], s2 = sources[(i+1) % sources.length];
+      sctx.beginPath();
+      sctx.moveTo(s1.x*512, s1.y*512);
+      const cpx = (s1.x+s2.x)/2*512 + Math.sin(t*0.4+i)*30;
+      const cpy = (s1.y+s2.y)/2*512 - 30 + Math.cos(t*0.3+i)*15;
+      sctx.quadraticCurveTo(cpx, cpy, s2.x*512, s2.y*512);
+      sctx.strokeStyle = `rgba(180,100,220,${0.06 + Math.sin(t*0.5+i)*0.03})`;
+      sctx.lineWidth = 3; sctx.stroke();
+      sctx.strokeStyle = `rgba(180,100,220,0.02)`;
+      sctx.lineWidth = 15; sctx.stroke();
+    }
+
+    sctx.globalCompositeOperation = 'source-over';
+  }
+  function draw(now){requestAnimationFrame(draw);if(now-last<50)return;last=now;time+=0.025;paint(time);renderASCII(display,src,12);}
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

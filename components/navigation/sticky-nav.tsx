@@ -13,9 +13,10 @@ import { useActiveSection } from "./use-active-section";
 
 type StickyNavProps = {
   sections: NavSection[];
+  onNavigate?: (id: NavSectionId) => void;
 };
 
-export function StickyNav({ sections }: StickyNavProps) {
+export function StickyNav({ sections, onNavigate }: StickyNavProps) {
   const sectionIds = useMemo(
     () => sections.map((section) => section.id),
     [sections],
@@ -27,8 +28,9 @@ export function StickyNav({ sections }: StickyNavProps) {
     (id: NavSectionId) => {
       setActiveSection(id);
       setMobileOpen(false);
+      onNavigate?.(id);
     },
-    [setActiveSection],
+    [setActiveSection, onNavigate],
   );
 
   return (
@@ -57,7 +59,10 @@ export function StickyNav({ sections }: StickyNavProps) {
                     )}
                     <a
                       href={`#${section.id}`}
-                      onClick={() => handleNavClick(section.id)}
+                      onClick={(e) => {
+                        if (onNavigate) e.preventDefault();
+                        handleNavClick(section.id);
+                      }}
                       className={cn(
                         "transition-colors",
                         isActive
@@ -120,7 +125,10 @@ export function StickyNav({ sections }: StickyNavProps) {
                   >
                     <a
                       href={`#${section.id}`}
-                      onClick={() => handleNavClick(section.id)}
+                      onClick={(e) => {
+                        if (onNavigate) e.preventDefault();
+                        handleNavClick(section.id);
+                      }}
                       className={cn(
                         "flex items-center gap-2 py-2.5 transition-colors",
                         isActive
