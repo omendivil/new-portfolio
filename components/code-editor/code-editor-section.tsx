@@ -1,5 +1,7 @@
 "use client";
 
+import { useCallback, useRef } from "react";
+
 import { WorldEntrance } from "@/components/world/world-entrance";
 import { useWorldActive } from "@/components/world/world-slide";
 
@@ -8,15 +10,30 @@ import { CodeEditorAnimation } from "./code-editor-animation";
 
 export function CodeEditorSection() {
   const isActive = useWorldActive();
+  const bgRef = useRef<{ triggerRipple: (e: React.MouseEvent) => void }>(null);
+
+  const handleBackgroundClick = useCallback((e: React.MouseEvent) => {
+    // Don't ripple if clicking the editor or slider
+    const target = e.target as HTMLElement;
+    if (target.closest("[data-no-ripple]")) return;
+    bgRef.current?.triggerRipple(e);
+  }, []);
 
   return (
-    <div className="relative h-full w-full overflow-hidden">
+    <div
+      className="relative h-full w-full overflow-hidden cursor-pointer"
+      onClick={handleBackgroundClick}
+    >
       {/* Video ASCII background — fills the world */}
-      <AsciiVideoBackground active={isActive} />
+      <AsciiVideoBackground ref={bgRef} active={isActive} />
 
-      {/* Editor content — floats on top, pointer-events pass through to canvas */}
+      {/* Editor content — floats on top */}
       <div className="pointer-events-none relative z-10 flex h-full items-center justify-center">
-        <div className="pointer-events-auto w-full rounded-2xl border border-white/[0.05] bg-[rgba(8,8,14,0.6)] px-6 py-6 backdrop-blur-[30px] sm:px-7" style={{ maxWidth: "min(960px, 92vw)", boxShadow: "0 40px 120px -20px rgba(0,0,0,0.7)" }}>
+        <div
+          data-no-ripple
+          className="pointer-events-auto w-full rounded-2xl border border-white/[0.05] bg-[rgba(8,8,14,0.6)] px-6 py-6 backdrop-blur-[30px] sm:px-7"
+          style={{ maxWidth: "min(960px, 92vw)", boxShadow: "0 40px 120px -20px rgba(0,0,0,0.7)" }}
+        >
           <WorldEntrance delay={0.1}>
             {isActive && <CodeEditorAnimation />}
           </WorldEntrance>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from "react";
 
 // ── Constants ──
 const ASCII =
@@ -78,7 +78,11 @@ function drawCover(
   ctx.drawImage(source, sx, sy, sw, sh, 0, 0, tw, th);
 }
 
-export function AsciiVideoBackground({ active }: { active: boolean }) {
+export interface AsciiVideoBackgroundRef {
+  triggerRipple: (e: React.MouseEvent) => void;
+}
+
+export const AsciiVideoBackground = forwardRef<AsciiVideoBackgroundRef, { active: boolean }>(function AsciiVideoBackground({ active }, ref) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoCanvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -137,8 +141,12 @@ export function AsciiVideoBackground({ active }: { active: boolean }) {
     sampleCanvasRef.current.height = s.rows;
   }, []);
 
+  useImperativeHandle(ref, () => ({
+    triggerRipple: (e: React.MouseEvent) => handleClick(e),
+  }));
+
   // ── Click → ripple ──
-  const handleClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleClick = useCallback((e: React.MouseEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
@@ -379,7 +387,7 @@ export function AsciiVideoBackground({ active }: { active: boolean }) {
       />
 
       {/* Fidelity slider */}
-      <div className="absolute bottom-4 right-4 z-20 flex items-center gap-2.5 rounded-lg border border-white/[0.06] bg-[rgba(8,8,14,0.6)] px-3.5 py-2 font-mono text-[10px] text-white/30 backdrop-blur-md">
+      <div data-no-ripple className="absolute bottom-4 right-4 z-20 flex items-center gap-2.5 rounded-lg border border-white/[0.06] bg-[rgba(8,8,14,0.6)] px-3.5 py-2 font-mono text-[10px] text-white/30 backdrop-blur-md">
         <span className="uppercase tracking-widest">ASCII</span>
         <input
           ref={fidelityRef}
@@ -393,4 +401,4 @@ export function AsciiVideoBackground({ active }: { active: boolean }) {
       </div>
     </>
   );
-}
+});
