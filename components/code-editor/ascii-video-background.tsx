@@ -387,7 +387,7 @@ export const AsciiVideoBackground = forwardRef<AsciiVideoBackgroundRef, { active
       />
 
       {/* Fidelity slider */}
-      <div data-no-ripple className="absolute bottom-4 right-4 z-20 flex items-center gap-2.5 rounded-lg border border-white/[0.06] bg-[rgba(8,8,14,0.6)] px-3.5 py-2 font-mono text-[10px] text-white/30 backdrop-blur-md">
+      <div className="absolute bottom-4 right-4 z-20 flex items-center gap-2.5 rounded-lg border border-white/[0.06] bg-[rgba(8,8,14,0.6)] px-3.5 py-2 font-mono text-[10px] text-white/30 backdrop-blur-md">
         <span className="uppercase tracking-widest">ASCII</span>
         <input
           ref={fidelityRef}

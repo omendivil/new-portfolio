@@ -13,9 +13,6 @@ export function CodeEditorSection() {
   const bgRef = useRef<{ triggerRipple: (e: React.MouseEvent) => void }>(null);
 
   const handleBackgroundClick = useCallback((e: React.MouseEvent) => {
-    // Don't ripple if clicking the editor or slider
-    const target = e.target as HTMLElement;
-    if (target.closest("[data-no-ripple]")) return;
     bgRef.current?.triggerRipple(e);
   }, []);
 
@@ -30,7 +27,6 @@ export function CodeEditorSection() {
       {/* Editor content — floats on top */}
       <div className="pointer-events-none relative z-10 flex h-full items-center justify-center">
         <div
-          data-no-ripple
           className="pointer-events-auto w-full rounded-2xl border border-white/[0.05] bg-[rgba(8,8,14,0.6)] px-6 py-6 backdrop-blur-[30px] sm:px-7"
           style={{ maxWidth: "min(960px, 92vw)", boxShadow: "0 40px 120px -20px rgba(0,0,0,0.7)" }}
         >
