@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, startTransition, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 import { motionEase, useMotionPreference } from "@/lib/motion";
@@ -36,7 +36,7 @@ export function WorldEntrance({
   // Reset entrance when world becomes inactive
   useEffect(() => {
     if (!isActive) {
-      setHasEntered(false);
+      startTransition(() => setHasEntered(false));
     } else {
       // Small delay to let the slide animation start first
       const timer = setTimeout(() => setHasEntered(true), 100);

@@ -98,9 +98,10 @@ function DiffLineRow({ line }: { line: DiffLine }) {
 
 type DiffViewProps = {
   startAnimation: boolean;
+  onMergeComplete?: () => void;
 };
 
-export function DiffView({ startAnimation }: DiffViewProps) {
+export function DiffView({ startAnimation, onMergeComplete }: DiffViewProps) {
   const { reduceMotion } = useMotionPreference();
   const [reviewed, setReviewed] = useState(false);
   const [merging, setMerging] = useState(false);
@@ -124,10 +125,10 @@ export function DiffView({ startAnimation }: DiffViewProps) {
       setMerged(true);
       setReviewed(true);
       scrollTimerRef.current = setTimeout(() => {
-        document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
+        onMergeComplete?.();
       }, 600);
     }, 1200);
-  }, [merging, merged]);
+  }, [merging, merged, onMergeComplete]);
 
   return (
     <div

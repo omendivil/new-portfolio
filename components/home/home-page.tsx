@@ -12,6 +12,7 @@ import { StickyNav } from "@/components/navigation/sticky-nav";
 import { ProjectsSection } from "@/components/sections/projects-section";
 import { TerminalTransition } from "@/components/world/terminal-transition";
 import { useWorldNavigation } from "@/components/world/use-world-navigation";
+import { WorldEntrance } from "@/components/world/world-entrance";
 import { WorldSlide } from "@/components/world/world-slide";
 import { experience, navSections } from "@/data/site";
 import type { NavSectionId } from "@/data/types";
@@ -49,7 +50,7 @@ export function HomePage() {
           onExit={world.goNext}
         >
           <WebflowGradient>
-            <HeroDiff />
+            <HeroDiff onMergeComplete={world.goNext} />
           </WebflowGradient>
         </WorldSlide>
 
@@ -83,12 +84,16 @@ export function HomePage() {
           onExit={world.goNext}
         >
           <div className="mx-auto max-w-2xl px-4 py-16 sm:max-w-3xl sm:py-24 lg:max-w-4xl">
-            <div className="mb-6">
-              <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.15em] text-muted/50">
-                Experience
+            <WorldEntrance delay={0.1}>
+              <div className="mb-6">
+                <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.15em] text-muted/50">
+                  Experience
+                </div>
               </div>
-            </div>
-            <ExperienceThemeSwitcher experiences={experience} />
+            </WorldEntrance>
+            <WorldEntrance delay={0.3}>
+              <ExperienceThemeSwitcher experiences={experience} />
+            </WorldEntrance>
           </div>
         </WorldSlide>
 
