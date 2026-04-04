@@ -338,6 +338,7 @@ export function AsciiVideoBackground({ active }: { active: boolean }) {
   // Load fallback image
   useEffect(() => {
     const img = new Image();
+    img.crossOrigin = "anonymous";
     img.src = FALLBACK_SRC;
     img.onload = () => {
       fallbackRef.current = img;
@@ -350,6 +351,7 @@ export function AsciiVideoBackground({ active }: { active: boolean }) {
       <video
         ref={videoRef}
         src={VIDEO_SRC}
+        crossOrigin="anonymous"
         autoPlay
         loop
         muted
