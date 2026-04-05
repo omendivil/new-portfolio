@@ -141,10 +141,6 @@ export const AsciiVideoBackground = forwardRef<AsciiVideoBackgroundRef, { active
     sampleCanvasRef.current.height = s.rows;
   }, []);
 
-  useImperativeHandle(ref, () => ({
-    triggerRipple: (e: React.MouseEvent) => handleClick(e),
-  }));
-
   // ── Click → ripple ──
   const handleClick = useCallback((e: React.MouseEvent) => {
     const canvas = canvasRef.current;
@@ -163,6 +159,10 @@ export const AsciiVideoBackground = forwardRef<AsciiVideoBackgroundRef, { active
     });
     if (s.ripples.length > 3) s.ripples.shift();
   }, []);
+
+  useImperativeHandle(ref, () => ({
+    triggerRipple: (e: React.MouseEvent) => handleClick(e),
+  }));
 
   // ── Init cells ──
   function initCells(s: (typeof stateRef)["current"], n: number) {
