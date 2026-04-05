@@ -1,14 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from "react";
 
 // ── Constants ──
 const ASCII =
   " .`'^\",:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
-const CELL_SIZE = 6;
+const CELL_SIZE = 8;
 const VIDEO_ZOOM = 1.6;
 const VIDEO_SHIFT_Y = 0.06;
-const FPS = 24;
+const FPS = 18;
 const FRAME_MS = 1000 / FPS;
 
 const VIDEO_SRC =
@@ -78,7 +78,11 @@ function drawCover(
   ctx.drawImage(source, sx, sy, sw, sh, 0, 0, tw, th);
 }
 
-export function AsciiVideoBackground({ active }: { active: boolean }) {
+export interface AsciiVideoBackgroundRef {
+  triggerRipple: (e: React.MouseEvent) => void;
+}
+
+export const AsciiVideoBackground = forwardRef<AsciiVideoBackgroundRef, { active: boolean }>(function AsciiVideoBackground({ active }, ref) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoCanvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -124,8 +128,8 @@ export function AsciiVideoBackground({ active }: { active: boolean }) {
     s.h = canvas.height = window.innerHeight * dpr;
     canvas.style.width = `${window.innerWidth}px`;
     canvas.style.height = `${window.innerHeight}px`;
-    videoCanvas.width = s.w;
-    videoCanvas.height = s.h;
+    videoCanvasRef.current!.width = s.w;
+    videoCanvasRef.current!.height = s.h;
     s.cellPx = CELL_SIZE * dpr;
     s.cols = Math.floor(s.w / s.cellPx);
     s.rows = Math.floor(s.h / s.cellPx);
@@ -137,8 +141,12 @@ export function AsciiVideoBackground({ active }: { active: boolean }) {
     sampleCanvasRef.current.height = s.rows;
   }, []);
 
+  useImperativeHandle(ref, () => ({
+    triggerRipple: (e: React.MouseEvent) => handleClick(e),
+  }));
+
   // ── Click → ripple ──
-  const handleClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleClick = useCallback((e: React.MouseEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
@@ -172,12 +180,15 @@ export function AsciiVideoBackground({ active }: { active: boolean }) {
     handleResize();
     window.addEventListener("resize", handleResize);
 
-    const video = videoRef.current!;
-    const canvas = canvasRef.current!;
-    const videoCanvas = videoCanvasRef.current!;
-    const ctx = canvas.getContext("2d")!;
-    const videoCtx = videoCanvas.getContext("2d")!;
-    const sampleCtx = sampleCanvasRef.current!.getContext("2d", {
+    // All refs are guaranteed non-null after this guard
+    if (!videoRef.current || !canvasRef.current || !videoCanvasRef.current || !sampleCanvasRef.current) return;
+    const videoEl = videoRef.current;
+    const canvasEl = canvasRef.current;
+    const videoCanvasEl = videoCanvasRef.current;
+    const sampleEl = sampleCanvasRef.current;
+    const ctx = canvasEl.getContext("2d")!;
+    const videoCtx = videoCanvasEl.getContext("2d")!;
+    const sampleCtx = sampleEl.getContext("2d", {
       willReadFrequently: true,
     })!;
 
@@ -192,7 +203,7 @@ export function AsciiVideoBackground({ active }: { active: boolean }) {
 
       // Determine source: video or fallback image
       const source =
-        s.videoReady && video.readyState >= 2 ? video : fallbackRef.current;
+        s.videoReady && videoEl.readyState >= 2 ? videoEl : fallbackRef.current;
       if (!source) return;
 
       const n = s.cols * s.rows;
@@ -209,18 +220,24 @@ export function AsciiVideoBackground({ active }: { active: boolean }) {
 
       // HD video layer
       if (s.fidelity > 0.01) {
-        videoCanvas.style.opacity = String(s.fidelity);
+        videoCanvasEl.style.opacity = String(s.fidelity);
         videoCtx.clearRect(0, 0, s.w, s.h);
         drawCover(source, videoCtx, s.w, s.h);
       } else {
-        videoCanvas.style.opacity = "0";
+        videoCanvasEl.style.opacity = "0";
       }
 
-      canvas.style.opacity = String(1 - s.fidelity * 0.85);
-      const imageData = sampleCtx.getImageData(0, 0, s.cols, s.rows).data;
+      canvasEl.style.opacity = String(1 - s.fidelity * 0.85);
+
+      let imageData: Uint8ClampedArray;
+      try {
+        imageData = sampleCtx.getImageData(0, 0, s.cols, s.rows).data;
+      } catch {
+        // Canvas tainted by CORS — skip this frame
+        return;
+      }
 
       ctx.clearRect(0, 0, s.w, s.h);
-      const dpr = Math.min(window.devicePixelRatio, 2);
       ctx.font = `bold ${s.cellPx * 0.88}px 'SF Mono','Fira Code','Courier New',monospace`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -317,7 +334,7 @@ export function AsciiVideoBackground({ active }: { active: boolean }) {
 
     // Start video
     try {
-      video.play().catch(() => {
+      videoEl.play().catch(() => {
         stateRef.current.videoFailed = true;
       });
     } catch {
@@ -329,15 +346,16 @@ export function AsciiVideoBackground({ active }: { active: boolean }) {
     return () => {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener("resize", handleResize);
-      video.pause();
-      video.removeAttribute("src");
-      video.load();
+      videoEl.pause();
+      videoEl.removeAttribute("src");
+      videoEl.load();
     };
   }, [active, handleResize]);
 
   // Load fallback image
   useEffect(() => {
     const img = new Image();
+    img.crossOrigin = "anonymous";
     img.src = FALLBACK_SRC;
     img.onload = () => {
       fallbackRef.current = img;
@@ -350,6 +368,7 @@ export function AsciiVideoBackground({ active }: { active: boolean }) {
       <video
         ref={videoRef}
         src={VIDEO_SRC}
+        crossOrigin="anonymous"
         autoPlay
         loop
         muted
@@ -391,4 +410,4 @@ export function AsciiVideoBackground({ active }: { active: boolean }) {
       </div>
     </>
   );
-}
+});
