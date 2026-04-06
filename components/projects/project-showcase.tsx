@@ -114,7 +114,7 @@ export function ProjectShowcase({
                 key={activeProject.id}
                 initial={reduceMotion ? false : { opacity: 0, scale: 0.96, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 className="w-full max-w-5xl"
               >
                 <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-black/30 shadow-2xl backdrop-blur-md">
@@ -132,7 +132,7 @@ export function ProjectShowcase({
               key={`info-${activeProject.id}`}
               initial={reduceMotion ? false : { opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
             >
               <div className="max-w-xl space-y-1.5">
