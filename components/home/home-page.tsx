@@ -61,9 +61,7 @@ export function HomePage() {
           exitLabel="Next"
           onExit={world.goNext}
         >
-          <div className="mx-auto max-w-6xl px-2.5 py-8 sm:px-4 sm:py-12">
-            <ProjectsSection />
-          </div>
+          <ProjectsSection />
         </WorldSlide>
 
         <WorldSlide
