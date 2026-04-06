@@ -58,7 +58,7 @@ export function CanvasViewport({
       .map((p) => {
         const pos = CANVAS_POSITIONS[p.id];
         if (!pos) return null;
-        const dims = getFrameDimensions(p.presentation);
+        const dims = getFrameDimensions(p.presentation as "canvas" | "device");
         return { x: pos.x, y: pos.y, width: dims.width, height: dims.height + 80 };
       })
       .filter((v): v is NonNullable<typeof v> => v !== null);
@@ -77,7 +77,7 @@ export function CanvasViewport({
     if (!pos) return;
     const project = projects.find((p) => p.id === activeProjectId);
     if (!project) return;
-    const dims = getFrameDimensions(project.presentation);
+    const dims = getFrameDimensions(project.presentation as "canvas" | "device");
     panToProject(pos.x, pos.y, dims.width, dims.height + 80);
   }, [activeProjectId, projects, panToProject]);
 

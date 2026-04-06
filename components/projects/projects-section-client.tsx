@@ -9,7 +9,7 @@ import { useProjectStore } from "@/lib/use-project-store";
 
 import dynamic from "next/dynamic";
 
-import { ProjectsCanvasSection } from "./projects-canvas-section";
+import { ProjectShowcase } from "./project-showcase";
 
 const ProjectPeekPanel = dynamic(() =>
   import("./project-peek-panel").then((mod) => ({ default: mod.ProjectPeekPanel })),
@@ -38,7 +38,7 @@ export function ProjectsSectionClient({ projects }: ProjectsSectionClientProps) 
   const setQuery = useProjectStore((s) => s.setQuery);
   const setSelectedCategory = useProjectStore((s) => s.setSelectedCategory);
 
-  const featuredProjects = useMemo(() => getFeaturedProjects(projects).slice(0, 4), [projects]);
+  const featuredProjects = useMemo(() => getFeaturedProjects(projects), [projects]);
   const categories = useMemo(
     () => ["All", ...getProjectCategories(projects)] as Array<typeof selectedCategory>,
     [projects],
@@ -112,7 +112,7 @@ export function ProjectsSectionClient({ projects }: ProjectsSectionClientProps) 
 
   return (
     <>
-      <ProjectsCanvasSection
+      <ProjectShowcase
         drawerTriggerRef={drawerTriggerRef}
         onOpenDrawer={openDrawer}
         projectCount={projectCount}

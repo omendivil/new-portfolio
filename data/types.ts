@@ -7,7 +7,7 @@ export type NavSectionId =
   | "writing"
   | "contact";
 
-export type ProjectCategory = "AI Product" | "Frontend" | "iOS";
+export type ProjectCategory = "AI Systems" | "Developer Tools" | "iOS" | "Frontend";
 
 export type SkillCategory =
   | "Design"
@@ -44,7 +44,7 @@ export type ProjectChapter = {
   videoId: string;
 };
 
-export type ProjectPresentation = "canvas" | "device";
+export type ProjectPresentation = "canvas" | "dashboard" | "device" | "terminal";
 
 export type ProjectStoryBeat = {
   description: string;
@@ -164,25 +164,22 @@ export type SiteMediaCatalog = {
     primaryHeadshot: MediaAsset;
   };
   projectAssets: {
-    game2048: {
+    researchCommander: {
       poster: MediaAsset;
-      videos: ProjectVideo[];
+    };
+    archDrift: {
+      poster: MediaAsset;
+    };
+    claudeNotifier: {
+      poster: MediaAsset;
     };
     animeAiApp: {
       extras: MediaAsset[];
       poster: MediaAsset;
       videos: ProjectVideo[];
     };
-    animeBrowser: {
+    atlasChatApp: {
       poster: MediaAsset;
-    };
-    appetizerApp: {
-      poster: MediaAsset;
-      videos: ProjectVideo[];
-    };
-    frameworksApp: {
-      poster: MediaAsset;
-      videos: ProjectVideo[];
     };
   };
 };

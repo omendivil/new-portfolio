@@ -39,7 +39,7 @@ export function CanvasProjectFrame({
   const hasVideo = project.videos.length > 0;
   const previewVideo = hasVideo ? project.videos[0] : null;
   const presentation = project.presentation;
-  const { width: frameWidth } = getFrameDimensions(presentation);
+  const { width: frameWidth } = getFrameDimensions(presentation as "canvas" | "device");
 
   useEffect(() => {
     trackedPlaybackRef.current = false;
