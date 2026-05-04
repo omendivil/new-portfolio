@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects World — 3D Concept</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #08090a;
+    color: #e0e0e0;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    overflow-x: hidden;
+  }
+
+  .page-title {
+    text-align: center;
+    padding: 32px 24px 8px;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #666;
+  }
+  .page-subtitle {
+    text-align: center;
+    padding: 0 24px 40px;
+    font-size: 15px;
+    color: #999;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ── Scene: The 3D Space ── */
+  .scene-container {
+    position: relative;
+    width: 100%;
+    height: 520px;
+    perspective: 1200px;
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+
+  .scene {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Camera positions for each project */
+  .scene.view-commander { transform: translateZ(0px) translateX(0px) translateY(0px); }
+  .scene.view-archdrift { transform: translateZ(200px) translateX(350px) translateY(80px) rotateY(8deg); }
+  .scene.view-notifier { transform: translateZ(250px) translateX(-300px) translateY(120px) rotateY(-5deg); }
+  .scene.view-animeai { transform: translateZ(180px) translateX(500px) translateY(-60px) rotateY(12deg); }
+  .scene.view-atlas { transform: translateZ(220px) translateX(-450px) translateY(-40px) rotateY(-10deg); }
+
+  /* ── Floating Project Planes ── */
+  .project-plane {
+    position: absolute;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .project-plane .card {
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .project-plane:hover .card {
+    border-color: rgba(255,255,255,0.15);
+    box-shadow: 0 0 40px rgba(255,255,255,0.03);
+  }
+
+  .project-plane .card-visual {
+    width: 100%;
+    aspect-ratio: 16/10;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-plane .card-info {
+    padding: 16px 20px;
+    background: rgba(8,9,10,0.95);
+    backdrop-filter: blur(20px);
+    transition: all 0.6s ease;
+  }
+
+  .project-plane .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .project-plane .card-desc {
+    font-size: 11px;
+    color: #777;
+    line-height: 1.5;
+  }
+
+  .project-plane .card-tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .project-plane .tag {
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── Research Commander (HERO — front, center, largest) ── */
+  .plane-commander {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) translateZ(0px);
+    z-index: 10;
+  }
+  .plane-commander .card {
+    width: 520px;
+  }
+  .plane-commander .card-visual {
+    background: linear-gradient(135deg, #0a0b0d 0%, #141620 50%, #0d0e12 100%);
+  }
+  /* Simulated dashboard content */
+  .commander-preview {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    padding: 12px;
+  }
+  .cmd-topbar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+    align-items: center;
+  }
+  .cmd-tab {
+    font-size: 8px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.04);
+    color: #555;
+  }
+  .cmd-tab.active {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+  }
+  .cmd-agents-strip {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+  }
+  .cmd-agent-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+  .cmd-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .cmd-glass-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cmd-glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+  }
+  .cmd-card-icon {
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+  }
+  .cmd-card-title {
+    font-size: 8px;
+    color: #aaa;
+    margin-bottom: 2px;
+  }
+  .cmd-card-num {
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .cmd-card-items {
+    margin-top: 4px;
+  }
+  .cmd-card-item {
+    font-size: 6px;
+    color: #555;
+    padding: 2px 0;
+    border-top: 1px solid rgba(255,255,255,0.03);
+  }
+  .plane-commander .tag { background: rgba(99,102,241,0.15); color: #818cf8; }
+
+  /* ── arch-drift (right, slightly behind) ── */
+  .plane-archdrift {
+    left: 72%;
+    top: 38%;
+    transform: translate(-50%, -50%) translateZ(-180px) rotateY(-8deg);
+    z-index: 5;
+    opacity: 0.7;
+    filter: blur(0.5px);
+  }
+  .plane-archdrift .card { width: 280px; }
+  .plane-archdrift .card-visual {
+    background: linear-gradient(135deg, #0a100a 0%, #0d1a0d 100%);
+    font-family: 'SF Mono', monospace;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .terminal-line {
+    font-size: 9px;
+    line-height: 1.8;
+    color: #4ade80;
+  }
+  .terminal-line .dim { color: #2a5a2a; }
+  .terminal-line .warn { color: #fbbf24; }
+  .terminal-line .prompt { color: #666; }
+  .plane-archdrift .tag { background: rgba(74,222,128,0.15); color: #4ade80; }
+
+  /* ── Claude Notifier (left, behind) ── */
+  .plane-notifier {
+    left: 22%;
+    top: 42%;
+    transform: translate(-50%, -50%) translateZ(-220px) rotateY(5deg);
+    z-index: 4;
+    opacity: 0.6;
+    filter: blur(0.8px);
+  }
+  .plane-notifier .card { width: 260px; }
+  .plane-notifier .card-visual {
+    background: linear-gradient(135deg, #0d0a14 0%, #1a0d2a 100%);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .kitty-tabs {
+    display: flex;
+    gap: 2px;
+    background: rgba(0,0,0,0.5);
+    padding: 4px;
+    border-radius: 6px;
+  }
+  .kitty-tab {
+    font-size: 8px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    color: #888;
+    position: relative;
+  }
+  .kitty-tab.permission {
+    animation: blink-amber 0.6s ease-in-out infinite;
+    color: #fbbf24;
+  }
+  .kitty-tab.done {
+    animation: blink-green 1.2s ease-in-out infinite;
+    color: #4ade80;
+  }
+  .kitty-tab.working {
+    color: #60a5fa;
+  }
+  @keyframes blink-amber {
+    0%, 100% { background: rgba(251,191,36,0.05); }
+    50% { background: rgba(251,191,36,0.2); }
+  }
+  @keyframes blink-green {
+    0%, 100% { background: rgba(74,222,128,0.05); }
+    50% { background: rgba(74,222,128,0.15); }
+  }
+  .notifier-label {
+    font-size: 8px;
+    color: #666;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .plane-notifier .tag { background: rgba(168,85,247,0.15); color: #a855f7; }
+
+  /* ── Anime AI (far right, deeper) ── */
+  .plane-animeai {
+    left: 80%;
+    top: 62%;
+    transform: translate(-50%, -50%) translateZ(-300px) rotateY(-12deg);
+    z-index: 3;
+    opacity: 0.5;
+    filter: blur(1px);
+  }
+  .plane-animeai .card { width: 180px; }
+  .plane-animeai .card-visual {
+    background: linear-gradient(135deg, #14080a 0%, #2a0d1a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 9/16;
+  }
+  .phone-frame {
+    width: 80%;
+    height: 85%;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    gap: 4px;
+  }
+  .phone-notch {
+    width: 40%;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 99px;
+    margin: 0 auto 4px;
+  }
+  .phone-card {
+    background: rgba(255,255,255,0.04);
+    border-radius: 6px;
+    height: 20px;
+    width: 100%;
+  }
+  .phone-card.accent { border-left: 2px solid #f472b6; }
+  .plane-animeai .tag { background: rgba(244,114,182,0.15); color: #f472b6; }
+
+  /* ── Atlas Chat (far left, deepest) ── */
+  .plane-atlas {
+    left: 15%;
+    top: 60%;
+    transform: translate(-50%, -50%) translateZ(-320px) rotateY(10deg);
+    z-index: 2;
+    opacity: 0.45;
+    filter: blur(1.2px);
+  }
+  .plane-atlas .card { width: 170px; }
+  .plane-atlas .card-visual {
+    background: linear-gradient(135deg, #080a14 0%, #0d1a2a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 9/16;
+  }
+  .chat-frame {
+    width: 80%;
+    height: 85%;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 8px;
+    gap: 4px;
+  }
+  .chat-bubble {
+    border-radius: 10px;
+    padding: 4px 8px;
+    font-size: 6px;
+    max-width: 80%;
+  }
+  .chat-bubble.sent {
+    background: rgba(96,165,250,0.2);
+    color: #60a5fa;
+    align-self: flex-end;
+  }
+  .chat-bubble.received {
+    background: rgba(255,255,255,0.06);
+    color: #888;
+    align-self: flex-start;
+  }
+  .chat-input {
+    height: 14px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    margin-top: 4px;
+  }
+  .plane-atlas .tag { background: rgba(96,165,250,0.15); color: #60a5fa; }
+
+  /* ── Active state (when camera flies to a project) ── */
+  .scene.view-commander .plane-commander { opacity: 1; filter: none; }
+  .scene.view-archdrift .plane-archdrift { opacity: 1; filter: none; transform: translate(-50%, -50%) translateZ(-180px) rotateY(0deg) scale(1.3); }
+  .scene.view-notifier .plane-notifier { opacity: 1; filter: none; transform: translate(-50%, -50%) translateZ(-220px) rotateY(0deg) scale(1.4); }
+  .scene.view-animeai .plane-animeai { opacity: 1; filter: none; transform: translate(-50%, -50%) translateZ(-300px) rotateY(0deg) scale(1.5); }
+  .scene.view-atlas .plane-atlas { opacity: 1; filter: none; transform: translate(-50%, -50%) translateZ(-320px) rotateY(0deg) scale(1.5); }
+
+  /* ── Ambient particles ── */
+  .particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+    animation: float linear infinite;
+  }
+  @keyframes float {
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    10% { opacity: 0.08; }
+    90% { opacity: 0.08; }
+    100% { transform: translateY(-400px) translateX(40px); opacity: 0; }
+  }
+
+  /* ── Navigation ── */
+  .nav-strip {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 24px 40px;
+  }
+  .nav-btn {
+    padding: 8px 20px;
+    border-radius: 99px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+    color: #666;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.4s ease;
+  }
+  .nav-btn:hover {
+    border-color: rgba(255,255,255,0.15);
+    color: #aaa;
+  }
+  .nav-btn.active {
+    border-color: rgba(255,255,255,0.2);
+    color: #fff;
+    background: rgba(255,255,255,0.06);
+  }
+
+  /* ── Concept notes ── */
+  .notes {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .notes h3 {
+    font-size: 13px;
+    color: #999;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .notes ul {
+    list-style: none;
+    padding: 0;
+  }
+  .notes li {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.8;
+    padding-left: 16px;
+    position: relative;
+  }
+  .notes li::before {
+    content: '>';
+    position: absolute;
+    left: 0;
+    color: #444;
+  }
+  .notes li strong {
+    color: #aaa;
+  }
+</style>
+</head>
+<body>
+
+<p class="page-title">Projects World — Spatial Concept</p>
+<p class="page-subtitle">
+  You enter a 3D space. Projects float as planes at varying depths.
+  Click any project — the camera flies to it. Click the buttons below to simulate.
+</p>
+
+<div class="scene-container">
+  <!-- Ambient particles -->
+  <div class="particle" style="left:10%;top:80%;animation-duration:12s;animation-delay:0s;"></div>
+  <div class="particle" style="left:30%;top:90%;animation-duration:15s;animation-delay:2s;"></div>
+  <div class="particle" style="left:50%;top:85%;animation-duration:10s;animation-delay:4s;"></div>
+  <div class="particle" style="left:70%;top:95%;animation-duration:14s;animation-delay:1s;"></div>
+  <div class="particle" style="left:85%;top:88%;animation-duration:11s;animation-delay:3s;"></div>
+  <div class="particle" style="left:20%;top:92%;animation-duration:13s;animation-delay:5s;"></div>
+  <div class="particle" style="left:60%;top:82%;animation-duration:16s;animation-delay:2.5s;"></div>
+
+  <div class="scene view-commander" id="scene">
+
+    <!-- RESEARCH COMMANDER (hero, front center) -->
+    <div class="project-plane plane-commander" onclick="flyTo('commander')">
+      <div class="card">
+        <div class="card-visual">
+          <div class="commander-preview">
+            <div class="cmd-topbar">
+              <div class="cmd-tab active">Workspace</div>
+              <div class="cmd-tab">Agents</div>
+              <div class="cmd-tab">Library</div>
+              <div class="cmd-tab">Atlas</div>
+              <div class="cmd-agents-strip">
+                <div class="cmd-agent-dot" style="background:#f97316;animation-delay:0s;"></div>
+                <div class="cmd-agent-dot" style="background:#4ade80;animation-delay:0.3s;"></div>
+                <div class="cmd-agent-dot" style="background:#60a5fa;animation-delay:0.6s;"></div>
+                <div class="cmd-agent-dot" style="background:#f472b6;animation-delay:0.9s;"></div>
+                <div class="cmd-agent-dot" style="background:#fbbf24;animation-delay:1.2s;"></div>
+              </div>
+            </div>
+            <div class="cmd-grid">
+              <div class="cmd-glass-card" style="--glow:#f97316;">
+                <div style="position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,#f97316,transparent);"></div>
+                <div class="cmd-card-title">Jobs</div>
+                <div class="cmd-card-num" style="color:#f97316;">60</div>
+                <div class="cmd-card-items">
+                  <div class="cmd-card-item">Amazon — Software Engineer I</div>
+                  <div class="cmd-card-item">Viaduct — Junior AI Engineer</div>
+                </div>
+              </div>
+              <div class="cmd-glass-card">
+                <div style="position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,#4ade80,transparent);"></div>
+                <div class="cmd-card-title">Dev Research</div>
+                <div class="cmd-card-num" style="color:#4ade80;">127</div>
+                <div class="cmd-card-items">
+                  <div class="cmd-card-item">Shorts Monetization: 45%</div>
+                  <div class="cmd-card-item">YouTube AI Integration</div>
+                </div>
+              </div>
+              <div class="cmd-glass-card">
+                <div style="position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,#60a5fa,transparent);"></div>
+                <div class="cmd-card-title">Marketing</div>
+                <div class="cmd-card-num" style="color:#60a5fa;">83</div>
+                <div class="cmd-card-items">
+                  <div class="cmd-card-item">Local SEO Rankings 2026</div>
+                  <div class="cmd-card-item">Best Choice Roofing Milestone</div>
+                </div>
+              </div>
+              <div class="cmd-glass-card">
+                <div style="position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,#f472b6,transparent);"></div>
+                <div class="cmd-card-title">Business</div>
+                <div class="cmd-card-num" style="color:#f472b6;">50</div>
+              </div>
+              <div class="cmd-glass-card">
+                <div style="position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,#a855f7,transparent);"></div>
+                <div class="cmd-card-title">Security</div>
+                <div class="cmd-card-num" style="color:#a855f7;">32</div>
+              </div>
+              <div class="cmd-glass-card">
+                <div style="position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,#fbbf24,transparent);"></div>
+                <div class="cmd-card-title">Video</div>
+                <div class="cmd-card-num" style="color:#fbbf24;">8</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Research Commander</div>
+          <div class="card-desc">Multi-agent AI research system. 11 agents run overnight, synthesize findings, and deliver daily briefings.</div>
+          <div class="card-tags">
+            <span class="tag">Next.js</span>
+            <span class="tag">LangGraph</span>
+            <span class="tag">Temporal</span>
+            <span class="tag">pgvector</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARCH-DRIFT (right, behind) -->
+    <div class="project-plane plane-archdrift" onclick="flyTo('archdrift')">
+      <div class="card">
+        <div class="card-visual">
+          <div class="terminal-line"><span class="prompt">$</span> arch-drift check</div>
+          <div class="terminal-line" style="margin-top:6px;">Scanning 847 files...</div>
+          <div class="terminal-line"><span class="warn">WARN</span> components → lib (boundary)</div>
+          <div class="terminal-line">  <span class="dim">components/editor imports lib/db</span></div>
+          <div class="terminal-line" style="margin-top:4px;">Found <span class="warn">1 warning</span>, 0 errors</div>
+          <div class="terminal-line" style="margin-top:8px;"><span class="prompt">$</span> <span style="animation:pulse 1s infinite;">_</span></div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">arch-drift</div>
+          <div class="card-desc">npm package — prevents architecture drift. AI agents write fast, this catches the mess.</div>
+          <div class="card-tags">
+            <span class="tag">npm</span>
+            <span class="tag">CLI</span>
+            <span class="tag">TypeScript</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLAUDE NOTIFIER (left, behind) -->
+    <div class="project-plane plane-notifier" onclick="flyTo('notifier')">
+      <div class="card">
+        <div class="card-visual">
+          <div class="notifier-label">Kitty Terminal Tabs</div>
+          <div class="kitty-tabs">
+            <div class="kitty-tab permission">claude-1</div>
+            <div class="kitty-tab done">claude-2</div>
+            <div class="kitty-tab working">claude-3</div>
+            <div class="kitty-tab">zsh</div>
+          </div>
+          <div class="notifier-label" style="margin-top:4px;">permission &bull; done &bull; working</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Claude Notifier</div>
+          <div class="card-desc">Visual tab indicators for Claude Code in Kitty. Glance at your tab bar — know what Claude is doing.</div>
+          <div class="card-tags">
+            <span class="tag">Bash</span>
+            <span class="tag">Hooks</span>
+            <span class="tag">DX</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANIME AI (far right, deep) -->
+    <div class="project-plane plane-animeai" onclick="flyTo('animeai')">
+      <div class="card">
+        <div class="card-visual">
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-card accent" style="height:30px;"></div>
+            <div class="phone-card" style="height:24px;"></div>
+            <div class="phone-card accent" style="height:30px;"></div>
+            <div class="phone-card" style="height:24px;"></div>
+            <div class="phone-card" style="height:20px;"></div>
+          </div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Anime AI</div>
+          <div class="card-desc">SwiftUI + OpenAI — natural language anime recs</div>
+          <div class="card-tags">
+            <span class="tag">SwiftUI</span>
+            <span class="tag">OpenAI</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ATLAS CHAT (far left, deepest) -->
+    <div class="project-plane plane-atlas" onclick="flyTo('atlas')">
+      <div class="card">
+        <div class="card-visual">
+          <div class="chat-frame">
+            <div class="chat-bubble received">Hey, what's up?</div>
+            <div class="chat-bubble sent">Not much, working on the app</div>
+            <div class="chat-bubble received">Nice! Send me the link</div>
+            <div class="chat-bubble sent">Will do</div>
+            <div class="chat-input"></div>
+          </div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Atlas Chat</div>
+          <div class="card-desc">Real-time iOS chat — MVVM, Keychain, pagination</div>
+          <div class="card-tags">
+            <span class="tag">SwiftUI</span>
+            <span class="tag">WebSocket</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Navigation strip -->
+<div class="nav-strip">
+  <button class="nav-btn active" onclick="flyTo('commander')">Research Commander</button>
+  <button class="nav-btn" onclick="flyTo('archdrift')">arch-drift</button>
+  <button class="nav-btn" onclick="flyTo('notifier')">Claude Notifier</button>
+  <button class="nav-btn" onclick="flyTo('animeai')">Anime AI</button>
+  <button class="nav-btn" onclick="flyTo('atlas')">Atlas Chat</button>
+</div>
+
+<div class="notes">
+  <h3>How this works in the real implementation</h3>
+  <ul>
+    <li><strong>R3F + drei springs</strong> — real 3D scene with spring-damped camera, not CSS transforms</li>
+    <li><strong>Research Commander expands</strong> — when active, its plane opens up to reveal live layers: the dashboard, agent pipelines visualized as flowing data, architecture diagram as 3D nodes</li>
+    <li><strong>arch-drift gets a terminal replay</strong> — animated terminal showing init → detect → check → catch violation in real-time</li>
+    <li><strong>Claude Notifier gets live blinking</strong> — simulated Kitty tab bar with real animation states cycling</li>
+    <li><strong>Mobile apps get device frames</strong> — video playing inside a floating phone in 3D space with UI layers that peel apart on hover</li>
+    <li><strong>Ambient particles + depth fog</strong> — the void between projects has life</li>
+    <li><strong>Mouse parallax on everything</strong> — subtle depth response even when idle</li>
+    <li><strong>Each project's plane has its own color temperature</strong> — warm orange for Commander, green for arch-drift, purple for Notifier, pink for Anime AI, blue for Atlas</li>
+  </ul>
+</div>
+
+<script>
+  function flyTo(project) {
+    const scene = document.getElementById('scene');
+    scene.className = 'scene view-' + project;
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.target.closest('.nav-btn')?.classList.add('active') ||
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        if (btn.textContent.toLowerCase().includes(project.substring(0, 4))) {
+          btn.classList.add('active');
+        }
+      });
+  }
+</script>
+
+</body>
+</html>
